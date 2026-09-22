@@ -69,8 +69,7 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi",
-            "@php -r \"shell_exec('cd .davingm && npm install --silent 2>&1');\"",
-            "@php -r \"shell_exec('cd .davingm && npm link --silent 2>&1');\""
+            "@php -r \"shell_exec('node .davingm/setup.js 2>&1');\""
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"

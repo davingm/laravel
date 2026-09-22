@@ -3,258 +3,295 @@
 /**
  * davingm Laravel CLI
  * .davingm/cli.js
- *
- * Usage:
- *   artisan dev              → start Laravel server + queue worker
- *   artisan <command>        → forward to `php artisan <command>`
  */
 
-import { spawn } from 'node:child_process';
+import { spawn, execSync }   from 'node:child_process';
 import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { existsSync } from 'node:fs';
+import { fileURLToPath }    from 'node:url';
+import { existsSync }       from 'node:fs';
 
-// ─── ANSI Colors ─────────────────────────────────────────────────────────────
+// ─── ANSI ─────────────────────────────────────────────────────────────────────
 
-const c = {
-    reset:   '\x1b[0m',
-    bold:    '\x1b[1m',
-    dim:     '\x1b[2m',
-    red:     '\x1b[31m',
-    orange:  '\x1b[38;5;208m',
-    white:   '\x1b[97m',
-    gray:    '\x1b[90m',
-    green:   '\x1b[32m',
-    yellow:  '\x1b[33m',
-    cyan:    '\x1b[36m',
-};
+const R = '\x1b[0m';          // reset
+const B = '\x1b[1m';          // bold
+const D = '\x1b[2m';          // dim
+const RED    = '\x1b[31m';
+const ORANGE = '\x1b[38;5;208m';
+const CYAN   = '\x1b[36m';
+const WHITE  = '\x1b[97m';
+const GREEN  = '\x1b[32m';
+const GRAY   = '\x1b[90m';
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const PRE_RED    = `${B}${RED}[davingm]${R}`;
+const PRE_ORANGE = `${B}${ORANGE}[davingm]${R}`;
+const PRE_WHITE  = `${B}${WHITE}[davingm]${R}`;
 
-const prefix = `${c.bold}${c.white}[davingm]${c.reset}`;
+const stripAnsi = (s) => s.replace(/\x1b\[[0-9;]*m/g, '').replace(/\r/g, '');
 
-function log(msg) {
-    process.stdout.write(`${prefix} ${msg}\n`);
-}
+// ─── Printers ─────────────────────────────────────────────────────────────────
 
-function logRed(msg) {
-    process.stdout.write(`${prefix} ${c.red}${msg}${c.reset}\n`);
-}
-
-function logOrange(msg) {
-    process.stdout.write(`${prefix} ${c.orange}${msg}${c.reset}\n`);
-}
-
-function logDim(msg) {
-    process.stdout.write(`${prefix} ${c.dim}${msg}${c.reset}\n`);
-}
-
-function separator() {
-    process.stdout.write(`${prefix} ${c.dim}${'─'.repeat(50)}${c.reset}\n`);
-}
+const out = (pre, msg) => process.stdout.write(`${pre} ${msg}\n`);
 
 // ─── ASCII Logo ───────────────────────────────────────────────────────────────
 
 function printLogo() {
-    const logo = [
-        '    __                               __',
-        '   / /   ____ __________ __   _____  / /',
-        '  / /   / __ `/ ___/ __ `/ | / / _ \\/ /',
-        ' / /___/ /_/ / /  / /_/ /| |/ /  __/ /',
-        '/_____/\\__,_/_/   \\__,_/ |___/\\___/_/',
+    const L = [
+        '    __                               __     ',
+        '   / /   ____ __________ __   _____  / /    ',
+        '  / /   / __ `/ ___/ __ `/ | / / _ \\/ /   ',
+        ' / /___/ /_/ / /  / /_/ /| |/ /  __/ /     ',
+        '/_____/\\__,_/_/   \\__,_/ |___/\\___/_/   ',
     ];
     process.stdout.write('\n');
-    for (const line of logo) {
-        process.stdout.write(`  ${c.red}${c.bold}${line}${c.reset}\n`);
-    }
+    for (const line of L) process.stdout.write(`  ${RED}${B}${line}${R}\n`);
     process.stdout.write('\n');
 }
 
-// ─── Project root detection ───────────────────────────────────────────────────
+// ─── Project root ─────────────────────────────────────────────────────────────
 
-function findProjectRoot() {
-    const __dir = dirname(fileURLToPath(import.meta.url));
-    // .davingm/ is inside the project root, so go one level up
-    const projectRoot = resolve(__dir, '..');
-    return projectRoot;
+const __dir      = dirname(fileURLToPath(import.meta.url));
+const projectRoot = resolve(__dir, '..');
+
+// ─── Laravel serve output parser ─────────────────────────────────────────────
+//
+// `php artisan serve` outputs per-request like:
+//
+//   2026-09-22 11:13:03          ← timestamp line
+//   /                            ← path line
+//   .......................       ← dots line
+//   ~ 503.13ms                   ← duration line
+//
+// We collect those 4 lines and emit one clean line:
+//   GET /  503ms
+//
+// It also emits startup lines we want to show once:
+//   INFO  Server running on [http://127.0.0.1:8000].
+//   Press Ctrl+C to stop the server
+
+function makeServerParser(onReady) {
+    let buf = '';
+    let readyShown = false;
+
+    function emitRequest(path, durStr) {
+        const dur = durStr.replace(/^~\s*/, '').trim();
+        let durColor = GREEN;
+        const ms = parseFloat(dur);
+        if (ms > 1000)      durColor = RED;
+        else if (ms > 200)  durColor = ORANGE;
+        const p = path.startsWith('/') ? path : `/${path}`;
+        out(PRE_RED, `${WHITE}GET ${R}${D}${p.padEnd(30)}${R}  ${durColor}${dur}${R}`);
+    }
+
+    return function parse(rawChunk) {
+        // Accumulate raw bytes, process complete lines only
+        buf += rawChunk;
+
+        // Split on newlines (handle \r\n and \n)
+        const lines = buf.split(/\r?\n/);
+        buf = lines.pop(); // last fragment — keep for next chunk
+
+        for (const rawLine of lines) {
+            const line = stripAnsi(rawLine).trim();
+            if (!line) continue;
+
+            // ── Ready ─────────────────────────────────────────────────────
+            if (/Server running on/i.test(line)) {
+                if (!readyShown) { readyShown = true; onReady(); }
+                continue;
+            }
+
+            // ── Suppress noise ────────────────────────────────────────────
+            if (/Press Ctrl/i.test(line)) continue;
+
+            // ── Request log line ──────────────────────────────────────────
+            // Format: "2026-09-22 11:13:03 /path ......... ~ 0.32ms"
+            // Dots may contain ANSI codes per-dot (already stripped above)
+            const req = line.match(
+                /^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+(\/\S*)\s+[.\s]*(~\s*[\d.]+\s*ms)/i
+            );
+            if (req) {
+                emitRequest(req[1], req[2]);
+                continue;
+            }
+
+            // ── Anything else (errors, warnings, etc.) ────────────────────
+            out(PRE_RED, `${D}${line}${R}`);
+        }
+    };
 }
 
-// ─── PHP detection ───────────────────────────────────────────────────────────
+// ─── Queue worker output parser ───────────────────────────────────────────────
+//
+// queue:work outputs lines like:
+//   2026-09-22 11:13:03 Processing: App\Jobs\SendEmail
+//   2026-09-22 11:13:03 Processed:  App\Jobs\SendEmail (12.34ms)
+//   2026-09-22 11:13:03 Failed:     App\Jobs\SendEmail (12.34ms)
 
-function phpBin() {
-    return 'php';
+function makeQueueParser() {
+    return function parse(raw) {
+        const line = stripAnsi(raw).trim();
+        if (!line) return;
+
+        // Strip leading timestamp
+        const noTs = line.replace(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+/, '');
+
+        if (/^Processing:/i.test(noTs)) {
+            const job = noTs.replace(/^Processing:\s*/i, '');
+            out(PRE_ORANGE, `${D}job ${R}${job}`);
+            return;
+        }
+        if (/^Processed:/i.test(noTs)) {
+            const job = noTs.replace(/^Processed:\s*/i, '');
+            out(PRE_ORANGE, `${GREEN}✓${R} ${job}`);
+            return;
+        }
+        if (/^Failed:/i.test(noTs)) {
+            const job = noTs.replace(/^Failed:\s*/i, '');
+            out(PRE_ORANGE, `${RED}✗ failed${R} ${job}`);
+            return;
+        }
+
+        // Suppress common noise
+        if (/^\[.*\]$/.test(noTs)) return; // just a bracketed group
+
+        // Show the rest dimmed
+        if (line) out(PRE_ORANGE, `${D}${line}${R}`);
+    };
 }
 
-// ─── dev command ─────────────────────────────────────────────────────────────
+// ─── startDev ─────────────────────────────────────────────────────────────────
 
 const PORT = process.env.APP_PORT || process.env.PORT || '8000';
 
-function startDev(projectRoot) {
+function startDev() {
+    const startMs = Date.now();
+
     printLogo();
-    separator();
-    log(`${c.bold}${c.white}Laravel Development${c.reset}`);
-    logDim(`Port : ${c.white}${PORT}`);
-    logDim(`URL  : ${c.cyan}http://localhost:${PORT}`);
-    separator();
-    logRed('Laravel server  : starting...');
-    logOrange('Queue worker    : starting...');
-    separator();
+    out(PRE_WHITE, `${B}${WHITE}Laravel Development${R}`);
+    out(PRE_WHITE, `${D}  Local:   ${R}${CYAN}http://localhost:${PORT}${R}`);
+    process.stdout.write('\n');
+    out(PRE_RED,    `${D}server   starting…${R}`);
+    out(PRE_ORANGE, `${D}queue    starting…${R}`);
     process.stdout.write('\n');
 
-    // Spawn Laravel dev server
+    // ── spawn server ──────────────────────────────────────────────────────────
+    // Run through bash with stdbuf to force line-buffering (Git Bash / Linux / macOS)
     const server = spawn(
-        phpBin(),
-        ['artisan', 'serve', `--port=${PORT}`, '--ansi'],
+        'bash',
+        ['-c', `stdbuf -oL -eL php artisan serve --port=${PORT} 2>&1`],
         {
             cwd: projectRoot,
             stdio: ['ignore', 'pipe', 'pipe'],
-            env: { ...process.env },
+            env: { ...process.env, PHP_CLI_SERVER_WORKERS: '1' },
         }
     );
 
-    // Spawn queue worker
-    const queue = spawn(
-        phpBin(),
-        ['artisan', 'queue:work', '--ansi', '--tries=3'],
-        {
-            cwd: projectRoot,
-            stdio: ['ignore', 'pipe', 'pipe'],
-            env: { ...process.env },
-        }
-    );
+    let readyEmitted = false;
+    function emitReady() {
+        if (readyEmitted) return;
+        readyEmitted = true;
+        clearTimeout(readyFallback);
+        const elapsed = ((Date.now() - startMs) / 1000).toFixed(1);
+        out(PRE_RED, `${GREEN}✓${R} Ready in ${elapsed}s`);
+        process.stdout.write('\n');
+    }
 
-    // Pipe server output (red)
-    server.stdout.on('data', (data) => {
-        const lines = data.toString().replace(/\r/g, '').split('\n');
-        for (const line of lines) {
-            if (line.trim()) logRed(stripAnsi(line));
-        }
-    });
-    server.stderr.on('data', (data) => {
-        const lines = data.toString().replace(/\r/g, '').split('\n');
-        for (const line of lines) {
-            if (line.trim()) logRed(stripAnsi(line));
-        }
-    });
+    const serverParse = makeServerParser(emitReady);
 
-    // Pipe queue output (orange)
-    queue.stdout.on('data', (data) => {
-        const lines = data.toString().replace(/\r/g, '').split('\n');
-        for (const line of lines) {
-            if (line.trim()) logOrange(stripAnsi(line));
-        }
-    });
-    queue.stderr.on('data', (data) => {
-        const lines = data.toString().replace(/\r/g, '').split('\n');
-        for (const line of lines) {
-            if (line.trim()) logOrange(stripAnsi(line));
-        }
+    // Fallback: show ready after 5s even if server output is buffered
+    const readyFallback = setTimeout(emitReady, 5000);
+
+    const feedServer = (data) => serverParse(data.toString());
+    server.stdout.on('data', feedServer);
+    server.stderr.on('data', feedServer);
+
+    // ── spawn queue ───────────────────────────────────────────────────────────
+    const queue = spawn('php', ['artisan', 'queue:work', '--tries=3'], {
+        cwd: projectRoot,
+        stdio: ['ignore', 'pipe', 'pipe'],
+        env: { ...process.env },
     });
 
-    // Handle process exits
-    server.on('close', (code) => {
-        separator();
-        logRed(`Laravel server stopped (exit ${code}).`);
-        if (!shuttingDown) cleanExit();
-    });
+    const queueParse = makeQueueParser();
+    const feedQueue = (data) => {
+        data.toString().split('\n').forEach(l => queueParse(l));
+    };
+    queue.stdout.on('data', feedQueue);
+    queue.stderr.on('data', feedQueue);
 
-    queue.on('close', (code) => {
-        separator();
-        logOrange(`Queue worker stopped (exit ${code}).`);
-        if (!shuttingDown) cleanExit();
-    });
-
-    // Clean shutdown on Ctrl+C / SIGTERM
+    // ── shutdown ──────────────────────────────────────────────────────────────
     let shuttingDown = false;
 
-    function cleanExit(signal = '') {
+    function cleanExit() {
         if (shuttingDown) return;
         shuttingDown = true;
         process.stdout.write('\n');
-        separator();
-        if (signal) log(`Received ${signal}. Stopping all processes...`);
-        else        log('A process exited. Stopping all processes...');
-
+        out(PRE_WHITE, `${D}stopping…${R}`);
         try { server.kill('SIGTERM'); } catch (_) {}
         try { queue.kill('SIGTERM'); }  catch (_) {}
-
         setTimeout(() => {
-            separator();
-            log('All processes stopped. Goodbye.');
+            out(PRE_WHITE, `${D}stopped${R}`);
             process.stdout.write('\n');
             process.exit(0);
-        }, 800);
+        }, 600);
     }
 
-    process.on('SIGINT',  () => cleanExit('SIGINT'));
-    process.on('SIGTERM', () => cleanExit('SIGTERM'));
-}
-
-// ─── Strip ANSI helper ────────────────────────────────────────────────────────
-
-// Keep it zero-dependency — simple regex
-function stripAnsi(str) {
-    return str.replace(/\x1b\[[0-9;]*m/g, '');
-}
-
-// ─── Forward artisan commands ─────────────────────────────────────────────────
-
-function forwardArtisan(projectRoot, args) {
-    const child = spawn(
-        phpBin(),
-        ['artisan', ...args],
-        {
-            cwd: projectRoot,
-            stdio: 'inherit',
-            env: { ...process.env },
+    server.on('close', (code) => {
+        if (!shuttingDown) {
+            out(PRE_RED, `${RED}server exited (${code})${R}`);
+            cleanExit();
         }
-    );
-
-    child.on('close', (code) => {
-        process.exit(code ?? 0);
+    });
+    queue.on('close', (code) => {
+        if (!shuttingDown) {
+            out(PRE_ORANGE, `${ORANGE}queue exited (${code})${R}`);
+        }
     });
 
+    process.on('SIGINT',  cleanExit);
+    process.on('SIGTERM', cleanExit);
+}
+
+// ─── forwardArtisan ───────────────────────────────────────────────────────────
+
+function forwardArtisan(args) {
+    const child = spawn('php', ['artisan', ...args], {
+        cwd: projectRoot,
+        stdio: 'inherit',
+        env: { ...process.env },
+    });
+    child.on('close', (code) => process.exit(code ?? 0));
     child.on('error', (err) => {
-        process.stderr.write(`[davingm] Error: ${err.message}\n`);
+        process.stderr.write(`[davingm] error: ${err.message}\n`);
         process.exit(1);
     });
 }
 
-// ─── Entry point ─────────────────────────────────────────────────────────────
+// ─── Entry ────────────────────────────────────────────────────────────────────
 
-const args = process.argv.slice(2);
-const projectRoot = findProjectRoot();
-
-// Validate project root has artisan
 if (!existsSync(resolve(projectRoot, 'artisan'))) {
-    process.stderr.write(
-        `[davingm] Error: Could not locate Laravel project at: ${projectRoot}\n`
-    );
+    process.stderr.write(`[davingm] error: laravel project not found at ${projectRoot}\n`);
     process.exit(1);
 }
 
+const args = process.argv.slice(2);
+
 if (args.length === 0) {
-    // No args — show help
     printLogo();
-    separator();
-    log(`${c.bold}${c.white}davingm Laravel CLI${c.reset}`);
-    separator();
-    logDim('Usage:');
-    log(`  ${c.cyan}artisan dev${c.reset}          ${c.dim}→ start Laravel server + queue worker${c.reset}`);
-    log(`  ${c.cyan}artisan <command>${c.reset}    ${c.dim}→ forward to \`php artisan <command>\`${c.reset}`);
-    separator();
-    logDim('Examples:');
-    log(`  ${c.cyan}artisan migrate${c.reset}`);
-    log(`  ${c.cyan}artisan make:model User${c.reset}`);
-    log(`  ${c.cyan}artisan route:list${c.reset}`);
-    log(`  ${c.cyan}artisan tinker${c.reset}`);
-    separator();
+    out(PRE_WHITE, `${B}${WHITE}davingm${R} ${D}Laravel CLI${R}`);
+    process.stdout.write('\n');
+    out(PRE_WHITE, `  ${CYAN}artisan dev${R}              start server + queue`);
+    out(PRE_WHITE, `  ${CYAN}artisan <command>${R}        php artisan <command>`);
+    process.stdout.write('\n');
+    out(PRE_WHITE, `  ${D}artisan migrate${R}`);
+    out(PRE_WHITE, `  ${D}artisan make:model User${R}`);
+    out(PRE_WHITE, `  ${D}artisan route:list${R}`);
     process.stdout.write('\n');
     process.exit(0);
 }
 
 if (args[0] === 'dev') {
-    startDev(projectRoot);
+    startDev();
 } else {
-    forwardArtisan(projectRoot, args);
+    forwardArtisan(args);
 }
