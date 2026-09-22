@@ -1,0 +1,21 @@
+{
+    "name": "@davingm/cli",
+    "version": "1.0.0",
+    "description": "davingm Laravel development CLI",
+    "type": "module",
+    "bin": {
+        "artisan": "./cli.js"
+    },
+    "scripts": {
+        "link": "npm link"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "keywords": [
+        "laravel",
+        "davingm",
+        "cli"
+    ],
+    "license": "MIT"
+}
