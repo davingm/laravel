@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\SiswaController;
 use App\Support\PageRouter;
 use Illuminate\Support\Facades\Route;
 
@@ -25,10 +26,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('barang', BarangController::class);
+Route::resource('siswa', SiswaController::class);
 
 PageRouter::register([
     'middleware' => ['web'],
-    'exclude' => ['barang'],
+    'exclude' => ['barang', 'siswa'],
 ]);
 
 /*
