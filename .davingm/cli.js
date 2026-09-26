@@ -268,6 +268,17 @@ function startDev() {
     process.on('SIGTERM', cleanExit);
 }
 
+// ─── startBuild ───────────────────────────────────────────────────────────────
+
+function startBuild(extraArgs) {
+    // Forward to php artisan build — the PHP command handles all steps
+    // including npm via proc_open. We just forward and inherit stdio.
+    printLogo();
+    out(PRE_WHITE, `${B}${WHITE}artisan build${R}`);
+    process.stdout.write('\n');
+    forwardArtisan(['build', ...extraArgs]);
+}
+
 // ─── forwardArtisan ───────────────────────────────────────────────────────────
 
 function forwardArtisan(args) {
@@ -297,6 +308,7 @@ if (args.length === 0) {
     out(PRE_WHITE, `${B}${WHITE}davingm${R} ${D}Laravel CLI${R}`);
     process.stdout.write('\n');
     out(PRE_WHITE, `  ${CYAN}artisan dev${R}              start server + queue`);
+    out(PRE_WHITE, `  ${CYAN}artisan build${R}            build for production`);
     out(PRE_WHITE, `  ${CYAN}artisan <command>${R}        php artisan <command>`);
     process.stdout.write('\n');
     out(PRE_WHITE, `  ${D}artisan migrate${R}`);
@@ -308,6 +320,8 @@ if (args.length === 0) {
 
 if (args[0] === 'dev') {
     startDev();
+} else if (args[0] === 'build') {
+    startBuild(args.slice(1));
 } else {
     forwardArtisan(args);
 }
