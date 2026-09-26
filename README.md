@@ -1,6 +1,6 @@
 # davingm/laravel
 
-Laravel starter project by [davingm](https://github.com/davingm), powered by the [Laravel](https://laravel.com) framework.
+Laravel Framework modified by [davingm](https://github.com/davingm), powered by the [Laravel](https://laravel.com) framework.
 
 ## Create a New Project
 
@@ -19,7 +19,28 @@ Start the development environment (Laravel server + queue worker in one terminal
 artisan dev
 ```
 
-The CLI will display the Laravel logo, port info, and color-coded output from both processes.
+The CLI will generate the Blade frontend manifest, then display the Laravel logo, port info, and color-coded output from both processes.
+
+## Blade Frontend Mode
+
+This starter includes Nuxt-inspired conventions without Vue. Keep route pages in `resources/views/pages`, use `resources/views/layouts/app.blade.php` as the shell, and render a page with a payload from a route:
+
+```php
+use App\Support\Frontend;
+
+Route::get('/about', fn () => Frontend::render('about', [
+	'title' => 'About',
+	'description' => 'A server-rendered Blade page.',
+]));
+```
+
+`@pageMeta` adds page metadata, `@payload` exposes the current state as JSON, and links with `data-navigate` use lightweight fetch navigation. The generated manifest and payload files live in `.davingm/cache`, which is ignored by Git.
+
+Regenerate manually with:
+
+```bash
+artisan frontend:generate
+```
 
 ## Artisan Commands
 

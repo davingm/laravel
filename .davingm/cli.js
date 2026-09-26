@@ -166,6 +166,12 @@ const PORT = process.env.APP_PORT || process.env.PORT || '8000';
 function startDev() {
     const startMs = Date.now();
 
+    try {
+        execSync('php artisan frontend:generate', { cwd: projectRoot, stdio: 'ignore' });
+    } catch (_) {
+        out(PRE_ORANGE, `${ORANGE}frontend manifest skipped${R}`);
+    }
+
     printLogo();
     out(PRE_WHITE, `${B}${WHITE}Laravel Development${R}`);
     out(PRE_WHITE, `${D}  Local:   ${R}${CYAN}http://localhost:${PORT}${R}`);
@@ -219,6 +225,15 @@ function startDev() {
     queue.stdout.on('data', feedQueue);
     queue.stderr.on('data', feedQueue);
 
+    const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    const vite = spawn(npm, ['run', 'dev'], {
+        cwd: projectRoot,
+        stdio: ['ignore', 'pipe', 'pipe'],
+        env: { ...process.env },
+        shell: process.platform === 'win32',
+    });
+    vite.on('error', () => {});
+
     // ── shutdown ──────────────────────────────────────────────────────────────
     let shuttingDown = false;
 
@@ -229,6 +244,7 @@ function startDev() {
         out(PRE_WHITE, `${D}stopping…${R}`);
         try { server.kill('SIGTERM'); } catch (_) {}
         try { queue.kill('SIGTERM'); }  catch (_) {}
+        try { vite.kill('SIGTERM'); }    catch (_) {}
         setTimeout(() => {
             out(PRE_WHITE, `${D}stopped${R}`);
             process.stdout.write('\n');
