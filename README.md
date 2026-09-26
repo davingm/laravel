@@ -75,4 +75,4 @@ After linking, `artisan` will be available globally from the project directory.
 
 ## License
 
-MIT
+GNU Affero
