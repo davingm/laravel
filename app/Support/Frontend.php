@@ -9,11 +9,25 @@ use Illuminate\Support\Str;
 
 class Frontend
 {
-    public static function render(string $page, array $data = [], ?string $layout = 'layouts.app'): View
+    /**
+     * Render a page view and build its frontend payload.
+     *
+     * @param  string  $viewKey  Full dot-notation view key, e.g. "about.index", "home"
+     * @param  string|null  $pageKey  Collapsed key used for payload / cache naming.
+     *                                Defaults to $viewKey when omitted.
+     * @param  array<string, mixed>  $data
+     */
+    public static function render(string $viewKey, ?string $pageKey = null, array $data = [], ?string $layout = 'layouts.app'): View
     {
-        $view = view('pages.'.$page, $data);
+        // Normalise: strip leading "pages." if caller passed the full prefixed key
+        $viewKey = Str::startsWith($viewKey, 'pages.') ? $viewKey : 'pages.'.$viewKey;
+
+        // pageKey used for payload filename / route name — default to viewKey without prefix
+        $pageKey ??= Str::after($viewKey, 'pages.');
+
+        $view = view($viewKey, $data);
         $payload = [
-            'page' => $page,
+            'page' => $pageKey,
             'url' => request()->fullUrl(),
             'path' => request()->path(),
             'data' => $data,
@@ -21,9 +35,9 @@ class Frontend
             'generated_at' => now()->toIso8601String(),
         ];
 
-        self::writePayload($page, $payload);
+        self::writePayload($pageKey, $payload);
 
-        return $view->with('frontendPage', $page)
+        return $view->with('frontendPage', $pageKey)
             ->with('frontendPayload', $payload)
             ->with('frontendLayout', $layout);
     }
@@ -64,13 +78,12 @@ class Frontend
 
         if (File::isDirectory($pagesPath)) {
             foreach (File::allFiles($pagesPath) as $file) {
-                if ($file->getExtension() !== 'php') {
+                if ($file->getExtension() !== 'php' || Str::startsWith($file->getFilename(), '_')) {
                     continue;
                 }
 
-                $relative = Str::after($file->getPathname(), $pagesPath.DIRECTORY_SEPARATOR);
-                $name = Str::beforeLast(str_replace(DIRECTORY_SEPARATOR, '.', $relative), '.blade.php');
-                $pages[$name] = 'pages.'.$name;
+                [, $pageKey] = PageRouter::resolve($file->getPathname(), $pagesPath);
+                $pages[$pageKey] = 'pages.'.$pageKey;
             }
         }
 
