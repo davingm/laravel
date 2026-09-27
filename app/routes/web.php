@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Route;
 | File-based Auto Routes (pages/**)
 |--------------------------------------------------------------------------
 |
-| PageRouter scans resources/views/pages/** and registers a GET route for
-| every Blade file automatically. Conventions:
+| PageRouter scans src/pages/** and registers a GET route for every Blade
+| file automatically. Conventions:
 |
 |   pages/home.blade.php           →  GET /home        (name: pages.home)
 |   pages/index.blade.php          →  GET /            (name: pages)

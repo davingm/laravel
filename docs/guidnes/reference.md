@@ -824,3 +824,49 @@ node .davingm/cli.js migrate
 | Composer | 2.x |
 | Node.js | 18.0.0 |
 | Laravel | 13.x |
+
+---
+
+## Project Structure
+
+```
+davingm-laravel/
+├── app/                     # Backend
+│   ├── Console/
+│   ├── Http/
+│   ├── Models/
+│   ├── Providers/
+│   ├── Support/
+│   ├── database/            # Migrations, factories, seeders
+│   │   ├── migrations/
+│   │   ├── factories/
+│   │   └── seeders/
+│   └── routes/              # Route definitions
+│       ├── web.php
+│       └── console.php
+│
+├── src/                     # Frontend
+│   ├── index.blade.php      # App entry point (ships in Composer package)
+│   ├── assets/
+│   │   ├── css/
+│   │   └── js/
+│   ├── components/          # Blade components (user-created)
+│   ├── layouts/             # Layouts (user-created)
+│   └── pages/               # Auto-routed pages (user-created)
+│       ├── index.blade.php
+│       ├── about.blade.php
+│       └── ...
+│
+├── config/
+├── bootstrap/
+├── public/
+├── storage/
+├── tests/
+├── artisan
+├── composer.json
+└── package.json
+```
+
+> `src/pages/`, `src/layouts/`, dan `src/components/` tidak disertakan saat
+> publish ke Composer — hanya `src/index.blade.php` yang dikirim. Folder
+> `pages/` dibuat otomatis saat user pertama kali menjalankan `php artisan make:page`.
