@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -12,16 +13,13 @@ class MakePageCommand extends Command
                             {name : Page path, e.g. "about" or "about/team"}
                             {--force : Overwrite existing page if it already exists}';
 
-    protected $description = 'Create a new page in resources/views/pages with full SEO standards';
+    protected $description = 'Create a new Blade page';
 
     public function handle(): int
     {
-        $name = $this->argument('name');
-
-        // Normalise: strip leading/trailing slashes, convert backslashes
-        $name = trim(str_replace('\\', '/', $name), '/');
-
+        $name = trim(str_replace('\\', '/', $this->argument('name')), '/');
         $targetPath = resource_path('views/pages/'.str_replace('.', '/', $name).'.blade.php');
+        $routeCacheExists = File::exists(app()->getCachedRoutesPath());
 
         if (File::exists($targetPath) && ! $this->option('force')) {
             $this->line("  <fg=yellow>!</> Page already exists: <fg=cyan>{$targetPath}</> (use <fg=yellow>--force</> to overwrite)");
@@ -32,8 +30,14 @@ class MakePageCommand extends Command
         File::ensureDirectoryExists(dirname($targetPath));
         File::put($targetPath, $this->stub($name));
 
+        if ($routeCacheExists) {
+            $this->warn('Route cache was preserved and may be stale. Run `php artisan route:clear` to load the new page, then `php artisan route:cache` to enable route caching again.');
+        } else {
+            Artisan::call('route:clear');
+        }
+
         $uri = '/'.implode('/', array_map(
-            fn (string $s) => Str::kebab($s),
+            fn (string $segment) => Str::kebab($segment),
             explode('/', $name),
         ));
 
@@ -45,210 +49,30 @@ class MakePageCommand extends Command
         return self::SUCCESS;
     }
 
-    /**
-     * Generate the Blade stub with full Nuxt-like SEO standards:
-     *   - Primary Meta Tags (title, description, keywords, robots, canonical)
-     *   - Open Graph (og:type, og:url, og:title, og:description, og:image, og:locale)
-     *   - Twitter Cards (twitter:card, twitter:title, twitter:description, twitter:image)
-     *   - Schema.org JSON-LD (WebPage + BreadcrumbList)
-     *   - Breadcrumb navigation
-     *   - Semantic page header (eyebrow, h1, lede)
-     *   - @stack('head') support for page-level extra head injections
-     */
     private function stub(string $name): string
     {
-        $rawSegments = explode('/', $name);
         $headline = Str::headline(basename(str_replace('/', ' ', $name)));
-        $category = count($rawSegments) > 1
-            ? Str::headline($rawSegments[count($rawSegments) - 2])
-            : 'Page';
-
-        // Build breadcrumb data (Home → parent → current)
-        $breadcrumbs = [['name' => 'Home', 'uri' => '/']];
-        $accumulated = '';
-        foreach ($rawSegments as $segment) {
-            $accumulated .= '/'.Str::kebab($segment);
-            $breadcrumbs[] = [
-                'name' => Str::headline($segment),
-                'uri' => $accumulated,
-            ];
-        }
-
-        // Parent URL for back button
-        $parentUri = count($breadcrumbs) > 2
-            ? $breadcrumbs[count($breadcrumbs) - 2]['uri']
-            : '/';
-
-        // JSON-LD BreadcrumbList items
-        $jsonLdItems = [];
-        foreach ($breadcrumbs as $index => $crumb) {
-            $pos = $index + 1;
-            $crumbName = $crumb['name'];
-            $crumbUri = $crumb['uri'];
-            $jsonLdItems[] = <<<JSON
-                    {
-                        "@type": "ListItem",
-                        "position": {$pos},
-                        "name": "{$crumbName}",
-                        "item": "{{ url('{$crumbUri}') }}"
-                    }
-JSON;
-        }
-        $jsonLdBreadcrumbs = implode(",\n", $jsonLdItems);
-
-        // HTML Breadcrumbs
-        $htmlCrumbs = ['<a href="{{ url(\'/\') }}" data-navigate="{{ url(\'/\') }}">Home</a>'];
-        $total = count($breadcrumbs);
-        for ($i = 1; $i < $total; $i++) {
-            $crumb = $breadcrumbs[$i];
-            $isLast = ($i === $total - 1);
-            $htmlCrumbs[] = '<span aria-hidden="true">/</span>';
-            if ($isLast) {
-                $htmlCrumbs[] = '<span aria-current="page">'.$crumb['name'].'</span>';
-            } else {
-                $uri = $crumb['uri'];
-                $n = $crumb['name'];
-                $htmlCrumbs[] = "<a href=\"{{ url('{$uri}') }}\" data-navigate=\"{{ url('{$uri}') }}\">{$n}</a>";
-            }
-        }
-        $htmlBreadcrumbs = implode("\n            ", $htmlCrumbs);
-
-        $keywords = Str::lower(implode(', ', array_unique(array_merge(
-            array_map(fn ($s) => Str::kebab($s), $rawSegments),
-            ['davingm', 'laravel']
-        ))));
 
         return <<<BLADE
 @extends('layouts.app')
 
-{{--
-|--------------------------------------------------------------------------
-| @section('seo') — Nuxt-like Head Management
-|--------------------------------------------------------------------------
-|
-| Blade pages menggunakan @section('seo') untuk override blok <head>
-| secara penuh, mirip konsep useHead() / useSeoMeta() di Nuxt 3.
-|
-| Yang tersedia di sini:
-|   - Primary Meta Tags  (title, description, keywords, robots, canonical)
-|   - Open Graph         (og:type, og:url, og:title, og:description, og:image)
-|   - Twitter Cards      (twitter:card, summary_large_image)
-|   - Schema.org JSON-LD (WebPage + BreadcrumbList)
-|
-| @stack('head') tersedia di layout untuk inject elemen <head> tambahan
-| dari halaman ini tanpa override seluruh @section('seo').
-|
---}}
+@php
+\$seo = [
+    'title' => '{$headline}',
+    'description' => 'Halaman {$headline}.',
+    'ogTitle' => '{$headline}',
+    'ogDescription' => 'Halaman {$headline}.',
+    'ogImage' => asset('images/og-image.jpg'),
+];
+@endphp
+
 @section('seo')
-    {{-- ═══════════════════════════════════════════════════════════════════ --}}
-    {{-- Primary Meta Tags                                                   --}}
-    {{-- ═══════════════════════════════════════════════════════════════════ --}}
-    <title>{$headline} | {{ config('app.name') }}</title>
-    <meta name="title"       content="{$headline} | {{ config('app.name') }}">
-    <meta name="description" content="Halaman {$headline} — akses informasi dan detail lengkap di {{ config('app.name') }}.">
-    <meta name="keywords"    content="{$keywords}">
-    <meta name="author"      content="{{ config('app.name') }}">
-    <meta name="robots"      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical"    href="{{ url()->current() }}">
-
-    {{-- ═══════════════════════════════════════════════════════════════════ --}}
-    {{-- Open Graph / Facebook / WhatsApp                                    --}}
-    {{-- ═══════════════════════════════════════════════════════════════════ --}}
-    <meta property="og:type"        content="website">
-    <meta property="og:url"         content="{{ url()->current() }}">
-    <meta property="og:title"       content="{$headline} | {{ config('app.name') }}">
-    <meta property="og:description" content="Halaman {$headline} — akses informasi dan detail lengkap di {{ config('app.name') }}.">
-    <meta property="og:image"       content="{{ asset('images/og-image.jpg') }}">
-    <meta property="og:image:alt"   content="{$headline}">
-    <meta property="og:site_name"   content="{{ config('app.name') }}">
-    <meta property="og:locale"      content="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-    {{-- ═══════════════════════════════════════════════════════════════════ --}}
-    {{-- Twitter / X Cards                                                   --}}
-    {{-- ═══════════════════════════════════════════════════════════════════ --}}
-    <meta name="twitter:card"        content="summary_large_image">
-    <meta name="twitter:url"         content="{{ url()->current() }}">
-    <meta name="twitter:title"       content="{$headline} | {{ config('app.name') }}">
-    <meta name="twitter:description" content="Halaman {$headline} — akses informasi dan detail lengkap di {{ config('app.name') }}.">
-    <meta name="twitter:image"       content="{{ asset('images/og-image.jpg') }}">
-
-    {{-- ═══════════════════════════════════════════════════════════════════ --}}
-    {{-- Structured Data — Schema.org JSON-LD                                --}}
-    {{-- Digunakan Google untuk rich results dan Knowledge Graph             --}}
-    {{-- ═══════════════════════════════════════════════════════════════════ --}}
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "WebPage",
-                "@id": "{{ url()->current() }}#webpage",
-                "url": "{{ url()->current() }}",
-                "name": "{$headline}",
-                "description": "Halaman {$headline} — akses informasi dan detail lengkap di {{ config('app.name') }}.",
-                "isPartOf": {
-                    "@type": "WebSite",
-                    "@id": "{{ url('/') }}#website",
-                    "url": "{{ url('/') }}",
-                    "name": "{{ config('app.name') }}"
-                },
-                "inLanguage": "{{ str_replace('_', '-', app()->getLocale()) }}"
-            },
-            {
-                "@type": "BreadcrumbList",
-                "@id": "{{ url()->current() }}#breadcrumb",
-                "itemListElement": [
-{$jsonLdBreadcrumbs}
-                ]
-            }
-        ]
-    }
-    </script>
-
-    {{-- Slot untuk inject elemen <head> tambahan dari halaman ini --}}
-    @stack('head')
+    <x-seo-meta :seo="\$seo" />
 @endsection
 
 @section('content')
 <section class="crud-shell">
-
-    {{-- ─── Breadcrumb Navigation ─────────────────────────────────────── --}}
-    <nav aria-label="Breadcrumb" class="page-breadcrumb">
-        {$htmlBreadcrumbs}
-    </nav>
-
-    {{-- ─── Page Header ────────────────────────────────────────────────── --}}
-    <header class="page-header">
-        <div>
-            <p class="eyebrow">{$category}</p>
-            <h1 class="crud-title">{$headline}</h1>
-            <p class="lede">Halaman {$headline} — akses informasi dan detail lengkap.</p>
-        </div>
-        <div class="hero-actions">
-            <a href="{{ url('{$parentUri}') }}" data-navigate="{{ url('{$parentUri}') }}" class="button button-quiet">
-                ← Kembali
-            </a>
-        </div>
-    </header>
-
-    {{-- ─── Main Content ────────────────────────────────────────────────── --}}
-    {{-- TODO: Ganti bagian ini dengan konten halaman yang sebenarnya --}}
-    <div class="hero-panel">
-        <div class="panel-topline">
-            <span class="status-dot"></span>{$headline}
-        </div>
-        <div class="runtime-grid" style="margin-top: 20px;">
-            <div>
-                <strong>SEO Ready</strong>
-                <small>Meta, OG, Twitter, JSON-LD</small>
-            </div>
-            <div>
-                <strong>Soft Nav</strong>
-                <small>data-navigate support</small>
-            </div>
-        </div>
-    </div>
-
+    <h1 class="crud-title">{$headline}</h1>
 </section>
 @endsection
 BLADE;

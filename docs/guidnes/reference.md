@@ -125,7 +125,7 @@ artisan <any-artisan-command>
 
 ### make:page
 
-Membuat halaman baru di `resources/views/pages/` dengan standar SEO lengkap.
+Membuat halaman Blade baru di `resources/views/pages/` dengan konfigurasi SEO terpisah dari konten.
 
 ```bash
 php artisan make:page <path>
@@ -163,21 +163,36 @@ php artisan make:page siswa/detail --force
 
 Setiap halaman hasil `make:page` sudah include:
 
-```
+```blade
+@php
+        $seo = [
+                'title' => 'About',
+                'description' => 'Halaman About.',
+                'ogTitle' => 'About',
+                'ogDescription' => 'Halaman About.',
+                'ogImage' => asset('images/og-image.jpg'),
+        ];
+@endphp
+
 @section('seo')
-  - title + meta name="title"
-  - meta name="description"
-  - meta name="keywords"     (auto dari path segments)
-  - meta name="robots"
-  - link rel="canonical"
-  - Open Graph (og:type, og:url, og:title, og:description, og:image, og:locale)
-  - Twitter Cards (twitter:card, title, description, image)
-  - Schema.org JSON-LD (WebPage + BreadcrumbList auto dari path)
+        <x-seo-meta :seo="$seo" />
+@endsection
 
 @section('content')
-  - nav breadcrumb (auto-generated dari path, dengan aria attributes)
-  - header (eyebrow, h1, lede, tombol kembali)
-  - Placeholder konten dengan TODO comment
+        {{-- Konten utama halaman --}}
+@endsection
+```
+
+SEO dirender oleh komponen `x-seo-meta`; isi `<head>` tidak perlu ditulis ulang pada setiap halaman.
+
+**Perilaku route cache:**
+
+- Jika route cache belum ada, command menjalankan `route:clear` agar route halaman baru langsung terdeteksi.
+- Jika route cache sudah ada, command mempertahankannya dan menampilkan peringatan. Untuk mendaftarkan halaman baru, jalankan secara manual:
+
+```bash
+php artisan route:clear
+php artisan route:cache
 ```
 
 ---
@@ -616,12 +631,7 @@ Override penuh blok `<head>` untuk halaman tersebut:
 @endsection
 ```
 
-Setiap halaman yang dihasilkan `make:page` sudah include section ini dengan template lengkap:
-
-- **Primary Meta:** `title`, `description`, `keywords`, `author`, `robots`, `canonical`
-- **Open Graph:** `og:type`, `og:url`, `og:title`, `og:description`, `og:image`, `og:image:alt`, `og:site_name`, `og:locale`
-- **Twitter Cards:** `twitter:card`, `twitter:url`, `twitter:title`, `twitter:description`, `twitter:image`
-- **JSON-LD:** `WebPage` + `BreadcrumbList` yang di-generate otomatis dari path halaman
+Setiap halaman hasil `make:page` membuat object `$seo` dan merendernya dengan `<x-seo-meta :seo="$seo" />`. Field yang didukung: `title`, `description`, `ogTitle`, `ogDescription`, `ogImage`, dan `articleAuthor`. Kamu dapat mengubah atau menambahkan field sesuai kebutuhan halaman.
 
 ### @section('title')
 
