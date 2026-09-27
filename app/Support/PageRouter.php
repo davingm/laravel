@@ -53,9 +53,15 @@ class PageRouter
 
             [$uri, $viewKey, $pageKey, $routeName] = self::resolve($file->getPathname(), $pagesPath, $prefix);
 
-            if (collect($excludedPages)->contains(
-                fn (string $excludedPage): bool => $pageKey === $excludedPage || Str::startsWith($pageKey, $excludedPage.'.')
-            )) {
+            if (collect($excludedPages)->contains(function (string $excludedPage) use ($pageKey, $uri): bool {
+                if (Str::endsWith($excludedPage, '*')) {
+                    $wildcardPrefix = rtrim(rtrim($excludedPage, '*'), '.');
+
+                    return $pageKey === $wildcardPrefix || Str::startsWith($pageKey, $wildcardPrefix.'.');
+                }
+
+                return $pageKey === $excludedPage || $uri === '/'.ltrim($excludedPage, '/');
+            })) {
                 continue;
             }
 

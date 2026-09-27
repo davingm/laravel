@@ -25,13 +25,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::resource('barang', BarangController::class);
-Route::resource('siswa', SiswaController::class);
-
 PageRouter::register([
     'middleware' => ['web'],
     'exclude' => ['barang', 'siswa'],
 ]);
+
+Route::resource('barang', BarangController::class);
+Route::resource('siswa', SiswaController::class);
 
 /*
 |--------------------------------------------------------------------------

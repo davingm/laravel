@@ -3,6 +3,7 @@
 .env
 .env.backup
 .env.production
+.env.preview
 .phpactor.json
 .phpunit.result.cache
 /.codex
@@ -18,6 +19,7 @@
 /.davingm/cache
 /.davingm/generated
 /.davingm/*.log
+/.davingm/.preview
 /public/build
 /public/fonts-manifest.dev.json
 /public/hot
@@ -30,3 +32,4 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 playground/test-laravel
+resault.html

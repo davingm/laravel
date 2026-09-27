@@ -8,7 +8,7 @@
 import { spawn, execSync }   from 'node:child_process';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath }    from 'node:url';
-import { existsSync }       from 'node:fs';
+import { existsSync, unlinkSync } from 'node:fs';
 
 // ─── ANSI ─────────────────────────────────────────────────────────────────────
 
@@ -166,6 +166,12 @@ const PORT = process.env.APP_PORT || process.env.PORT || '8000';
 function startDev() {
     const startMs = Date.now();
 
+    // Ensure stale preview flag is cleaned up so dev mode never runs in preview state
+    const previewFlag = resolve(__dir, '.preview');
+    if (existsSync(previewFlag)) {
+        try { unlinkSync(previewFlag); } catch (_) {}
+    }
+
     try {
         execSync('php artisan frontend:generate', { cwd: projectRoot, stdio: 'ignore' });
     } catch (_) {
@@ -268,6 +274,12 @@ function startDev() {
     process.on('SIGTERM', cleanExit);
 }
 
+// ─── startPreview ─────────────────────────────────────────────────────────────
+
+function startPreview(extraArgs) {
+    forwardArtisan(['preview', ...extraArgs]);
+}
+
 // ─── startBuild ───────────────────────────────────────────────────────────────
 
 function startBuild(extraArgs) {
@@ -287,7 +299,13 @@ function forwardArtisan(args) {
         stdio: 'inherit',
         env: { ...process.env },
     });
-    child.on('close', (code) => process.exit(code ?? 0));
+    child.on('close', (code) => {
+        const previewFlag = resolve(__dir, '.preview');
+        if (existsSync(previewFlag)) {
+            try { unlinkSync(previewFlag); } catch (_) {}
+        }
+        process.exit(code ?? 0);
+    });
     child.on('error', (err) => {
         process.stderr.write(`[davingm] error: ${err.message}\n`);
         process.exit(1);
@@ -309,6 +327,7 @@ if (args.length === 0) {
     process.stdout.write('\n');
     out(PRE_WHITE, `  ${CYAN}artisan dev${R}              start server + queue`);
     out(PRE_WHITE, `  ${CYAN}artisan build${R}            build for production`);
+    out(PRE_WHITE, `  ${CYAN}artisan preview${R}          serve in production preview mode`);
     out(PRE_WHITE, `  ${CYAN}artisan <command>${R}        php artisan <command>`);
     process.stdout.write('\n');
     out(PRE_WHITE, `  ${D}artisan migrate${R}`);
@@ -322,6 +341,8 @@ if (args[0] === 'dev') {
     startDev();
 } else if (args[0] === 'build') {
     startBuild(args.slice(1));
+} else if (args[0] === 'preview') {
+    startPreview(args.slice(1));
 } else {
     forwardArtisan(args);
 }

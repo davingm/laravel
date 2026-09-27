@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Siswa;
 use App\Http\Requests\StoreSiswaRequest;
 use App\Http\Requests\UpdateSiswaRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
+use App\Models\Siswa;
 use App\Support\Frontend;
-
+use Illuminate\View\View;
 
 class SiswaController extends Controller
 {

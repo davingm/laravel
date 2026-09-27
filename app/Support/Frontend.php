@@ -82,7 +82,7 @@ class Frontend
                     continue;
                 }
 
-                [, $pageKey] = PageRouter::resolve($file->getPathname(), $pagesPath);
+                [, , $pageKey] = PageRouter::resolve($file->getPathname(), $pagesPath);
                 $pages[$pageKey] = 'pages.'.$pageKey;
             }
         }

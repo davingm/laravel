@@ -19,7 +19,7 @@ class SiswaFactory extends Factory
     {
         return [
             'nama' => fake()->name(),
-            'nis' => fake()->unique()->numerify('NIS-#####')
+            'nis' => fake()->unique()->numerify('NIS-#####'),
         ];
     }
 }

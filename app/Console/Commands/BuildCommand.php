@@ -135,11 +135,23 @@ class BuildCommand extends Command
         // Clear config before running tests to avoid stale cache interference
         $this->callSilent('config:clear');
 
+        $env = array_filter(
+            array_merge($_SERVER, [
+                'APP_ENV' => 'testing',
+                'SESSION_DRIVER' => 'array',
+                'CACHE_STORE' => 'array',
+                'DB_CONNECTION' => 'sqlite',
+                'DB_DATABASE' => ':memory:',
+            ]),
+            'is_string'
+        );
+
         $process = proc_open(
             [PHP_BINARY, 'artisan', 'test', '--compact'],
             [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
             $pipes,
             base_path(),
+            $env,
         );
 
         if (! is_resource($process)) {
@@ -162,34 +174,28 @@ class BuildCommand extends Command
     private function runNpm(): int
     {
         $isWindows = PHP_OS_FAMILY === 'Windows';
-        $npm = $isWindows ? 'npm.cmd' : 'npm';
 
-        // On Windows, proc_open with array descriptor requires shell invocation
+        // On Windows use cmd /c to resolve npm.cmd via PATH, merge stderr into stdout
         $cmd = $isWindows
             ? 'cmd /c npm run build 2>&1'
-            : [$npm, 'run', 'build'];
+            : 'npm run build 2>&1';
 
-        $process = proc_open(
-            $cmd,
-            [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
-            $pipes,
-            base_path(),
-        );
+        $output = [];
+        $exitCode = 0;
 
-        if (! is_resource($process)) {
-            return 1;
-        }
+        exec($cmd, $output, $exitCode);
 
-        while (! feof($pipes[1])) {
-            $line = fgets($pipes[1]);
-            if ($line !== false && trim($line) !== '') {
-                $this->line('     '.rtrim($line), null, 'v');
+        if ($exitCode !== 0) {
+            // Show full output on failure so developer knows what went wrong
+            $this->newLine();
+            foreach ($output as $line) {
+                if (trim($line) !== '') {
+                    $this->line('     <fg=red>'.htmlspecialchars($line, ENT_NOQUOTES).'</>');
+                }
             }
+            $this->newLine();
         }
 
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-
-        return proc_close($process);
+        return $exitCode;
     }
 }
