@@ -20,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register src/components for x-component syntax (anonymous components)
+        Blade::anonymousComponentPath(base_path('src/components'));
+
         Blade::directive('pageMeta', function (): string {
             return <<<'PHP'
                 <?php if (! empty($frontendPayload['meta']['title'] ?? null)): ?><title><?= e($frontendPayload['meta']['title']) ?></title><?php endif; ?>

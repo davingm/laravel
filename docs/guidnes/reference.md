@@ -26,7 +26,7 @@
 
 `davingm/laravel` adalah Laravel starter kit yang membawa konvensi modern ala Nuxt ke ekosistem Blade tanpa Vue, tanpa build kompleks. Framework ini menambahkan:
 
-- **File-based routing** — buat file di `resources/views/pages/`, route terdaftar otomatis
+- **File-based routing** — buat file di `src/pages/`, route terdaftar otomatis
 - **Frontend payload system** — tiap halaman punya JSON state yang bisa dibaca JS
 - **SEO head management** — mirip `useSeoMeta()` di Nuxt 3, langsung di Blade
 - **Custom `artisan` CLI** — wrapper Node.js yang menjalankan dev server, queue, dan Vite sekaligus
@@ -148,11 +148,11 @@ php artisan make:page <path> --force
 
 ```bash
 php artisan make:page about
-# Hasil: resources/views/pages/about.blade.php
+# Hasil: src/pages/about.blade.php
 # Route: GET /about
 
 php artisan make:page blog/post
-# Hasil: resources/views/pages/blog/post.blade.php
+# Hasil: src/pages/blog/post.blade.php
 # Route: GET /blog/post
 
 php artisan make:page siswa/detail --force
@@ -364,7 +364,7 @@ Manifest disimpan di `.davingm/cache/manifest.json` dan di-ignore Git. Perintah 
 
 ## File-Based Routing — PageRouter
 
-`PageRouter` memindai `resources/views/pages/` dan mendaftarkan GET route untuk setiap file Blade secara otomatis. Mirip dengan file-system routing di **Nuxt.js**.
+`PageRouter` memindai `src/pages/` dan mendaftarkan GET route untuk setiap file Blade secara otomatis. Mirip dengan file-system routing di **Nuxt.js**.
 
 ### File Conventions
 
@@ -714,7 +714,7 @@ Jika fetch gagal atau elemen `#page-view` tidak ditemukan di response, browser o
 
 ### layouts/app.blade.php
 
-Layout utama yang dipakai semua halaman (`resources/views/layouts/app.blade.php`):
+Layout utama yang dipakai semua halaman (`src/layouts/app.blade.php`):
 
 ```html
 <!doctype html>
@@ -735,7 +735,7 @@ Layout utama yang dipakai semua halaman (`resources/views/layouts/app.blade.php`
     @endif
     @stack('head')
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['src/assets/css/app.css', 'src/assets/js/app.js'])
 </head>
 <body>
     <x-site-header />
@@ -758,7 +758,7 @@ Layout utama yang dipakai semua halaman (`resources/views/layouts/app.blade.php`
 
 ### x-site-header
 
-Komponen header global (`resources/views/components/site-header.blade.php`). Menampilkan brand logo dan navigasi utama. Bisa di-customize atau diganti sesuai kebutuhan project.
+Komponen header global (`src/components/site-header.blade.php`). Menampilkan brand logo dan navigasi utama. Bisa di-customize atau diganti sesuai kebutuhan project.
 
 ---
 

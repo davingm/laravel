@@ -73,7 +73,7 @@ class Frontend
 
     public static function generateManifest(): array
     {
-        $pagesPath = resource_path('views/pages');
+        $pagesPath = base_path('src/pages');
         $pages = [];
 
         if (File::isDirectory($pagesPath)) {

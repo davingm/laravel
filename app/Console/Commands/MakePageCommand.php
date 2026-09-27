@@ -18,7 +18,7 @@ class MakePageCommand extends Command
     public function handle(): int
     {
         $name = trim(str_replace('\\', '/', $this->argument('name')), '/');
-        $targetPath = resource_path('views/pages/'.str_replace('.', '/', $name).'.blade.php');
+        $targetPath = base_path('src/pages/'.str_replace('.', '/', $name).'.blade.php');
         $routeCacheExists = File::exists(app()->getCachedRoutesPath());
 
         if (File::exists($targetPath) && ! $this->option('force')) {
@@ -42,7 +42,7 @@ class MakePageCommand extends Command
         ));
 
         $this->newLine();
-        $this->line("  <fg=green>✓</> Page created: <fg=cyan>resources/views/pages/{$name}.blade.php</>");
+        $this->line("  <fg=green>✓</> Page created: <fg=cyan>src/pages/{$name}.blade.php</>");
         $this->line("  <fg=gray>  Route registered automatically → {$uri}</>");
         $this->newLine();
 

@@ -49,7 +49,7 @@ class PageRouterTest extends TestCase
 
     public function test_make_page_preserves_an_existing_route_cache(): void
     {
-        $pagePath = resource_path('views/pages/generated-cache-test.blade.php');
+        $pagePath = base_path('src/pages/generated-cache-test.blade.php');
         $routesCachePath = app()->getCachedRoutesPath();
         $originalRoutesCache = File::exists($routesCachePath) ? File::get($routesCachePath) : null;
         File::put($routesCachePath, 'stale route cache');
@@ -77,7 +77,7 @@ class PageRouterTest extends TestCase
 
     public function test_make_page_does_not_warn_when_no_route_cache_exists(): void
     {
-        $pagePath = resource_path('views/pages/generated-no-cache-test.blade.php');
+        $pagePath = base_path('src/pages/generated-no-cache-test.blade.php');
         $routesCachePath = app()->getCachedRoutesPath();
         $originalRoutesCache = File::exists($routesCachePath) ? File::get($routesCachePath) : null;
         File::delete($routesCachePath);
