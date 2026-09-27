@@ -1,124 +1,3 @@
-<?php
-
-namespace App\Console\Commands;
-
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
-
-class MakePageCommand extends Command
-{
-    protected $signature = 'make:page
-                            {name : Page path, e.g. "about" or "about/team"}
-                            {--force : Overwrite existing page if it already exists}';
-
-    protected $description = 'Create a new page in resources/views/pages with full SEO standards';
-
-    public function handle(): int
-    {
-        $name = $this->argument('name');
-
-        // Normalise: strip leading/trailing slashes, convert backslashes
-        $name = trim(str_replace('\\', '/', $name), '/');
-
-        $targetPath = resource_path('views/pages/'.str_replace('.', '/', $name).'.blade.php');
-
-        if (File::exists($targetPath) && ! $this->option('force')) {
-            $this->line("  <fg=yellow>!</> Page already exists: <fg=cyan>{$targetPath}</> (use <fg=yellow>--force</> to overwrite)");
-
-            return self::FAILURE;
-        }
-
-        File::ensureDirectoryExists(dirname($targetPath));
-        File::put($targetPath, $this->stub($name));
-
-        $uri = '/'.implode('/', array_map(
-            fn (string $s) => Str::kebab($s),
-            explode('/', $name),
-        ));
-
-        $this->newLine();
-        $this->line("  <fg=green>✓</> Page created: <fg=cyan>resources/views/pages/{$name}.blade.php</>");
-        $this->line("  <fg=gray>  Route registered automatically → {$uri}</>");
-        $this->newLine();
-
-        return self::SUCCESS;
-    }
-
-    /**
-     * Generate the Blade stub with full Nuxt-like SEO standards:
-     *   - Primary Meta Tags (title, description, keywords, robots, canonical)
-     *   - Open Graph (og:type, og:url, og:title, og:description, og:image, og:locale)
-     *   - Twitter Cards (twitter:card, twitter:title, twitter:description, twitter:image)
-     *   - Schema.org JSON-LD (WebPage + BreadcrumbList)
-     *   - Breadcrumb navigation
-     *   - Semantic page header (eyebrow, h1, lede)
-     *   - @stack('head') support for page-level extra head injections
-     */
-    private function stub(string $name): string
-    {
-        $rawSegments = explode('/', $name);
-        $headline = Str::headline(basename(str_replace('/', ' ', $name)));
-        $category = count($rawSegments) > 1
-            ? Str::headline($rawSegments[count($rawSegments) - 2])
-            : 'Page';
-
-        // Build breadcrumb data (Home → parent → current)
-        $breadcrumbs = [['name' => 'Home', 'uri' => '/']];
-        $accumulated = '';
-        foreach ($rawSegments as $segment) {
-            $accumulated .= '/'.Str::kebab($segment);
-            $breadcrumbs[] = [
-                'name' => Str::headline($segment),
-                'uri' => $accumulated,
-            ];
-        }
-
-        // Parent URL for back button
-        $parentUri = count($breadcrumbs) > 2
-            ? $breadcrumbs[count($breadcrumbs) - 2]['uri']
-            : '/';
-
-        // JSON-LD BreadcrumbList items
-        $jsonLdItems = [];
-        foreach ($breadcrumbs as $index => $crumb) {
-            $pos = $index + 1;
-            $crumbName = $crumb['name'];
-            $crumbUri = $crumb['uri'];
-            $jsonLdItems[] = <<<JSON
-                    {
-                        "@type": "ListItem",
-                        "position": {$pos},
-                        "name": "{$crumbName}",
-                        "item": "{{ url('{$crumbUri}') }}"
-                    }
-JSON;
-        }
-        $jsonLdBreadcrumbs = implode(",\n", $jsonLdItems);
-
-        // HTML Breadcrumbs
-        $htmlCrumbs = ['<a href="{{ url(\'/\') }}" data-navigate="{{ url(\'/\') }}">Home</a>'];
-        $total = count($breadcrumbs);
-        for ($i = 1; $i < $total; $i++) {
-            $crumb = $breadcrumbs[$i];
-            $isLast = ($i === $total - 1);
-            $htmlCrumbs[] = '<span aria-hidden="true">/</span>';
-            if ($isLast) {
-                $htmlCrumbs[] = '<span aria-current="page">'.$crumb['name'].'</span>';
-            } else {
-                $uri = $crumb['uri'];
-                $n = $crumb['name'];
-                $htmlCrumbs[] = "<a href=\"{{ url('{$uri}') }}\" data-navigate=\"{{ url('{$uri}') }}\">{$n}</a>";
-            }
-        }
-        $htmlBreadcrumbs = implode("\n            ", $htmlCrumbs);
-
-        $keywords = Str::lower(implode(', ', array_unique(array_merge(
-            array_map(fn ($s) => Str::kebab($s), $rawSegments),
-            ['davingm', 'laravel']
-        ))));
-
-        return <<<BLADE
 @extends('layouts.app')
 
 {{--
@@ -143,10 +22,10 @@ JSON;
     {{-- ═══════════════════════════════════════════════════════════════════ --}}
     {{-- Primary Meta Tags                                                   --}}
     {{-- ═══════════════════════════════════════════════════════════════════ --}}
-    <title>{$headline} | {{ config('app.name') }}</title>
-    <meta name="title"       content="{$headline} | {{ config('app.name') }}">
-    <meta name="description" content="Halaman {$headline} — akses informasi dan detail lengkap di {{ config('app.name') }}.">
-    <meta name="keywords"    content="{$keywords}">
+    <title>Siswa Detail | {{ config('app.name') }}</title>
+    <meta name="title"       content="Siswa Detail | {{ config('app.name') }}">
+    <meta name="description" content="Halaman Siswa Detail — akses informasi dan detail lengkap di {{ config('app.name') }}.">
+    <meta name="keywords"    content="siswa, detail, davingm, laravel">
     <meta name="author"      content="{{ config('app.name') }}">
     <meta name="robots"      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical"    href="{{ url()->current() }}">
@@ -156,10 +35,10 @@ JSON;
     {{-- ═══════════════════════════════════════════════════════════════════ --}}
     <meta property="og:type"        content="website">
     <meta property="og:url"         content="{{ url()->current() }}">
-    <meta property="og:title"       content="{$headline} | {{ config('app.name') }}">
-    <meta property="og:description" content="Halaman {$headline} — akses informasi dan detail lengkap di {{ config('app.name') }}.">
+    <meta property="og:title"       content="Siswa Detail | {{ config('app.name') }}">
+    <meta property="og:description" content="Halaman Siswa Detail — akses informasi dan detail lengkap di {{ config('app.name') }}.">
     <meta property="og:image"       content="{{ asset('images/og-image.jpg') }}">
-    <meta property="og:image:alt"   content="{$headline}">
+    <meta property="og:image:alt"   content="Siswa Detail">
     <meta property="og:site_name"   content="{{ config('app.name') }}">
     <meta property="og:locale"      content="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -168,8 +47,8 @@ JSON;
     {{-- ═══════════════════════════════════════════════════════════════════ --}}
     <meta name="twitter:card"        content="summary_large_image">
     <meta name="twitter:url"         content="{{ url()->current() }}">
-    <meta name="twitter:title"       content="{$headline} | {{ config('app.name') }}">
-    <meta name="twitter:description" content="Halaman {$headline} — akses informasi dan detail lengkap di {{ config('app.name') }}.">
+    <meta name="twitter:title"       content="Siswa Detail | {{ config('app.name') }}">
+    <meta name="twitter:description" content="Halaman Siswa Detail — akses informasi dan detail lengkap di {{ config('app.name') }}.">
     <meta name="twitter:image"       content="{{ asset('images/og-image.jpg') }}">
 
     {{-- ═══════════════════════════════════════════════════════════════════ --}}
@@ -184,8 +63,8 @@ JSON;
                 "@type": "WebPage",
                 "@id": "{{ url()->current() }}#webpage",
                 "url": "{{ url()->current() }}",
-                "name": "{$headline}",
-                "description": "Halaman {$headline} — akses informasi dan detail lengkap di {{ config('app.name') }}.",
+                "name": "Siswa Detail",
+                "description": "Halaman Siswa Detail — akses informasi dan detail lengkap di {{ config('app.name') }}.",
                 "isPartOf": {
                     "@type": "WebSite",
                     "@id": "{{ url('/') }}#website",
@@ -198,7 +77,24 @@ JSON;
                 "@type": "BreadcrumbList",
                 "@id": "{{ url()->current() }}#breadcrumb",
                 "itemListElement": [
-{$jsonLdBreadcrumbs}
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "{{ url('/') }}"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Siswa",
+                        "item": "{{ url('/siswa') }}"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "Detail",
+                        "item": "{{ url('/siswa/detail') }}"
+                    }
                 ]
             }
         ]
@@ -214,18 +110,22 @@ JSON;
 
     {{-- ─── Breadcrumb Navigation ─────────────────────────────────────── --}}
     <nav aria-label="Breadcrumb" class="page-breadcrumb">
-        {$htmlBreadcrumbs}
+        <a href="{{ url('/') }}" data-navigate="{{ url('/') }}">Home</a>
+            <span aria-hidden="true">/</span>
+            <a href="{{ url('/siswa') }}" data-navigate="{{ url('/siswa') }}">Siswa</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Detail</span>
     </nav>
 
     {{-- ─── Page Header ────────────────────────────────────────────────── --}}
     <header class="page-header">
         <div>
-            <p class="eyebrow">{$category}</p>
-            <h1 class="crud-title">{$headline}</h1>
-            <p class="lede">Halaman {$headline} — akses informasi dan detail lengkap.</p>
+            <p class="eyebrow">Siswa</p>
+            <h1 class="crud-title">Siswa Detail</h1>
+            <p class="lede">Halaman Siswa Detail — akses informasi dan detail lengkap.</p>
         </div>
         <div class="hero-actions">
-            <a href="{{ url('{$parentUri}') }}" data-navigate="{{ url('{$parentUri}') }}" class="button button-quiet">
+            <a href="{{ url('/siswa') }}" data-navigate="{{ url('/siswa') }}" class="button button-quiet">
                 ← Kembali
             </a>
         </div>
@@ -235,7 +135,7 @@ JSON;
     {{-- TODO: Ganti bagian ini dengan konten halaman yang sebenarnya --}}
     <div class="hero-panel">
         <div class="panel-topline">
-            <span class="status-dot"></span>{$headline}
+            <span class="status-dot"></span>Siswa Detail
         </div>
         <div class="runtime-grid" style="margin-top: 20px;">
             <div>
@@ -251,6 +151,3 @@ JSON;
 
 </section>
 @endsection
-BLADE;
-    }
-}

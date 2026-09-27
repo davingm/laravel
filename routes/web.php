@@ -27,6 +27,11 @@ use Illuminate\Support\Facades\Route;
 
 PageRouter::register([
     'middleware' => ['web'],
+    // Exclude patterns:
+    //   'barang'   → exact match only: blocks GET /barang (index), NOT /barang/create etc.
+    //   'barang/*' → wildcard: blocks /barang AND all sub-pages
+    //   'siswa'    → exact match: blocks GET /siswa (index), NOT /siswa/detail, /siswa/about, etc.
+    //   'siswa/*'  → wildcard: blocks /siswa AND all pages under siswa/
     'exclude' => ['barang', 'siswa'],
 ]);
 

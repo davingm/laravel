@@ -19,6 +19,10 @@ use Illuminate\Support\Str;
  * Route names follow the dot-notation of the view key:
  *   pages/about/us-me.blade.php   →  name: pages.about.us-me
  *   pages/about/index.blade.php   →  name: pages.about
+ *
+ * Exclude behaviour:
+ *   'siswa'   → exclude ONLY the exact /siswa route (index), NOT sub-pages
+ *   'siswa/*' → exclude /siswa and ALL sub-pages under it
  */
 class PageRouter
 {
@@ -53,15 +57,7 @@ class PageRouter
 
             [$uri, $viewKey, $pageKey, $routeName] = self::resolve($file->getPathname(), $pagesPath, $prefix);
 
-            if (collect($excludedPages)->contains(function (string $excludedPage) use ($pageKey, $uri): bool {
-                if (Str::endsWith($excludedPage, '*')) {
-                    $wildcardPrefix = rtrim(rtrim($excludedPage, '*'), '.');
-
-                    return $pageKey === $wildcardPrefix || Str::startsWith($pageKey, $wildcardPrefix.'.');
-                }
-
-                return $pageKey === $excludedPage || $uri === '/'.ltrim($excludedPage, '/');
-            })) {
+            if (self::isExcluded($pageKey, $uri, $excludedPages)) {
                 continue;
             }
 
@@ -69,6 +65,40 @@ class PageRouter
                 return Frontend::render($viewKey, $pageKey, $extraData);
             })->name($routeName);
         }
+    }
+
+    /**
+     * Check whether a resolved page should be excluded from auto-registration.
+     *
+     * Exclude patterns:
+     *   'about'    → exact match only: excludes pages.about but NOT pages.about.team
+     *   'about/*'  → wildcard: excludes pages.about AND all sub-pages
+     *   '/about'   → URI match (leading slash is normalised away)
+     *
+     * @param  string[]  $excludedPages
+     */
+    public static function isExcluded(string $pageKey, string $uri, array $excludedPages): bool
+    {
+        foreach ($excludedPages as $pattern) {
+            // Wildcard pattern: 'siswa/*' → exclude siswa and all sub-pages
+            if (Str::endsWith($pattern, '/*') || Str::endsWith($pattern, '*')) {
+                $prefix = rtrim(str_replace(['/*', '*'], '', $pattern), '.');
+
+                if ($pageKey === $prefix || Str::startsWith($pageKey, $prefix.'.')) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            // Exact pattern: 'siswa' → ONLY exclude pages.siswa (the index), not siswa.detail
+            $normalised = ltrim($pattern, '/');
+            if ($pageKey === $normalised || $uri === '/'.$normalised) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -81,11 +111,14 @@ class PageRouter
      */
     public static function resolve(string $absolutePath, string $pagesPath, string $prefix = ''): array
     {
-        // e.g. "about/us-me.blade.php" or "about\us-me.blade.php"
-        $relative = Str::after($absolutePath, $pagesPath.DIRECTORY_SEPARATOR);
+        // Normalise both paths to forward slashes to handle Windows backslashes consistently
+        $absolutePath = str_replace('\\', '/', $absolutePath);
+        $pagesPath = rtrim(str_replace('\\', '/', $pagesPath), '/');
 
-        // Normalise to forward slashes and strip .blade.php
-        $relative = str_replace(DIRECTORY_SEPARATOR, '/', $relative);
+        // Relative path, e.g. "about/us-me.blade.php"
+        $relative = ltrim(Str::after($absolutePath, $pagesPath), '/');
+
+        // Strip .blade.php extension
         $relative = Str::beforeLast($relative, '.blade.php');
 
         // Segments: ['about', 'index'] or ['home'] or ['blog', '[slug]']
