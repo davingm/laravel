@@ -28,7 +28,7 @@
     <article>
         <span class="feature-number">01</span>
         <h2>Pages directory</h2>
-        <p>Keep route views in <code>resources/views/pages</code> and render them with a predictable frontend contract.</p>
+        <p>Keep route views in <code>src/pages</code> and render them with a predictable frontend contract.</p>
     </article>
     <article>
         <span class="feature-number">02</span>

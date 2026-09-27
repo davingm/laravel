@@ -6,6 +6,19 @@
 *.md diff=markdown
 *.php diff=php
 
+# Composer export-ignore: files/folders excluded from `composer create-project`
+/.devContainer export-ignore
 /.github export-ignore
+/.vscode export-ignore
+/docs export-ignore
+/playground export-ignore
+AGENTS.md export-ignore
+boost.json export-ignore
 CHANGELOG.md export-ignore
+CONTRIBUTING.md export-ignore
+SECURITY.md export-ignore
+.env.preview export-ignore
+.phpunit.result.cache export-ignore
 .styleci.yml export-ignore
+.taks export-ignore
+resault.html export-ignore
