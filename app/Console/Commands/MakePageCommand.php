@@ -44,6 +44,7 @@ class MakePageCommand extends Command
         $this->newLine();
         $this->line("  <fg=green>✓</> Page created: <fg=cyan>src/pages/{$name}.blade.php</>");
         $this->line("  <fg=gray>  Route registered automatically → {$uri}</>");
+        $this->line("  <fg=gray>  Restart dev server if the route is not accessible</>");
         $this->newLine();
 
         return self::SUCCESS;
