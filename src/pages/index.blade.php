@@ -7,7 +7,7 @@
         <h1>Nuxt-like conventions.<br><em>Still Blade.</em></h1>
         <p class="lede">File-based pages, auto routing, payload hydration, and client navigation — without Vue.</p>
         <div class="hero-actions">
-            <a class="button button-primary" href="{{ route('pages.about') }}" @navigate(route('pages.about'))>About <span>→</span></a>
+            <a class="button button-primary" href="{{ route('pages.help') }}" @navigate(route('pages.help'))>Get started <span>→</span></a>
             <a class="button button-quiet" href="https://laravel.com/docs" target="_blank" rel="noreferrer">Laravel docs</a>
         </div>
     </div>

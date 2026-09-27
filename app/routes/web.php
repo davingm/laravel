@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\BarangController;
-use App\Http\Controllers\SiswaController;
 use App\Support\PageRouter;
 use Illuminate\Support\Facades\Route;
 
@@ -10,8 +8,8 @@ use Illuminate\Support\Facades\Route;
 | File-based Auto Routes (pages/**)
 |--------------------------------------------------------------------------
 |
-| PageRouter scans resources/views/pages/** and registers a GET route for
-| every Blade file automatically. Conventions:
+| PageRouter scans src/pages/** and registers a GET route for every Blade
+| file automatically. Conventions:
 |
 |   pages/home.blade.php           →  GET /home        (name: pages.home)
 |   pages/index.blade.php          →  GET /            (name: pages)
@@ -27,16 +25,7 @@ use Illuminate\Support\Facades\Route;
 
 PageRouter::register([
     'middleware' => ['web'],
-    // Exclude patterns:
-    //   'barang'   → exact match only: blocks GET /barang (index), NOT /barang/create etc.
-    //   'barang/*' → wildcard: blocks /barang AND all sub-pages
-    //   'siswa'    → exact match: blocks GET /siswa (index), NOT /siswa/detail, /siswa/about, etc.
-    //   'siswa/*'  → wildcard: blocks /siswa AND all pages under siswa/
-    'exclude' => ['barang', 'siswa'],
 ]);
-
-Route::resource('barang', BarangController::class);
-Route::resource('siswa', SiswaController::class);
 
 /*
 |--------------------------------------------------------------------------

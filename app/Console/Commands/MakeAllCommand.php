@@ -85,7 +85,7 @@ class MakeAllCommand extends Command
      */
     private function injectRoute(string $modelName, string $routePrefix): bool
     {
-        $webPhpPath = base_path('routes/web.php');
+        $webPhpPath = base_path('app/routes/web.php');
         $content = File::get($webPhpPath);
 
         // Check if already exists

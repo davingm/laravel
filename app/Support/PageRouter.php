@@ -39,7 +39,7 @@ class PageRouter
      */
     public static function register(array $options = []): void
     {
-        $pagesPath = resource_path('views/pages');
+        $pagesPath = base_path('src/pages');
 
         if (! File::isDirectory($pagesPath)) {
             return;
