@@ -45,7 +45,13 @@ cd nama-proyek
 artisan dev
 ```
 
-Setelah `composer create-project`, CLI `artisan` sudah terinstall otomatis secara global via `setup.js`. Kamu bisa langsung jalankan `artisan dev` dari direktori mana saja di dalam project.
+Setelah `composer create-project`, CLI `artisan` terinstall otomatis secara global via `setup.js`. Launcher mencari `.davingm/cli.js` dari direktori kerja saat ini ke direktori induk, sehingga satu instalasi global bisa digunakan di beberapa project. Jalankan `artisan dev` dari direktori project atau subdirektorinya.
+
+Jika launcher global yang sudah ada masih menunjuk ke lokasi project lama, jalankan ulang setup dari root project:
+
+```bash
+node .davingm/setup.js
+```
 
 ---
 
