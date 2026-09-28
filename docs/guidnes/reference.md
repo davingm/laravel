@@ -45,7 +45,7 @@ cd nama-proyek
 artisan dev
 ```
 
-Setelah `composer create-project`, CLI `artisan` terinstall otomatis secara global via `setup.js`. Launcher mencari `.davingm/cli.js` dari direktori kerja saat ini ke direktori induk, sehingga satu instalasi global bisa digunakan di beberapa project. Jalankan `artisan dev` dari direktori project atau subdirektorinya.
+Setelah `composer create-project`, Composer menyiapkan database, menginstall npm dependencies dari `package-lock.json`, membangun asset frontend, dan memasang CLI `artisan` secara global via `setup.js`. Launcher mencari `.davingm/cli.js` dari direktori kerja saat ini ke direktori induk, sehingga satu instalasi global bisa digunakan di beberapa project. Jalankan `artisan dev` dari direktori project atau subdirektorinya.
 
 Jika launcher global yang sudah ada masih menunjuk ke lokasi project lama, jalankan ulang setup dari root project:
 
@@ -828,7 +828,7 @@ node .davingm/cli.js migrate
 |---|---|
 | PHP | 8.3 |
 | Composer | 2.x |
-| Node.js | 18.0.0 |
+| Node.js | 20.19.0+ atau 22.12.0+ |
 | Laravel | 13.x |
 
 ---

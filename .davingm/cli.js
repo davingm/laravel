@@ -232,13 +232,24 @@ function startDev() {
     queue.stderr.on('data', feedQueue);
 
     const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-    const vite = spawn(npm, ['run', 'dev'], {
-        cwd: projectRoot,
-        stdio: ['ignore', 'pipe', 'pipe'],
-        env: { ...process.env },
-        shell: process.platform === 'win32',
-    });
-    vite.on('error', () => {});
+    const viteEntry = resolve(projectRoot, 'node_modules/vite/bin/vite.js');
+    let vite = null;
+
+    if (!existsSync(viteEntry)) {
+        out(PRE_ORANGE, `${ORANGE}Frontend dependencies are missing. Run npm ci in the project root.${R}`);
+    } else {
+        vite = spawn(npm, ['run', 'dev'], {
+            cwd: projectRoot,
+            stdio: ['ignore', 'pipe', 'pipe'],
+            env: { ...process.env },
+            shell: process.platform === 'win32',
+        });
+        vite.stdout.on('data', (data) => process.stdout.write(data));
+        vite.stderr.on('data', (data) => process.stderr.write(data));
+        vite.on('error', (error) => {
+            out(PRE_ORANGE, `${ORANGE}Frontend dev server failed: ${error.message}${R}`);
+        });
+    }
 
     // ── shutdown ──────────────────────────────────────────────────────────────
     let shuttingDown = false;
@@ -250,7 +261,7 @@ function startDev() {
         out(PRE_WHITE, `${D}stopping…${R}`);
         try { server.kill('SIGTERM'); } catch (_) {}
         try { queue.kill('SIGTERM'); }  catch (_) {}
-        try { vite.kill('SIGTERM'); }    catch (_) {}
+        try { vite?.kill('SIGTERM'); }   catch (_) {}
         setTimeout(() => {
             out(PRE_WHITE, `${D}stopped${R}`);
             process.stdout.write('\n');

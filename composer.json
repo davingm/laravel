@@ -48,7 +48,7 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate",
             "@php artisan migrate --force",
-            "npm install --ignore-scripts",
+            "npm ci --ignore-scripts",
             "npm run build"
         ],
         "dev": [
@@ -73,6 +73,8 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('app/database/database.sqlite') || touch('app/database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi",
+            "npm ci --ignore-scripts",
+            "npm run build",
             "@php -r \"shell_exec('node .davingm/setup.js 2>&1');\""
         ],
         "pre-package-uninstall": [
