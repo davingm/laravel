@@ -231,23 +231,39 @@ function startDev() {
     queue.stdout.on('data', feedQueue);
     queue.stderr.on('data', feedQueue);
 
-    const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
     const viteEntry = resolve(projectRoot, 'node_modules/vite/bin/vite.js');
     let vite = null;
 
     if (!existsSync(viteEntry)) {
         out(PRE_ORANGE, `${ORANGE}Frontend dependencies are missing. Run npm ci in the project root.${R}`);
     } else {
-        vite = spawn(npm, ['run', 'dev'], {
+        const viteOutput = [];
+        const maxViteOutputLength = 12000;
+        const captureViteOutput = (data) => {
+            viteOutput.push(data.toString());
+            const output = viteOutput.join('');
+
+            if (output.length > maxViteOutputLength) {
+                viteOutput.splice(0, viteOutput.length, output.slice(-maxViteOutputLength));
+            }
+        };
+
+        vite = spawn(process.execPath, [viteEntry], {
             cwd: projectRoot,
             stdio: ['ignore', 'pipe', 'pipe'],
             env: { ...process.env },
-            shell: process.platform === 'win32',
         });
-        vite.stdout.on('data', (data) => process.stdout.write(data));
-        vite.stderr.on('data', (data) => process.stderr.write(data));
-        vite.on('error', (error) => {
-            out(PRE_ORANGE, `${ORANGE}Frontend dev server failed: ${error.message}${R}`);
+        vite.stdout.on('data', captureViteOutput);
+        vite.stderr.on('data', captureViteOutput);
+        vite.on('error', captureViteOutput);
+        vite.on('close', (code) => {
+            if (!shuttingDown && code !== 0) {
+                out(PRE_ORANGE, `${ORANGE}Frontend dev server exited (${code}).${R}`);
+                const output = viteOutput.join('').trim();
+                if (output) {
+                    process.stderr.write(`${output}\n`);
+                }
+            }
         });
     }
 
