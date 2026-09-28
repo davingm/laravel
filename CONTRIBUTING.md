@@ -198,3 +198,15 @@ Open a [GitHub Issue](https://github.com/davingm/laravel/issues) with the label 
 - Alternatives you have considered
 
 Features that significantly expand the scope or add dependencies will require broader discussion before implementation.
+
+```bash
+git status
+
+git add .
+git commit -m "feat: here"
+
+git tag v1.<major>.0<version>
+git push origin v1.<major>.<version>
+
+git push origin main --tags
+```
