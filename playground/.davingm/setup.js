@@ -10,24 +10,12 @@
 import { writeFileSync, chmodSync, mkdirSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { homedir, platform } from 'node:os';
-import { execSync } from 'node:child_process';
+import { homedir } from 'node:os';
 
 const __dir   = dirname(fileURLToPath(import.meta.url));
-const projDir = resolve(__dir, '..');
 const cliPath = resolve(__dir, 'cli.js');
 
 // ── Find node executable ──────────────────────────────────────────────────────
-function findNode() {
-    try {
-        const p = execSync('which node 2>/dev/null || where node 2>nul', { encoding: 'utf8' }).trim().split('\n')[0].trim();
-        if (p) return p;
-    } catch (_) {}
-    return 'node';
-}
-
-const nodeBin = findNode();
-
 // ── Build the artisan shell script content ────────────────────────────────────
 // Use a POSIX sh script so it works in Git Bash, WSL, and Linux/macOS
 const scriptContent = `#!/usr/bin/env sh

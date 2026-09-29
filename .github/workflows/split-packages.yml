@@ -76,6 +76,25 @@ jobs:
           destination="https://x-access-token:${SPLIT_TOKEN}@github.com/${expected_name}.git"
           clean_tag="v$version"
 
+          existing_tag="$(git ls-remote --refs "$destination" "refs/tags/$clean_tag" | awk 'NR == 1 { print $1 }')"
+          if [[ -n "$existing_tag" ]]; then
+            if [[ "$existing_tag" != "$split_commit" ]]; then
+              echo "Destination tag $clean_tag already points to $existing_tag, not $split_commit. Refusing to overwrite it." >&2
+              exit 1
+            fi
+
+            echo "Destination tag $clean_tag already points to this split commit; this release was published already."
+            {
+              echo '## Composer package already published'
+              echo
+              echo "- Package: `$expected_name`"
+              echo "- Source tag: `$RELEASE_TAG`"
+              echo "- Destination tag: `$clean_tag`"
+              echo "- Split commit: `$split_commit`"
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
           echo "Publishing $expected_name from $package_path at $RELEASE_TAG as $clean_tag."
           git push --atomic "$destination" \
             "$split_commit:refs/heads/main" \

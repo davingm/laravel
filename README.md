@@ -1,75 +1,67 @@
 # davingm/laravel
 
-Laravel Framework modified by [davingm](https://github.com/davingm), powered by the [Laravel](https://laravel.com) framework.
+Laravel framework project by [davingm](https://github.com/davingm), powered by the [Laravel](https://laravel.com) framework.
 
-## Create a New Project
+This repository is a monorepo: Composer packages live in `packages/`, while the Laravel framework project lives in `playground/`. The root Composer manifest bootstraps the framework from `playground/`, so users install a normal Laravel project rather than the whole monorepo.
 
-```bash
-composer create-project davingm/laravel nama-proyek
-cd nama-proyek
-```
-
-After installation, the project is ready to use — including the `artisan` CLI tool.
-
-## Development
-
-Start the development environment (Laravel server + queue worker in one terminal):
+## Create a project
 
 ```bash
-artisan dev
+composer create-project davingm/laravel app
+cd app
 ```
 
-The CLI will generate the Blade frontend manifest, then display the Laravel logo, port info, and color-coded output from both processes.
+Composer materializes the contents of `playground/` at the new project's root, then installs dependencies, generates the app key, runs migrations, and builds frontend assets.
 
-## Blade Frontend Mode
+## Develop in this repository
 
-This starter includes Nuxt-inspired conventions without Vue. Keep route pages in `resources/views/pages`, use `resources/views/layouts/app.blade.php` as the shell, and render a page with a payload from a route:
-
-```php
-use App\Support\Frontend;
-
-Route::get('/about', fn () => Frontend::render('about', [
-	'title' => 'About',
-	'description' => 'A server-rendered Blade page.',
-]));
-```
-
-`@pageMeta` adds page metadata, `@payload` exposes the current state as JSON, and links with `data-navigate` use lightweight fetch navigation. The generated manifest and payload files live in `.davingm/cache`, which is ignored by Git.
-
-Regenerate manually with:
+For monorepo development, install and run the Laravel project from `playground/`:
 
 ```bash
-artisan frontend:generate
+cd playground
+composer install
+npm ci --ignore-scripts
+npm run build
+php artisan key:generate
+php artisan migrate
+composer run dev
 ```
 
-## Artisan Commands
-
-The `artisan` command is a shortcut for `php artisan`:
+`composer run dev` starts the Laravel development environment. You can also use `php artisan <command>` for any Artisan command, such as:
 
 ```bash
-artisan migrate
-artisan make:model User
-artisan make:controller UserController
-artisan route:list
-artisan tinker
-artisan <any-artisan-command>
+php artisan about
+php artisan route:list
+php artisan test
 ```
 
-## Composer Package Releases
+The application source is under `playground/`. The Nuxt-inspired page conventions live in `playground/src/pages` and layouts in `playground/src/layouts`.
 
-Packages are maintained in `packages/<name>` and split to individual GitHub repositories on version tags. Repository setup, secrets, and release steps are documented in `docs/package-split-releases.md` in the monorepo.
+## Frontend
 
-## CLI Setup (manual, if needed)
+The project includes a server-rendered page frontend. Pages are in `src/pages` and shared layouts are in `src/layouts`, relative to `playground/`. Generated frontend manifest and payload files are stored in `playground/.davingm/cache` and ignored by Git.
 
-The CLI is set up automatically on `composer create-project`. If you need to set it up manually:
+Build frontend assets from `playground/`:
 
 ```bash
-cd .davingm
+npm run build
+```
+
+## Composer package releases
+
+Packages are maintained in `packages/<name>` and split to individual GitHub repositories on version tags. Repository setup, secrets, and release steps are documented in [docs/package-split-releases.md](docs/package-split-releases.md).
+
+## CLI setup (optional)
+
+The `artisan` helper is part of the playground CLI. To link it for local use, run:
+
+```bash
+cd playground/.davingm
 npm install
 npm link
 ```
 
-After linking, `artisan` will be available globally from the project directory.
+Then run `artisan` from the playground project directory. Standard `php artisan` commands also work without linking the helper.
 
 ## Requirements
 
@@ -79,4 +71,4 @@ After linking, `artisan` will be available globally from the project directory.
 
 ## License
 
-GNU Affero
+GNU Affero General Public License v3.0

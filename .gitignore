@@ -27,11 +27,16 @@
 /.davingm/.preview
 /playground/.davingm/.preview
 /playground/public/build
+/public/build
 /playground/public/fonts-manifest.dev.json
 /playground/public/hot
+/public/hot
 /playground/public/storage
+/public/storage
 /playground/storage/*.key
+/storage/*.key
 /playground/storage/pail
+/storage/pail
 /playground/vendor
 /vendor
 _ide_helper.php
@@ -44,3 +49,4 @@ resault.html
 *.db
 .auth-dashboard.html
 .auth-cookie
+workspace

@@ -3,7 +3,11 @@
     "name": "davingm/laravel",
     "type": "project",
     "description": "Laravel starter project by davingm.",
-    "keywords": ["laravel", "starter", "davingm"],
+    "keywords": [
+        "laravel",
+        "starter",
+        "davingm"
+    ],
     "license": "MIT",
     "homepage": "https://github.com/davingm/laravel",
     "authors": [
@@ -43,42 +47,16 @@
         }
     },
     "scripts": {
-        "setup": [
-            "composer install",
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate",
-            "@php artisan migrate --force",
-            "npm ci --ignore-scripts",
-            "npm run build"
-        ],
-        "dev": [
-            "Composer\\Config::disableProcessTimeout",
-            "@php artisan dev"
-        ],
-        "test": [
-            "@php artisan config:clear --ansi @no_additional_args",
-            "@php artisan test"
-        ],
-        "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
-        ],
-        "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
-        ],
-        "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
         "post-create-project-cmd": [
+            "@php .materialize-playground.php",
+            "@composer dump-autoload --no-interaction",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('app/database/database.sqlite') || touch('app/database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi",
             "npm ci --ignore-scripts",
             "npm run build",
             "node .davingm/setup.js"
-        ],
-        "pre-package-uninstall": [
-            "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
         ]
     },
     "extra": {

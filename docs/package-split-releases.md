@@ -6,7 +6,7 @@ This repository keeps Composer packages under `packages/` and publishes each pac
 
 `packages/auth` is currently the only package folder with a `composer.json`; its Composer name must remain `davingm/auth`. `packages/dev` is an empty placeholder and is ignored by the workflow until it contains a Composer manifest. There is no `packages/laravel` directory yet, so a `laravel-v...` release tag will fail validation. Add a package directory and its manifest before releasing it; the manifest name must be `davingm/<directory-name>`.
 
-The root project remains the framework's `davingm/laravel` create-project source. This checkout's GitHub origin is also `davingm/laravel`, so that repository cannot be used as a split destination from itself. If you later add `packages/laravel` and want to publish it as `davingm/laravel`, first move the monorepo to a different GitHub repository; the workflow explicitly blocks a self-push. The split workflow only publishes directories under `packages/`; it does not move or split the root project.
+The root Composer manifest is the `davingm/laravel` create-project entry point. During `composer create-project`, its post-create script places the contents of `playground/` at the installed project root. In the source monorepo, continue working from `playground/`. This checkout's GitHub origin is also `davingm/laravel`, so that repository cannot be used as a split destination from itself. If you later add `packages/laravel` and want to publish it as `davingm/laravel`, first move the monorepo to a different GitHub repository; the workflow explicitly blocks a self-push. The split workflow only publishes directories under `packages/`; it does not move or split the root project.
 
 ## Prepare destination repositories
 
@@ -52,7 +52,7 @@ Examples:
 | `support-v1.0.0` | `packages/support` | `davingm/support` | `v1.0.0` |
 | `laravel-v1.0.0` | `packages/laravel` | `davingm/laravel` | `v1.0.0` |
 
-Only the package named in the pushed tag is published. The version format is `name-vX.Y.Z`; the workflow rejects malformed versions, missing package folders, name mismatches, or a missing token. It does not force-push, so a non-fast-forward destination or an existing release tag fails without overwriting destination history.
+Only the package named in the pushed tag is published. The version format is `name-vX.Y.Z`; the workflow rejects malformed versions, missing package folders, name mismatches, or a missing token. It does not force-push, so a non-fast-forward destination fails without overwriting destination history. Re-running a release is a no-op when its destination tag already points at the same split commit; an existing tag pointing elsewhere is rejected.
 
 ## Verify a release
 
