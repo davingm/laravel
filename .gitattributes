@@ -11,7 +11,7 @@
 /.github export-ignore
 /.vscode export-ignore
 /docs export-ignore
-/playground export-ignore
+/packages export-ignore
 AGENTS.md export-ignore
 boost.json export-ignore
 CHANGELOG.md export-ignore
@@ -22,3 +22,14 @@ SECURITY.md export-ignore
 .styleci.yml export-ignore
 .taks export-ignore
 resault.html export-ignore
+/playground/.env.preview export-ignore
+/playground/.phpunit.result.cache export-ignore
+/playground/.styleci.yml export-ignore
+/playground/node_modules export-ignore
+/playground/vendor export-ignore
+/playground/.davingm/node_modules export-ignore
+/playground/.davingm/cache export-ignore
+/playground/.davingm/generated export-ignore
+/playground/public/build export-ignore
+/playground/public/hot export-ignore
+/playground/public/storage export-ignore

@@ -1,0 +1,91 @@
+name: Split Composer package
+
+on:
+  push:
+    tags:
+      - '*-v*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: package-split-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  split:
+    name: Split and publish tagged package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out monorepo history
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Split and push package history
+        shell: bash
+        env:
+          SPLIT_TOKEN: ${{ secrets.MONOREPO_SPLIT_TOKEN }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          SOURCE_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$RELEASE_TAG" =~ ^([a-z0-9][a-z0-9-]*)-v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Tag '$RELEASE_TAG' must use the format <package>-v<major>.<minor>.<patch>." >&2
+            exit 1
+          fi
+
+          package="${BASH_REMATCH[1]}"
+          version="${BASH_REMATCH[2]}.${BASH_REMATCH[3]}.${BASH_REMATCH[4]}"
+          package_path="packages/$package"
+          manifest="$package_path/composer.json"
+
+          if [[ ! -f "$manifest" ]]; then
+            echo "No Composer package manifest found at $manifest." >&2
+            exit 1
+          fi
+
+          expected_name="davingm/$package"
+          if [[ "${SOURCE_REPOSITORY,,}" == "$expected_name" ]]; then
+            echo "The package destination $expected_name is this monorepo itself. Use a separate monorepo repository before splitting to this destination." >&2
+            exit 1
+          fi
+
+          actual_name="$(jq -r '.name // empty' "$manifest")"
+          if [[ "$actual_name" != "$expected_name" ]]; then
+            echo "$manifest must declare \"name\": \"$expected_name\" (found '$actual_name')." >&2
+            exit 1
+          fi
+
+          if [[ -z "$SPLIT_TOKEN" ]]; then
+            echo 'Set the MONOREPO_SPLIT_TOKEN repository secret before releasing packages.' >&2
+            exit 1
+          fi
+
+          subtree_binary="$(git --exec-path)/git-subtree"
+          if [[ ! -x "$subtree_binary" ]]; then
+            sudo apt-get update
+            sudo apt-get install --yes git-subtree
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          split_commit="$(git subtree split --prefix="$package_path" "$GITHUB_SHA")"
+          destination="https://x-access-token:${SPLIT_TOKEN}@github.com/${expected_name}.git"
+          clean_tag="v$version"
+
+          echo "Publishing $expected_name from $package_path at $RELEASE_TAG as $clean_tag."
+          git push --atomic "$destination" \
+            "$split_commit:refs/heads/main" \
+            "$split_commit:refs/tags/$clean_tag"
+
+          {
+            echo '## Composer package published'
+            echo
+            echo "- Package: `$expected_name`"
+            echo "- Source tag: `$RELEASE_TAG`"
+            echo "- Destination tag: `$clean_tag`"
+            echo "- Split commit: `$split_commit`"
+          } >> "$GITHUB_STEP_SUMMARY"
