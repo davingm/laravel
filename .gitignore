@@ -1,6 +1,7 @@
 *.log
 .DS_Store
 .env
+.taks
 .env.backup
 .env.production
 .env.preview
@@ -34,3 +35,7 @@ Thumbs.db
 playground/test-laravel
 resault.html
 playground/*
+*.sqlite
+*.db
+.auth-dashboard.html
+.auth-cookie

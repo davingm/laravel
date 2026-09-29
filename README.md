@@ -55,6 +55,31 @@ artisan tinker
 artisan <any-artisan-command>
 ```
 
+## Auth Package (Local Development)
+
+The authentication package lives in `packages/auth` and is available as a local Composer path repository. To install that working copy into this framework repository:
+
+```bash
+composer require davingm/auth:@dev --dev
+php artisan auth:install
+php artisan migrate
+```
+
+The installer adds a nullable, unique `username` column and enables `/login`, `/logout`, and the protected `/dashboard` page. Create users with a unique username and a hashed password before signing in.
+
+To exercise the package without touching the normal development database, use a separate SQLite database (PowerShell):
+
+```powershell
+$env:DB_CONNECTION = 'sqlite'
+$env:DB_DATABASE = Join-Path $PWD '.auth-package-test.sqlite'
+php artisan migrate:fresh --force
+php artisan route:list --path=login
+php artisan route:list --path=dashboard
+php artisan serve
+```
+
+Open `/login`, sign in with a user in the temporary database, confirm `/dashboard` requires authentication, and submit the sign-out form. Remove `.auth-package-test.sqlite` when finished. `auth:install` creates a config file and migration in the project; remove those generated files and run `php artisan config:clear` and `php artisan route:clear` to return to an uninstalled state.
+
 ## CLI Setup (manual, if needed)
 
 The CLI is set up automatically on `composer create-project`. If you need to set it up manually:
