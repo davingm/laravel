@@ -21,8 +21,8 @@ use Illuminate\Support\Str;
  *   pages/about/index.blade.php   →  name: pages.about
  *
  * Exclude behaviour:
- *   'siswa'   → exclude ONLY the exact /siswa route (index), NOT sub-pages
- *   'siswa/*' → exclude /siswa and ALL sub-pages under it
+ *   'admin'   → exclude ONLY the exact /admin route, NOT sub-pages
+ *   'admin/*' → exclude /admin and ALL sub-pages under it
  */
 class PageRouter
 {
@@ -80,7 +80,7 @@ class PageRouter
     public static function isExcluded(string $pageKey, string $uri, array $excludedPages): bool
     {
         foreach ($excludedPages as $pattern) {
-            // Wildcard pattern: 'siswa/*' → exclude siswa and all sub-pages
+            // Wildcard pattern: 'admin/*' → exclude admin and all sub-pages
             if (Str::endsWith($pattern, '/*') || Str::endsWith($pattern, '*')) {
                 $prefix = rtrim(str_replace(['/*', '*'], '', $pattern), '.');
 
@@ -91,7 +91,7 @@ class PageRouter
                 continue;
             }
 
-            // Exact pattern: 'siswa' → ONLY exclude pages.siswa (the index), not siswa.detail
+            // Exact pattern: 'admin' → ONLY exclude pages.admin (the index), not admin.users
             $normalised = ltrim($pattern, '/');
             if ($pageKey === $normalised || $uri === '/'.$normalised) {
                 return true;

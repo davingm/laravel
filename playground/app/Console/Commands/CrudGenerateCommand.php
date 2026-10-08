@@ -18,16 +18,18 @@ class CrudGenerateCommand extends Command
 
     public function handle(): int
     {
-        $modelName = Str::studly(trim((string) $this->argument('name')));
+        $inputName = Str::snake(trim((string) $this->argument('name')));
+        $modelInput = Str::endsWith($inputName, 's') ? substr($inputName, 0, -1) : $inputName;
+        $modelName = Str::studly($modelInput);
         if (! preg_match('/^[A-Z][A-Za-z0-9]*$/', $modelName)) {
             $this->error('Invalid model name. Use a simple class name such as Product.');
 
             return self::FAILURE;
         }
 
-        $table = Str::snake(Str::pluralStudly($modelName));
-        $routePrefix = Str::kebab($table);
-        $pageDirectory = Str::kebab($table);
+        $tableCandidates = Str::endsWith($inputName, 's')
+            ? [$inputName, $modelInput]
+            : [$inputName.'s', $inputName];
         $modelVariable = Str::camel($modelName);
         $stubDirectory = base_path('stubs/crud');
         $routeFile = base_path('app/routes/web.php');
@@ -47,8 +49,12 @@ class CrudGenerateCommand extends Command
         }
 
         try {
-            if (! Schema::hasTable($table)) {
-                $this->error("Table \"{$table}\" does not exist. Please run your migration first.");
+            $table = collect(array_unique($tableCandidates))
+                ->first(fn (string $candidate) => Schema::hasTable($candidate));
+
+            if ($table === null) {
+                $expectedTables = implode('" or "', array_unique($tableCandidates));
+                $this->error("Neither table \"{$expectedTables}\" exists. A migration file alone does not create its table; run `artisan migrate` first.");
 
                 return self::FAILURE;
             }
@@ -60,6 +66,9 @@ class CrudGenerateCommand extends Command
 
             return self::FAILURE;
         }
+
+        $routePrefix = Str::kebab($table);
+        $pageDirectory = Str::kebab($table);
 
         if ($columns === []) {
             $this->error("No supported column metadata was returned for table \"{$table}\".");
@@ -326,20 +335,22 @@ class CrudGenerateCommand extends Command
                 $selected = $isEdit
                     ? "@selected(old({$phpName}, \${$modelVariable}->{$name}) == \${$relatedVariable}->{$foreignColumn})"
                     : "@selected(old({$phpName}) == \${$relatedVariable}->{$foreignColumn})";
-                $lines[] = "    <label>\n        {$label}\n        <select name=\"{$escapedName}\"{$required}>\n            <option value=\"\">Pilih {$label}</option>\n            @foreach(\${$relationship['variable']} as \${$relatedVariable})\n                <option value=\"{{ \${$relatedVariable}->{$foreignColumn} }}\" {$selected}>{{ \${$relatedVariable}->{$displayColumn} }}</option>\n            @endforeach\n        </select>\n        @error({$phpName})<span class=\"form-error\">{{ \$message }}</span>@enderror\n    </label>";
+                $lines[] = "    <label class=\"crud-field\">\n        {$label}\n        <select name=\"{$escapedName}\"{$required} class=\"crud-input\">\n            <option value=\"\">Pilih {$label}</option>\n            @foreach(\${$relationship['variable']} as \${$relatedVariable})\n                <option value=\"{{ \${$relatedVariable}->{$foreignColumn} }}\" {$selected}>{{ \${$relatedVariable}->{$displayColumn} }}</option>\n            @endforeach\n        </select>\n        @error({$phpName})<span class=\"form-error\">{{ \$message }}</span>@enderror\n    </label>";
 
                 continue;
             }
 
             if (in_array($field['column_type'], ['text', 'tinytext', 'longtext', 'mediumtext'], true)) {
-                $control = "<textarea name=\"{$escapedName}\"{$required}>{{ {$valueExpression} }}</textarea>";
+                $control = "<textarea name=\"{$escapedName}\"{$required} rows=\"4\" class=\"crud-input\">{{ {$valueExpression} }}</textarea>";
             } elseif ($field['type'] === 'checkbox') {
-                $control = "<input type=\"hidden\" name=\"{$escapedName}\" value=\"0\">\n        <input type=\"checkbox\" name=\"{$escapedName}\" value=\"1\" @checked({$oldValue})>";
+                $lines[] = "    <label class=\"crud-checkbox-field\">\n        <input type=\"hidden\" name=\"{$escapedName}\" value=\"0\">\n        <input type=\"checkbox\" name=\"{$escapedName}\" value=\"1\" class=\"crud-checkbox\" @checked({$oldValue})>\n        {$label}\n        @error({$phpName})<span class=\"form-error\">{{ \$message }}</span>@enderror\n    </label>";
+
+                continue;
             } else {
-                $control = "<input type=\"{$field['type']}\" name=\"{$escapedName}\" value=\"{{ {$valueExpression} }}\"{$required}>";
+                $control = "<input type=\"{$field['type']}\" name=\"{$escapedName}\" value=\"{{ {$valueExpression} }}\"{$required} class=\"crud-input\">";
             }
 
-            $lines[] = "    <label>\n        {$label}\n        {$control}\n        @error({$phpName})<span class=\"form-error\">{{ \$message }}</span>@enderror\n    </label>";
+            $lines[] = "    <label class=\"crud-field\">\n        {$label}\n        {$control}\n        @error({$phpName})<span class=\"form-error\">{{ \$message }}</span>@enderror\n    </label>";
         }
 
         return $lines;

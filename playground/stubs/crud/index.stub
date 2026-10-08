@@ -4,14 +4,11 @@
 <section class="crud-shell">
     <header class="crud-heading">
         <div class="crud-heading-copy">
-            <p class="eyebrow">Manajemen data</p>
-            <h1 class="crud-title">Daftar {{MODEL}}</h1>
-            <p class="crud-description">Lihat dan kelola data {{MODEL_PLURAL}}.</p>
+            <p class="eyebrow">Data</p>
+            <h1 class="crud-title">{{MODEL_PLURAL}}</h1>
+            <p class="crud-description">Kelola data {{MODEL_PLURAL}}.</p>
         </div>
-        <a href="{{ route('{{ROUTE_PREFIX}}.create') }}" class="button button-primary crud-create">
-            <span class="button-icon" aria-hidden="true">+</span>
-            Tambah {{MODEL}}
-        </a>
+        <a href="{{ route('{{ROUTE_PREFIX}}.create') }}" class="button button-primary">Tambah {{MODEL}}</a>
     </header>
 
     @if (session('success'))
@@ -19,30 +16,33 @@
     @endif
 
     <div class="crud-summary">
-        <span class="crud-summary-count">{{ ${{MODEL_PLURAL}}->total() }}</span>
-        <span>data terdaftar</span>
+        <span><strong class="crud-summary-count">{{ ${{MODEL_PLURAL}}->total() }}</strong> data</span>
+        <label class="crud-search-wrap">
+            <span class="sr-only">Cari data pada halaman ini</span>
+            <input type="search" data-table-search placeholder="Cari…" class="crud-search">
+        </label>
     </div>
 
     <div class="table-wrap">
         <table class="barang-table">
-            <caption class="visually-hidden">Daftar {{MODEL_PLURAL}}</caption>
+            <caption class="sr-only">Daftar {{MODEL_PLURAL}}</caption>
             <thead>
                 <tr>
 {{INDEX_HEADERS}}
                     <th class="actions-heading">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody data-table-body>
                 @forelse (${{MODEL_PLURAL}} as ${{MODEL_VARIABLE}})
-                    <tr>
+                    <tr data-table-row>
 {{INDEX_CELLS}}
                         <td>
                             <div class="table-actions">
                                 <a href="{{ route('{{ROUTE_PREFIX}}.edit', ${{MODEL_VARIABLE}}) }}" class="button button-secondary button-small">Edit</a>
-                                <form method="POST" action="{{ route('{{ROUTE_PREFIX}}.destroy', ${{MODEL_VARIABLE}}) }}" class="inline-form" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                @csrf
-                                @method('DELETE')
-                                    <button type="submit" class="button button-danger button-small">Hapus</button>
+                                <form method="POST" action="{{ route('{{ROUTE_PREFIX}}.destroy', ${{MODEL_VARIABLE}}) }}" data-confirm="Yakin ingin menghapus data ini?">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="button button-secondary button-small">Hapus</button>
                                 </form>
                             </div>
                         </td>
@@ -51,20 +51,20 @@
                     <tr>
                         <td class="empty-state" colspan="{{INDEX_COLUMN_COUNT}}">
                             <div class="crud-empty-state">
-                                <span class="empty-state-mark" aria-hidden="true">+</span>
                                 <h2>Belum ada data</h2>
-                                <p>Mulai dengan menambahkan {{MODEL}} pertama.</p>
+                                <p>Tambahkan {{MODEL}} pertama.</p>
                                 <a href="{{ route('{{ROUTE_PREFIX}}.create') }}" class="button button-primary">Tambah {{MODEL}}</a>
                             </div>
                         </td>
                     </tr>
                 @endforelse
+                <tr data-table-no-results hidden>
+                    <td class="empty-state" colspan="{{INDEX_COLUMN_COUNT}}">Tidak ada data yang cocok.</td>
+                </tr>
             </tbody>
         </table>
     </div>
 
-    <div class="crud-pagination">
-        {{ ${{MODEL_PLURAL}}->links() }}
-    </div>
+    <div class="crud-pagination">{{ ${{MODEL_PLURAL}}->links() }}</div>
 </section>
 @endsection

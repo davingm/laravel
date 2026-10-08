@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\MinifyHtmlMiddleware;
+use App\Console\Commands\MakeMigrationCommand;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,6 +13,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../app/routes/console.php',
         health: '/up',
     )
+    ->withCommands([MakeMigrationCommand::class])
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             MinifyHtmlMiddleware::class,

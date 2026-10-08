@@ -6,7 +6,7 @@
         <a href="{{ route('{{ROUTE_PREFIX}}.index') }}" class="back-link">&larr; Kembali ke daftar</a>
         <p class="eyebrow">Perbarui data</p>
         <h1 class="crud-title">Edit {{MODEL}}</h1>
-        <p class="crud-description">Perbarui informasi {{MODEL}} yang dipilih.</p>
+        <p class="crud-description">Ubah informasi {{MODEL}}.</p>
     </header>
 
     <form method="POST" action="{{ route('{{ROUTE_PREFIX}}.update', ${{MODEL_VARIABLE}}) }}" class="barang-form">

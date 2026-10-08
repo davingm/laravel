@@ -35,6 +35,32 @@ document.addEventListener('click', (event) => {
 	window.__DAVINGM__.navigate(link.dataset.navigate || link.href);
 });
 
+document.addEventListener('submit', (event) => {
+	const message = event.target.dataset?.confirm;
+	if (message && !window.confirm(message)) event.preventDefault();
+});
+
+document.addEventListener('input', (event) => {
+	const search = event.target;
+	if (!search.matches('[data-table-search]')) return;
+
+	const tableBody = search.closest('section')?.querySelector('[data-table-body]');
+	if (!tableBody) return;
+
+	const query = search.value.trim().toLocaleLowerCase();
+	const rows = [...tableBody.querySelectorAll('[data-table-row]')];
+	let visibleRows = 0;
+
+	for (const row of rows) {
+		const matches = row.textContent.toLocaleLowerCase().includes(query);
+		row.hidden = !matches;
+		if (matches) visibleRows++;
+	}
+
+	const noResults = tableBody.querySelector('[data-table-no-results]');
+	if (noResults) noResults.hidden = query.length === 0 || visibleRows > 0 || rows.length === 0;
+});
+
 document.querySelectorAll('[data-reveal]').forEach((element) => {
 	element.style.setProperty('--reveal-delay', `${element.dataset.delay || 0}ms`);
 });

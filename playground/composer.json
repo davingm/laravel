@@ -61,7 +61,8 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "node .davingm/setup.js"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
@@ -74,8 +75,7 @@
             "@php -r \"file_exists('app/database/database.sqlite') || touch('app/database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi",
             "npm ci --ignore-scripts",
-            "npm run build",
-            "node .davingm/setup.js"
+            "npm run build"
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
