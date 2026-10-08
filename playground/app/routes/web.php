@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 PageRouter::register([
+    'exclude' => ['siswas', 'siswas/*'],
     'middleware' => ['web'],
 ]);
 
@@ -44,3 +45,5 @@ PageRouter::register([
 |   ]))->name('pages.home');
 |
 */
+
+Route::resource('siswas', \App\Http\Controllers\SiswaController::class);
