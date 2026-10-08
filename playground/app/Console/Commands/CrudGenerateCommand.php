@@ -10,7 +10,7 @@ use Throwable;
 
 class CrudGenerateCommand extends Command
 {
-    protected $signature = 'crud:generate {name : Model name, e.g. Product}';
+    protected $signature = 'crud:generate {model : Nama Model} {--role= : Nama role untuk middleware}';
 
     protected $description = 'Generate CRUD files from the active database schema';
 
@@ -18,13 +18,15 @@ class CrudGenerateCommand extends Command
 
     public function handle(): int
     {
-        $modelName = Str::studly(trim((string) $this->argument('name')));
+        $modelArgument = $this->argument('model');
+        $modelName = Str::studly(trim((string) ($modelArgument !== null && $modelArgument !== '' ? $modelArgument : ($this->argument('name') ?? ''))));
         if (! preg_match('/^[A-Z][A-Za-z0-9]*$/', $modelName)) {
             $this->error('Invalid model name. Use a simple class name such as Product.');
 
             return self::FAILURE;
         }
 
+        $role = $this->option('role');
         $table = Str::snake(Str::pluralStudly($modelName));
         $routePrefix = Str::kebab($table);
         $pageDirectory = Str::kebab($table);
@@ -150,7 +152,7 @@ class CrudGenerateCommand extends Command
             $this->line("  <fg=green>✓</> {$relativePath} created");
         }
 
-        [$routeAdded, $routeError] = $this->registerResourceRoute($routeFile, $routePrefix, $modelName);
+        [$routeAdded, $routeError] = $this->registerResourceRoute($routeFile, $routePrefix, $modelName, $role);
         if ($routeError !== null) {
             $this->error($routeError);
 
@@ -381,12 +383,19 @@ class CrudGenerateCommand extends Command
     }
 
     /** @return array{bool, string|null} */
-    private function registerResourceRoute(string $routeFile, string $routePrefix, string $modelName): array
+    private function registerResourceRoute(string $routeFile, string $routePrefix, string $modelName, ?string $role = null): array
     {
         $original = File::get($routeFile);
         $content = $original;
+        $roleLabel = trim((string) ($role ?? ''));
+        $modelMarker = "// CRUD Routes for {$modelName}";
+        $routeExists = str_contains($content, $modelMarker);
+
         $routePattern = '/Route\s*::\s*resource\s*\(\s*([\'\"])'.preg_quote($routePrefix, '/').'\1\s*,/';
-        $routeExists = preg_match($routePattern, $content) === 1;
+        if (! $routeExists) {
+            $routeExists = preg_match($routePattern, $content) === 1;
+        }
+
         $registerPosition = strpos($content, 'PageRouter::register');
 
         if ($registerPosition !== false) {
@@ -420,8 +429,14 @@ class CrudGenerateCommand extends Command
         }
 
         if (! $routeExists) {
-            $routeLine = "Route::resource('{$routePrefix}', \\App\\Http\\Controllers\\{$modelName}Controller::class);";
-            $content = rtrim($content)."\n\n{$routeLine}\n";
+            if ($roleLabel !== '') {
+                $roleAlias = 'role.'.Str::snake($roleLabel);
+                $routeBlock = "// CRUD Routes for {$modelName} (Role: {$roleLabel})\nRoute::middleware(['auth', '{$roleAlias}'])->group(function () {\n    Route::resource('{$routePrefix}', \\App\\Http\\Controllers\\{$modelName}Controller::class);\n});";
+            } else {
+                $routeBlock = "// CRUD Routes for {$modelName}\nRoute::resource('{$routePrefix}', \\App\\Http\\Controllers\\{$modelName}Controller::class);";
+            }
+
+            $content = rtrim($content)."\n\n{$routeBlock}\n";
         }
 
         if ($content !== $original) {

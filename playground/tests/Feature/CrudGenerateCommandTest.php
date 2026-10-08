@@ -33,13 +33,13 @@ class CrudGenerateCommandTest extends TestCase
         $generatedFiles = [
             app_path('Models/CrudGeneratorProduct.php'),
             app_path('Http/Controllers/CrudGeneratorProductController.php'),
-            base_path('src/pages/crud-generator-products/index.blade.php'),
-            base_path('src/pages/crud-generator-products/create.blade.php'),
-            base_path('src/pages/crud-generator-products/edit.blade.php'),
+            base_path('src/pages/crud_generator_products/index.blade.php'),
+            base_path('src/pages/crud_generator_products/create.blade.php'),
+            base_path('src/pages/crud_generator_products/edit.blade.php'),
         ];
 
         try {
-            $this->artisan('crud:generate', ['name' => 'CrudGeneratorProduct'])
+            $this->artisan('crud:generate', ['model' => 'CrudGeneratorProduct'])
                 ->expectsOutputToContain('CRUD generation completed successfully.')
                 ->assertExitCode(0);
 
@@ -59,7 +59,7 @@ class CrudGenerateCommandTest extends TestCase
             $this->assertStringNotContainsString('unconstrainedCategory', $model);
             $this->assertStringContainsString("'exists:crud_generator_categories,id'", $controller);
             $this->assertStringContainsString("DB::table('crud_generator_categories')", $controller);
-            $this->assertStringContainsString("'published_at' => ['nullable', 'date_format:Y-m-d\\\\TH:i']", $controller);
+            $this->assertStringContainsString("'published_at' => ['nullable', 'date_format:Y-m-d\TH:i']", $controller);
             $this->assertStringContainsString('function index(): View', $controller);
             $this->assertStringContainsString('function store(Request $request): RedirectResponse', $controller);
             $this->assertStringContainsString('function update(Request $request', $controller);
@@ -70,23 +70,23 @@ class CrudGenerateCommandTest extends TestCase
             $this->assertStringNotContainsString('$model->', $createView);
             $this->assertStringContainsString("old('name', \$crudGeneratorProduct->name)", $editView);
             $this->assertStringContainsString("old('crud_generator_category_id', \$crudGeneratorProduct->crud_generator_category_id)", $editView);
-            $this->assertStringContainsString("Route::resource('crud-generator-products'", $routes);
-            $this->assertStringContainsString("'crud-generator-products'", $routes);
-            $this->assertStringContainsString("'crud-generator-products/*'", $routes);
+            $this->assertStringContainsString("Route::resource('crud_generator_products'", $routes);
+            $this->assertStringContainsString("'crud_generator_products'", $routes);
+            $this->assertStringContainsString("'crud_generator_products/*'", $routes);
 
             $existingContents = [];
             foreach ([0, 1, 2, 3, 4] as $index) {
                 $existingContents[$index] = "user-owned-file-{$index}";
                 File::put($generatedFiles[$index], $existingContents[$index]);
             }
-            $this->artisan('crud:generate', ['name' => 'CrudGeneratorProduct'])
+            $this->artisan('crud:generate', ['model' => 'CrudGeneratorProduct'])
                 ->expectsOutputToContain('already exists. Skipping...')
                 ->assertExitCode(0);
 
             foreach ($existingContents as $index => $contents) {
                 $this->assertSame($contents, File::get($generatedFiles[$index]));
             }
-            $this->assertSame(1, substr_count(File::get($routePath), "Route::resource('crud-generator-products'"));
+            $this->assertSame(1, substr_count(File::get($routePath), "Route::resource('crud_generator_products'"));
         } finally {
             File::put($routePath, $originalRoutes);
             foreach ($generatedFiles as $path) {
@@ -95,9 +95,45 @@ class CrudGenerateCommandTest extends TestCase
         }
     }
 
+    public function test_it_wraps_generated_routes_in_role_middleware_group_when_requested(): void
+    {
+        Schema::create('crud_role_products', function ($table): void {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        $routePath = base_path('app/routes/web.php');
+        $originalRoutes = File::get($routePath);
+
+        try {
+            $this->artisan('crud:generate', ['model' => 'CrudRoleProduct', '--role' => 'admin'])
+                ->expectsOutputToContain('CRUD generation completed successfully.')
+                ->assertExitCode(0);
+
+            $routes = File::get($routePath);
+            $this->assertStringContainsString('// CRUD Routes for CrudRoleProduct (Role: admin)', $routes);
+            $this->assertStringContainsString("Route::middleware(['auth', 'role.admin'])->group(function () {", $routes);
+            $this->assertStringContainsString("Route::resource('crud_role_products'", $routes);
+        } finally {
+            File::put($routePath, $originalRoutes);
+            foreach ([
+                app_path('Models/CrudRoleProduct.php'),
+                app_path('Http/Controllers/CrudRoleProductController.php'),
+                base_path('src/pages/crud_role_products/index.blade.php'),
+                base_path('src/pages/crud_role_products/create.blade.php'),
+                base_path('src/pages/crud_role_products/edit.blade.php'),
+            ] as $path) {
+                if (File::exists($path)) {
+                    File::delete($path);
+                }
+            }
+        }
+    }
+
     public function test_it_reports_a_missing_table_without_creating_files(): void
     {
-        $this->artisan('crud:generate', ['name' => 'CrudGeneratorMissing'])
+        $this->artisan('crud:generate', ['model' => 'CrudGeneratorMissing'])
             ->expectsOutputToContain('Table "crud_generator_missings" does not exist.')
             ->assertExitCode(1);
 
