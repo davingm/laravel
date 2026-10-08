@@ -61,3 +61,6 @@ resault.html export-ignore
 /playground/storage/framework/testing/* export-ignore
 /playground/storage/logs/*.log export-ignore
 /playground/test.log export-ignore
+
+/dist export-ignore
+/dist/** export-ignore

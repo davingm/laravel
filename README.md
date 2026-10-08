@@ -11,7 +11,7 @@ composer create-project davingm/laravel app
 cd app
 ```
 
-Composer materializes the contents of `playground/` at the new project's root, then installs dependencies, generates the app key, runs migrations, and builds frontend assets.
+Composer materializes the contents of `playground/` at the new project's root before installing dependencies. After installation, it generates the app key, runs migrations, and builds frontend assets.
 
 ## Develop in this repository
 
