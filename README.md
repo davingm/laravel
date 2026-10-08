@@ -49,7 +49,7 @@ npm run build
 
 ## Composer package releases
 
-Packages are maintained in `packages/<name>` and split to individual GitHub repositories on version tags. Repository setup, secrets, and release steps are documented in [docs/package-split-releases.md](docs/package-split-releases.md).
+Packages are maintained in `packages/<name>` and split to move for individual GitHub repositories on version tags. Repository setup, secrets, and release steps are documented in [docs/package-split-releases.md](docs/package-split-releases.md).
 
 ## CLI setup (optional)
 
