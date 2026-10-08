@@ -7,7 +7,6 @@
 
 import { spawn, execSync }   from 'node:child_process';
 import { resolve, dirname } from 'node:path';
-import { fileURLToPath }    from 'node:url';
 import { existsSync, unlinkSync } from 'node:fs';
 
 // ─── ANSI ─────────────────────────────────────────────────────────────────────
@@ -49,8 +48,21 @@ function printLogo() {
 
 // ─── Project root ─────────────────────────────────────────────────────────────
 
-const __dir      = dirname(fileURLToPath(import.meta.url));
-const projectRoot = resolve(__dir, '..');
+function findProjectRoot(startDirectory) {
+    let directory = resolve(startDirectory);
+
+    while (true) {
+        if (existsSync(resolve(directory, 'artisan')) && existsSync(resolve(directory, '.davingm', 'cli.js'))) {
+            return directory;
+        }
+
+        const parent = dirname(directory);
+        if (parent === directory) return null;
+        directory = parent;
+    }
+}
+
+const projectRoot = findProjectRoot(process.cwd());
 
 // ─── Laravel serve output parser ─────────────────────────────────────────────
 //
@@ -167,7 +179,7 @@ function startDev() {
     const startMs = Date.now();
 
     // Ensure stale preview flag is cleaned up so dev mode never runs in preview state
-    const previewFlag = resolve(__dir, '.preview');
+    const previewFlag = resolve(projectRoot, '.davingm', '.preview');
     if (existsSync(previewFlag)) {
         try { unlinkSync(previewFlag); } catch (_) {}
     }
@@ -327,7 +339,7 @@ function forwardArtisan(args) {
         env: { ...process.env },
     });
     child.on('close', (code) => {
-        const previewFlag = resolve(__dir, '.preview');
+        const previewFlag = resolve(projectRoot, '.davingm', '.preview');
         if (existsSync(previewFlag)) {
             try { unlinkSync(previewFlag); } catch (_) {}
         }
@@ -341,8 +353,8 @@ function forwardArtisan(args) {
 
 // ─── Entry ────────────────────────────────────────────────────────────────────
 
-if (!existsSync(resolve(projectRoot, 'artisan'))) {
-    process.stderr.write(`[davingm] error: laravel project not found at ${projectRoot}\n`);
+if (projectRoot === null) {
+    process.stderr.write('[davingm] error: no davingm Laravel project found in this directory or its parents.\n');
     process.exit(1);
 }
 
