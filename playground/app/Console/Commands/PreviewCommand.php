@@ -31,7 +31,7 @@ class PreviewCommand extends Command
 
         // Write a temporary preview flag file that MinifyHtmlMiddleware reads.
         // We write the current PID so middleware can verify the process is alive.
-        $flagFile = base_path('.davingm/.preview');
+        $flagFile = base_path('.auto/.preview');
         file_put_contents($flagFile, (string) getmypid());
 
         register_shutdown_function(static function () use ($flagFile): void {
@@ -44,7 +44,7 @@ class PreviewCommand extends Command
             [
                 'APP_ENV' => 'production',
                 'APP_DEBUG' => 'false',
-                'DAVINGM_PREVIEW' => '1',
+                'AUTO_PREVIEW' => '1',
             ],
         );
 

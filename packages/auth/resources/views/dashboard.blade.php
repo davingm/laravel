@@ -1,4 +1,4 @@
-@extends('davingm-src::layouts.app')
+@extends('auto-src::layouts.app')
 
 @section('title', 'Dashboard')
 

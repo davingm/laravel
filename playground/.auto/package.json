@@ -1,7 +1,7 @@
 {
-    "name": "@davingm/cli",
+    "name": "@auto/cli",
     "version": "1.0.0",
-    "description": "davingm Laravel development CLI",
+    "description": "AutoLaravel development CLI",
     "type": "module",
     "bin": {
         "artisan": "./cli.js"
@@ -14,7 +14,7 @@
     },
     "keywords": [
         "laravel",
-        "davingm",
+        "auto",
         "cli"
     ],
     "license": "MIT"

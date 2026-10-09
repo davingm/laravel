@@ -1,6 +1,6 @@
 <?php
 
-namespace Davingm\Auth\Http\Controllers;
+namespace AutoLaravel\Auth\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ class AuthenticatedSessionController
 {
     public function create(): View
     {
-        return view('davingm-auth::login');
+        return view('auto-auth::login');
     }
 
     public function store(Request $request): RedirectResponse

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * davingm Laravel CLI
- * .davingm/cli.js
+ * AutoLaravel CLI
+ * .auto/cli.js
  */
 
 import { spawn, execSync }   from 'node:child_process';
@@ -21,9 +21,9 @@ const WHITE  = '\x1b[97m';
 const GREEN  = '\x1b[32m';
 const GRAY   = '\x1b[90m';
 
-const PRE_RED    = `${B}${RED}[davingm]${R}`;
-const PRE_ORANGE = `${B}${ORANGE}[davingm]${R}`;
-const PRE_WHITE  = `${B}${WHITE}[davingm]${R}`;
+const PRE_RED    = `${B}${RED}[auto]${R}`;
+const PRE_ORANGE = `${B}${ORANGE}[auto]${R}`;
+const PRE_WHITE  = `${B}${WHITE}[auto]${R}`;
 
 const stripAnsi = (s) => s.replace(/\x1b\[[0-9;]*m/g, '').replace(/\r/g, '');
 
@@ -52,7 +52,7 @@ function findProjectRoot(startDirectory) {
     let directory = resolve(startDirectory);
 
     while (true) {
-        if (existsSync(resolve(directory, 'artisan')) && existsSync(resolve(directory, '.davingm', 'cli.js'))) {
+        if (existsSync(resolve(directory, 'artisan')) && existsSync(resolve(directory, '.auto', 'cli.js'))) {
             return directory;
         }
 
@@ -179,7 +179,7 @@ function startDev() {
     const startMs = Date.now();
 
     // Ensure stale preview flag is cleaned up so dev mode never runs in preview state
-    const previewFlag = resolve(projectRoot, '.davingm', '.preview');
+    const previewFlag = resolve(projectRoot, '.auto', '.preview');
     if (existsSync(previewFlag)) {
         try { unlinkSync(previewFlag); } catch (_) {}
     }
@@ -339,14 +339,14 @@ function forwardArtisan(args) {
         env: { ...process.env },
     });
     child.on('close', (code) => {
-        const previewFlag = resolve(projectRoot, '.davingm', '.preview');
+        const previewFlag = resolve(projectRoot, '.auto', '.preview');
         if (existsSync(previewFlag)) {
             try { unlinkSync(previewFlag); } catch (_) {}
         }
         process.exit(code ?? 0);
     });
     child.on('error', (err) => {
-        process.stderr.write(`[davingm] error: ${err.message}\n`);
+        process.stderr.write(`[auto] error: ${err.message}\n`);
         process.exit(1);
     });
 }
@@ -354,7 +354,7 @@ function forwardArtisan(args) {
 // ─── Entry ────────────────────────────────────────────────────────────────────
 
 if (projectRoot === null) {
-    process.stderr.write('[davingm] error: no davingm Laravel project found in this directory or its parents.\n');
+    process.stderr.write('[auto] error: no AutoLaravel project found in this directory or its parents.\n');
     process.exit(1);
 }
 
@@ -362,7 +362,7 @@ const args = process.argv.slice(2);
 
 if (args.length === 0) {
     printLogo();
-    out(PRE_WHITE, `${B}${WHITE}davingm${R} ${D}Laravel CLI${R}`);
+    out(PRE_WHITE, `${B}${WHITE}AutoLaravel${R} ${D}CLI${R}`);
     process.stdout.write('\n');
     out(PRE_WHITE, `  ${CYAN}artisan dev${R}              start server + queue`);
     out(PRE_WHITE, `  ${CYAN}artisan build${R}            build for production`);

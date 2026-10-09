@@ -1,0 +1,8 @@
+{
+    "page": "siswas.create",
+    "url": "http://localhost:8000/siswas/create",
+    "path": "siswas/create",
+    "data": [],
+    "meta": [],
+    "generated_at": "2026-10-08T12:55:25+00:00"
+}

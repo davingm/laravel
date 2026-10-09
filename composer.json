@@ -1,19 +1,19 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "davingm/laravel",
+    "name": "auto/laravel",
     "type": "project",
-    "description": "Laravel starter project by davingm.",
+    "description": "Laravel starter project by AutoLaravel.",
     "keywords": [
         "laravel",
         "starter",
-        "davingm"
+        "auto"
     ],
     "license": "MIT",
-    "homepage": "https://github.com/davingm/laravel",
+    "homepage": "https://github.com/auto/laravel",
     "authors": [
         {
-            "name": "davingm",
-            "homepage": "https://github.com/davingm"
+            "name": "AutoLaravel",
+            "homepage": "https://github.com/auto"
         }
     ],
     "require": {
@@ -58,7 +58,7 @@
             "@php artisan migrate --graceful --ansi",
             "npm ci --ignore-scripts",
             "npm run build",
-            "node .davingm/setup.js"
+            "node .auto/setup.js"
         ]
     },
     "extra": {

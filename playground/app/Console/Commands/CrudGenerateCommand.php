@@ -18,21 +18,15 @@ class CrudGenerateCommand extends Command
 
     public function handle(): int
     {
-main
-        $modelArgument = $this->argument('model');
-        $modelName = Str::studly(trim((string) ($modelArgument !== null && $modelArgument !== '' ? $modelArgument : ($this->argument('name') ?? ''))));
-
-        $inputName = Str::snake(trim((string) $this->argument('name')));
+        $inputName = Str::snake(trim((string) $this->argument('model')));
         $modelInput = Str::endsWith($inputName, 's') ? substr($inputName, 0, -1) : $inputName;
         $modelName = Str::studly($modelInput);
-   main
         if (! preg_match('/^[A-Z][A-Za-z0-9]*$/', $modelName)) {
             $this->error('Invalid model name. Use a simple class name such as Product.');
 
             return self::FAILURE;
         }
 
-   main
         $role = $this->option('role');
         $table = Str::snake(Str::pluralStudly($modelName));
         $routePrefix = Str::kebab($table);
@@ -41,7 +35,6 @@ main
         $tableCandidates = Str::endsWith($inputName, 's')
             ? [$inputName, $modelInput]
             : [$inputName.'s', $inputName];
-   main
         $modelVariable = Str::camel($modelName);
         $stubDirectory = base_path('stubs/crud');
         $routeFile = base_path('app/routes/web.php');
@@ -65,8 +58,7 @@ main
                 ->first(fn (string $candidate) => Schema::hasTable($candidate));
 
             if ($table === null) {
-                $expectedTables = implode('" or "', array_unique($tableCandidates));
-                $this->error("Neither table \"{$expectedTables}\" exists. A migration file alone does not create its table; run `artisan migrate` first.");
+                $this->error("Table \"{$tableCandidates[0]}\" does not exist.");
 
                 return self::FAILURE;
             }

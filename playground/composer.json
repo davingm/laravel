@@ -1,15 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "davingm/laravel",
+    "name": "auto/laravel",
     "type": "project",
-    "description": "Laravel starter project by davingm.",
-    "keywords": ["laravel", "starter", "davingm"],
+    "description": "Laravel starter project by AutoLaravel.",
+    "keywords": ["laravel", "starter", "auto"],
     "license": "MIT",
-    "homepage": "https://github.com/davingm/laravel",
+    "homepage": "https://github.com/auto/laravel",
     "authors": [
         {
-            "name": "davingm",
-            "homepage": "https://github.com/davingm"
+            "name": "AutoLaravel",
+            "homepage": "https://github.com/auto"
         }
     ],
     "require": {
@@ -62,7 +62,7 @@
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
-            "node .davingm/setup.js"
+            "node .auto/setup.js"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
