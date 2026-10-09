@@ -3,12 +3,12 @@
  * davingm CLI setup script
  * Installs the `artisan` command so it works from anywhere in Git Bash / Unix shells.
  *
- * Called automatically by composer post-create-project-cmd.
+ * Called automatically after Composer generates the project autoloader.
  * Can also be run manually: node .davingm/setup.js
  */
 
-import { writeFileSync, chmodSync, mkdirSync, existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { writeFileSync, readFileSync, chmodSync, mkdirSync, existsSync, accessSync, constants } from 'node:fs';
+import { resolve, dirname, delimiter } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
 
@@ -41,22 +41,51 @@ exit 1
 
 // ── Determine install targets ─────────────────────────────────────────────────
 const home    = homedir();
+const pathEntries = (process.env.PATH ?? '')
+    .split(delimiter)
+    .filter(Boolean)
+    .map((entry) => resolve(entry));
+const pathKeys = new Set(pathEntries.map((entry) => process.platform === 'win32' ? entry.toLowerCase() : entry));
+const composerHome = process.env.COMPOSER_HOME
+    ?? (process.platform === 'win32'
+        ? resolve(process.env.APPDATA ?? resolve(home, 'AppData', 'Roaming'), 'Composer')
+        : resolve(process.env.XDG_CONFIG_HOME ?? resolve(home, '.config'), 'composer'));
+const composerBin = resolve(process.env.COMPOSER_BIN_DIR ?? resolve(composerHome, 'vendor', 'bin'));
+const npmBin = process.platform === 'win32'
+    ? resolve(process.env.APPDATA ?? resolve(home, 'AppData', 'Roaming'), 'npm')
+    : null;
+
+// Bare `artisan` only works when its directory is already on PATH. Prefer the
+// Composer global bin (the normal home for Composer-installed CLI tools), then
+// npm's global bin and conventional user bins when they are already on PATH.
+const candidates = [composerBin, npmBin, resolve(home, 'bin'), resolve(home, '.local', 'bin')]
+    .filter(Boolean)
+    .map((directory) => resolve(directory))
+    .filter((directory, index, all) => all.indexOf(directory) === index)
+    .filter((directory) => pathKeys.has(process.platform === 'win32' ? directory.toLowerCase() : directory));
+
 const targets = [];
-
-// ~/bin  (Git Bash default, usually in PATH already)
-const userBin = resolve(home, 'bin');
-targets.push(resolve(userBin, 'artisan'));
-
-// ~/.local/bin  (Linux / WSL convention)
-const localBin = resolve(home, '.local', 'bin');
-targets.push(resolve(localBin, 'artisan'));
+for (const directory of candidates) {
+    try {
+        if (!existsSync(directory)) mkdirSync(directory, { recursive: true });
+        accessSync(directory, constants.W_OK);
+        targets.push(resolve(directory, 'artisan'));
+    } catch {
+        // Continue to another already-PATH'd, user-writable bin directory.
+    }
+}
 
 let installed = false;
 
 for (const target of targets) {
     try {
-        const dir = dirname(target);
-        if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+        if (existsSync(target)) {
+            const existing = readFileSync(target, 'utf8');
+            if (!existing.includes('davingm Laravel CLI')) {
+                console.warn(`[davingm] Skipping existing command: ${target}`);
+                continue;
+            }
+        }
 
         writeFileSync(target, scriptContent, { encoding: 'utf8' });
         chmodSync(target, 0o755);
@@ -69,7 +98,8 @@ for (const target of targets) {
 }
 
 if (!installed) {
-    console.warn('[davingm] Could not auto-install artisan to ~/bin or ~/.local/bin.');
+    console.warn('[davingm] Could not install artisan in a writable directory already on PATH.');
+    console.warn('[davingm] Ensure Composer global bin is on PATH, then run composer install again.');
     console.warn('[davingm] Run manually:');
     console.warn(`[davingm]   node "${cliPath.replace(/\\/g, '/')}" <command>`);
 } else {

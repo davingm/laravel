@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->app->bind(MigrationCreator::class, fn ($app) => $app['migration.creator']);
+
         // Register src/components for x-component syntax (anonymous components)
         Blade::anonymousComponentPath(base_path('src/components'));
 

@@ -6,7 +6,7 @@
         <a href="{{ route('{{ROUTE_PREFIX}}.index') }}" class="back-link">&larr; Kembali ke daftar</a>
         <p class="eyebrow">Data baru</p>
         <h1 class="crud-title">Tambah {{MODEL}}</h1>
-        <p class="crud-description">Lengkapi informasi {{MODEL}} di bawah ini.</p>
+        <p class="crud-description">Isi informasi {{MODEL}}.</p>
     </header>
 
     <form method="POST" action="{{ route('{{ROUTE_PREFIX}}.store') }}" class="barang-form">
@@ -26,7 +26,7 @@
         </div>
         <div class="crud-form-actions">
             <a href="{{ route('{{ROUTE_PREFIX}}.index') }}" class="button button-secondary">Batal</a>
-            <button type="submit" class="button button-primary">Simpan {{MODEL}}</button>
+            <button type="submit" class="button button-primary">Simpan</button>
         </div>
     </form>
 </section>

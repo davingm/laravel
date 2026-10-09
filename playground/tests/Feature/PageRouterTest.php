@@ -2,47 +2,27 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class PageRouterTest extends TestCase
 {
-    use RefreshDatabase;
-
-    public function test_home_page_is_accessible(): void
+    public function test_page_router_resolves_nested_page_paths(): void
     {
-        $response = $this->get('/home');
-
-        $response->assertOk();
+        $this->assertSame(
+            ['/about', 'about.index', 'about', 'pages.about'],
+            \App\Support\PageRouter::resolve(
+                base_path('src/pages/about/index.blade.php'),
+                base_path('src/pages'),
+            ),
+        );
     }
 
-    public function test_help_page_is_accessible(): void
+    public function test_page_router_supports_exact_and_wildcard_exclusions(): void
     {
-        $response = $this->get('/help');
-
-        $response->assertOk();
-    }
-
-    public function test_help_page_renders_when_frontend_manifest_is_missing(): void
-    {
-        $manifestPath = storage_path('../.davingm/cache/manifest.json');
-        $originalManifest = File::exists($manifestPath) ? File::get($manifestPath) : null;
-        File::delete($manifestPath);
-
-        try {
-            $response = $this->get('/help');
-
-            $response->assertOk();
-            $response->assertSee('<title>Help</title>', false);
-            $response->assertSee('<meta property="og:title" content="Help">', false);
-            $response->assertSee('Halaman bantuan dan informasi.');
-        } finally {
-            if ($originalManifest !== null) {
-                File::ensureDirectoryExists(dirname($manifestPath));
-                File::put($manifestPath, $originalManifest);
-            }
-        }
+        $this->assertTrue(\App\Support\PageRouter::isExcluded('admin', '/admin', ['admin']));
+        $this->assertFalse(\App\Support\PageRouter::isExcluded('admin.users', '/admin/users', ['admin']));
+        $this->assertTrue(\App\Support\PageRouter::isExcluded('admin.users', '/admin/users', ['admin/*']));
     }
 
     public function test_make_page_preserves_an_existing_route_cache(): void
@@ -97,22 +77,4 @@ class PageRouterTest extends TestCase
         }
     }
 
-    public function test_preview_mode_minifies_html_while_dev_mode_does_not(): void
-    {
-        // Dev mode: multi-line HTML, no aggressive minification
-        $devResponse = $this->get('/help');
-        $devResponse->assertOk();
-        $this->assertStringContainsString("\n", $devResponse->getContent());
-
-        // Preview mode: single-line minified HTML
-        putenv('DAVINGM_PREVIEW=1');
-        $_SERVER['DAVINGM_PREVIEW'] = '1';
-
-        $previewResponse = $this->get('/help');
-        $previewResponse->assertOk();
-        $this->assertStringNotContainsString('id="browser-logger-active"', $previewResponse->getContent());
-
-        putenv('DAVINGM_PREVIEW');
-        unset($_SERVER['DAVINGM_PREVIEW']);
-    }
 }

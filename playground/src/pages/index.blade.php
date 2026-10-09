@@ -1,22 +1,23 @@
 @extends('layouts.app')
 
+@section('title', config('app.name', 'Laravel'))
+
 @section('content')
-<section class="hero-shell">
-    <div class="hero-copy" data-reveal>
-        <p class="eyebrow">Blade frontend</p>
-        <h1>Nuxt-like conventions.<br><em>Still Blade.</em></h1>
-        <p class="lede">File-based pages, auto routing, payload hydration, and client navigation — without Vue.</p>
-        <div class="hero-actions">
-            <a class="button button-primary" href="{{ route('pages.help') }}" @navigate(route('pages.help'))>Get started <span>→</span></a>
-            <a class="button button-quiet" href="https://laravel.com/docs" target="_blank" rel="noreferrer">Laravel docs</a>
-        </div>
-    </div>
-    <div class="hero-panel" data-reveal data-delay="120">
-        <div class="panel-topline"><span class="status-dot"></span> auto routing</div>
-        <div class="terminal-line"><span>$</span> pages/index.blade.php → /</div>
-        <div class="terminal-line"><span>$</span> pages/about/index.blade.php → /about</div>
-        <div class="terminal-line"><span>$</span> pages/blog/[slug].blade.php → /blog/{slug}</div>
-        <div class="terminal-result">routes registered automatically</div>
+<section class="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 py-20">
+    <p class="text-sm font-semibold uppercase tracking-widest text-gray-500">{{ config('app.name', 'Laravel') }}</p>
+    <h1 class="mt-5 max-w-3xl text-5xl font-semibold tracking-tight text-gray-950 sm:text-7xl">
+        A clean start for your next idea.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg leading-8 text-gray-600">
+        Your Laravel application is ready. Start building pages, models, and features for your project.
+    </p>
+    <div class="mt-10 flex flex-wrap gap-4">
+        <a class="rounded-lg bg-gray-950 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-700" href="https://laravel.com/docs" target="_blank" rel="noreferrer">
+            Read the Laravel docs
+        </a>
+        <a class="rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-50" href="https://github.com/davingm/laravel" target="_blank" rel="noreferrer">
+            Explore the framework
+        </a>
     </div>
 </section>
 @endsection

@@ -47,8 +47,10 @@
         }
     },
     "scripts": {
+        "post-root-package-install": [
+            "@php .materialize-playground.php"
+        ],
         "post-create-project-cmd": [
-            "@php .materialize-playground.php",
             "@composer dump-autoload --no-interaction",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate --ansi",

@@ -11,7 +11,7 @@ composer create-project davingm/laravel app
 cd app
 ```
 
-Composer materializes the contents of `playground/` at the new project's root, then installs dependencies, generates the app key, runs migrations, and builds frontend assets.
+Composer materializes the contents of `playground/` at the new project's root before installing dependencies. After installation, it generates the app key, runs migrations, and builds frontend assets.
 
 ## Develop in this repository
 
@@ -49,7 +49,7 @@ npm run build
 
 ## Composer package releases
 
-Packages are maintained in `packages/<name>` and split to individual GitHub repositories on version tags. Repository setup, secrets, and release steps are documented in [docs/package-split-releases.md](docs/package-split-releases.md).
+Packages are maintained in `packages/<name>` and split to move for individual GitHub repositories on version tags. Repository setup, secrets, and release steps are documented in [docs/package-split-releases.md](docs/package-split-releases.md).
 
 ## CLI setup (optional)
 
