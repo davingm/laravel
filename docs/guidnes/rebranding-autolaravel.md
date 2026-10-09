@@ -1,4 +1,4 @@
-# Panduan Rebranding AutoLaravel
+      # Panduan Rebranding AutoLaravel
 
 Panduan ini merangkum perubahan nama dari `davingm` menjadi `AutoLaravel` untuk namespace PHP dan `auto` untuk nama package serta komponen CLI.
 

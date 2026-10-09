@@ -39,7 +39,7 @@ class CrudGenerateCommand extends Command
         $stubDirectory = base_path('stubs/crud');
         $routeFile = base_path('app/routes/web.php');
 
-        foreach (['model', 'controller', 'index', 'create', 'edit'] as $stubName) {
+        foreach (['model', 'controller', 'view_index', 'view_form', 'edit'] as $stubName) {
             if (! File::exists("{$stubDirectory}/{$stubName}.stub")) {
                 $this->error("CRUD stub not found: stubs/crud/{$stubName}.stub");
 
@@ -134,8 +134,8 @@ class CrudGenerateCommand extends Command
         $files = [
             app_path("Models/{$modelName}.php") => 'model',
             app_path("Http/Controllers/{$modelName}Controller.php") => 'controller',
-            base_path("src/pages/{$pageDirectory}/index.blade.php") => 'index',
-            base_path("src/pages/{$pageDirectory}/create.blade.php") => 'create',
+            base_path("src/pages/{$pageDirectory}/index.blade.php") => 'view_index',
+            base_path("src/pages/{$pageDirectory}/create.blade.php") => 'view_form',
             base_path("src/pages/{$pageDirectory}/edit.blade.php") => 'edit',
         ];
 
@@ -155,7 +155,7 @@ class CrudGenerateCommand extends Command
             }
 
             File::ensureDirectoryExists(dirname($path));
-            $templateContext = in_array($stubName, ['create', 'edit'], true)
+            $templateContext = in_array($stubName, ['view_form', 'edit'], true)
                 ? ($stubName === 'edit' ? $editContext : $createContext)
                 : $createContext;
             $contents = strtr(File::get("{$stubDirectory}/{$stubName}.stub"), $templateContext);
