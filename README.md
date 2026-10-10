@@ -1,5 +1,7 @@
 # davingm/laravel
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/davingm/laravel)
+
 Laravel framework project by [davingm](https://github.com/davingm), powered by the [Laravel](https://laravel.com) framework.
 
 This repository is a monorepo: Composer packages live in `packages/`, while the Laravel framework project lives in `playground/`. The root Composer manifest bootstraps the framework from `playground/`, so users install a normal Laravel project rather than the whole monorepo.
