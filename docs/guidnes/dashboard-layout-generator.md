@@ -60,9 +60,9 @@ Karena aplikasi ini sudah memiliki layout pada lokasi tersebut, menjalankan comm
 Stub CRUD menggunakan `@extends('layouts.app')` agar halaman yang dihasilkan memakai layout tersebut:
 
 ```text
-stubs/crud/view_index.stub  → src/pages/<resource>/index.blade.php
-stubs/crud/view_form.stub   → src/pages/<resource>/create.blade.php
-stubs/crud/edit.stub        → src/pages/<resource>/edit.blade.php
+.laravel/crud/view_index.stub  → src/pages/<resource>/index.blade.php
+.laravel/crud/view_form.stub   → src/pages/<resource>/create.blade.php
+.laravel/crud/edit.stub        → src/pages/<resource>/edit.blade.php
 ```
 
 Jalankan generator CRUD seperti biasa setelah schema database siap:
@@ -93,4 +93,4 @@ artisan test
 - Nama opsi yang valid adalah `sidebar` dan `navbar`.
 - Generator membuat folder `src/layouts/` bila belum tersedia.
 - Layout mempertahankan hook metadata, asset Vite, payload frontend, dan elemen `#page-view` yang digunakan navigasi aplikasi.
-- Command di folder `app/Console/Commands/` didaftarkan melalui discovery Laravel.
+- Generator PHP ada di `.laravel/generators/` dan didaftarkan oleh bootstrap Laravel.

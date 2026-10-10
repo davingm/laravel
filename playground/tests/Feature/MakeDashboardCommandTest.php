@@ -78,7 +78,7 @@ class MakeDashboardCommandTest extends TestCase
     {
         $temporaryBasePath = sys_get_temp_dir().DIRECTORY_SEPARATOR.'auto-dashboard-'.bin2hex(random_bytes(8));
         File::ensureDirectoryExists($temporaryBasePath);
-        File::copyDirectory(base_path('stubs/layouts'), $temporaryBasePath.'/stubs/layouts');
+        File::copyDirectory(base_path('.laravel/layouts'), $temporaryBasePath.'/.laravel/layouts');
 
         return $temporaryBasePath;
     }

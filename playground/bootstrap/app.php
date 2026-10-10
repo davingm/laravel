@@ -6,6 +6,13 @@ use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Laravel\Generators\CrudGenerateCommand;
+use Laravel\Generators\MakeAllCommand;
+use Laravel\Generators\MakeControllerCommand;
+use Laravel\Generators\MakeDashboardCommand;
+use Laravel\Generators\MakeMigrationCommand;
+use Laravel\Generators\MakePageCommand;
+use Laravel\Generators\MakeRolesCommand;
 
 $app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,6 +21,15 @@ $app = Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withCommands()
+    ->withCommands([
+        CrudGenerateCommand::class,
+        MakeAllCommand::class,
+        MakeControllerCommand::class,
+        MakeDashboardCommand::class,
+        MakeMigrationCommand::class,
+        MakePageCommand::class,
+        MakeRolesCommand::class,
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             MinifyHtmlMiddleware::class,

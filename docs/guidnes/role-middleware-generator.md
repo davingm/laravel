@@ -20,7 +20,7 @@ app/Http/Middleware/EnsureUserIsAuthorMiddleware.php
 app/Http/Middleware/EnsureUserIsEditorMiddleware.php
 ```
 
-Setiap file middleware dibuat dari stub `stubs/roles/middleware.stub` dan berisi pengecekan role user seperti berikut:
+Setiap file middleware dibuat dari stub `.laravel/role/middleware.stub` dan berisi pengecekan role user seperti berikut:
 
 ```php
 $user = $request->user();

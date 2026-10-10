@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Laravel\Generators;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -22,9 +22,9 @@ class MakeRolesCommand extends Command
             return self::FAILURE;
         }
 
-        $stubPath = base_path('stubs/roles/middleware.stub');
+        $stubPath = base_path('.laravel/role/middleware.stub');
         if (! File::exists($stubPath)) {
-            $this->error('Middleware stub not found: stubs/roles/middleware.stub');
+            $this->error('Middleware stub not found: .laravel/role/middleware.stub');
 
             return self::FAILURE;
         }

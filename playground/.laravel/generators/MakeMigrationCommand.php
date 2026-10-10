@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Laravel\Generators;
 
 use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
 use Illuminate\Support\Str;

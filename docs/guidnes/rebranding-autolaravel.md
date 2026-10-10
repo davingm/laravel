@@ -49,7 +49,7 @@ make:roles
 auth:install
 ```
 
-Command aplikasi di `app/Console/Commands/` didaftarkan melalui discovery Laravel. Jalankan perintah dari folder `playground/`.
+Generator framework di `playground/.laravel/generators/` didaftarkan melalui bootstrap Laravel. Jalankan perintah dari folder `playground/`.
 
 ## 5. Verifikasi setelah perubahan
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Laravel\Generators;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -36,12 +36,12 @@ class CrudGenerateCommand extends Command
             ? [$inputName, $modelInput]
             : [$inputName.'s', $inputName];
         $modelVariable = Str::camel($modelName);
-        $stubDirectory = base_path('stubs/crud');
+        $stubDirectory = base_path('.laravel/crud');
         $routeFile = base_path('app/routes/web.php');
 
         foreach (['model', 'controller', 'view_index', 'view_form', 'edit'] as $stubName) {
             if (! File::exists("{$stubDirectory}/{$stubName}.stub")) {
-                $this->error("CRUD stub not found: stubs/crud/{$stubName}.stub");
+                $this->error("CRUD stub not found: .laravel/crud/{$stubName}.stub");
 
                 return self::FAILURE;
             }

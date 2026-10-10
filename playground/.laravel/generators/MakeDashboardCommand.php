@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Laravel\Generators;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -28,9 +28,9 @@ class MakeDashboardCommand extends Command
             return self::FAILURE;
         }
 
-        $stubPath = base_path("stubs/layouts/{$layout}.stub");
+        $stubPath = base_path(".laravel/layouts/{$layout}.stub");
         if (! File::exists($stubPath)) {
-            $this->error("Layout stub not found: stubs/layouts/{$layout}.stub");
+            $this->error("Layout stub not found: .laravel/layouts/{$layout}.stub");
 
             return self::FAILURE;
         }
