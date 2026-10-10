@@ -27,6 +27,8 @@ class PreviewCommand extends Command
             }
         }
 
+        $this->removeStaleViteHotFile();
+
         $this->printBanner($port);
 
         // Write a temporary preview flag file that MinifyHtmlMiddleware reads.
@@ -116,5 +118,32 @@ class PreviewCommand extends Command
         $this->newLine();
         $this->line('  <fg=gray>Press Ctrl+C to stop.</>');
         $this->newLine();
+    }
+
+    private function removeStaleViteHotFile(): void
+    {
+        $hotFile = public_path('hot');
+
+        if (! is_file($hotFile)) {
+            return;
+        }
+
+        $url = trim((string) @file_get_contents($hotFile));
+        $host = parse_url($url, PHP_URL_HOST);
+        $port = parse_url($url, PHP_URL_PORT);
+
+        if (is_string($host) && is_int($port)) {
+            $host = trim($host, '[]');
+            $address = str_contains($host, ':') ? "tcp://[{$host}]:{$port}" : "tcp://{$host}:{$port}";
+            $socket = @stream_socket_client($address, $errorCode, $errorMessage, 0.2);
+
+            if (is_resource($socket)) {
+                fclose($socket);
+
+                return;
+            }
+        }
+
+        @unlink($hotFile);
     }
 }

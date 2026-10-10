@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\MinifyHtmlMiddleware;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
@@ -28,6 +29,9 @@ $app = Application::configure(basePath: dirname(__DIR__))
 // directory. This project uses it for CLI runtime files, so keep the actual
 // framework bootstrap directory explicit.
 $app->useBootstrapPath(__DIR__);
+// Application::configure() initially reads its provider list before the
+// bootstrap path override above; point that registration back to this file.
+RegisterProviders::merge([], __DIR__.'/providers.php');
 $app->useDatabasePath($app->basePath('app/database'));
 
 return $app;
