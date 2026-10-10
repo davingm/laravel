@@ -2,14 +2,14 @@
 
 Panduan ini menjelaskan cara membuat middleware role otomatis dengan command `make:roles` dan cara menggunakannya bersama `crud:generate --role`.
 
-> Jalankan semua perintah dari folder `playground/`.
+> Jalankan semua perintah dari root aplikasi, yaitu folder yang berisi file `artisan`.
 
 ## 1. Buat middleware role otomatis
 
 Command berikut membuat file middleware untuk satu atau beberapa role sekaligus:
 
 ```bash
-php artisan make:roles admin author editor
+artisan make:roles admin author editor
 ```
 
 Hasilnya akan membuat file berikut di `app/Http/Middleware/`:
@@ -64,7 +64,7 @@ Generator CRUD dapat membuat route yang otomatis dibungkus dengan auth + role mi
 Contoh:
 
 ```bash
-php artisan crud:generate Product --role=admin
+artisan crud:generate Product --role=admin
 ```
 
 Hasil yang masuk ke `app/routes/web.php` akan seperti ini:
@@ -91,7 +91,7 @@ ls app/Http/Middleware
 
 ### Cek route yang terdaftar
 ```bash
-php artisan route:list --path=products
+artisan route:list --path=products
 ```
 
 Pastikan route product muncul dengan middleware:
@@ -101,7 +101,7 @@ Pastikan route product muncul dengan middleware:
 
 ### Cek test otomatis
 ```bash
-php artisan test --filter='CrudGenerateCommandTest|MakeRolesCommandTest'
+artisan test --filter='CrudGenerateCommandTest|MakeRolesCommandTest'
 ```
 
 Semua test harus PASS.

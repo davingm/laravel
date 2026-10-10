@@ -1,5 +1,7 @@
 # Composer package split releases
 
+> **Status: perlu disinkronkan dan diverifikasi.** Dokumen ini masih menyebut package `davingm/<name>`, sedangkan manifest Composer saat ini menggunakan `auto/laravel` dan `auto/auth`. Workflow split juga memvalidasi nama `davingm/<name>`. Jangan gunakan langkah rilis di bawah sampai keputusan nama dan workflow diselaraskan.
+
 This repository keeps Composer packages under `packages/` and publishes each package to `github.com/davingm/<folder-name>`. The release workflow uses `git subtree split`, which creates a package-only history while retaining the history of files under that package path.
 
 ## Current package folders

@@ -54,7 +54,7 @@ laravel-davingm/
 - Workflow menolak split ke repo yang sama dengan sumber.
 - Webhook Packagist tidak diatur workflow. Harus dikonfigurasi terpisah pada repo tujuan.
 - Risiko: repo tujuan yang sudah punya commit atau tag berbeda akan menolak push (tidak ditimpa).
-- Panduan setup ada di `docs/package-split-releases.md`.
+- Dokumen package split ada di `docs/discussion/package-split-releases.md` dan perlu diselaraskan sebelum dipakai untuk rilis.
 - Workflow belum pernah dijalankan sungguhan.
 
 ## Perintah yang dipakai
