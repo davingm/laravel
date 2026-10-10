@@ -4,7 +4,7 @@ Baca file ini dulu sebelum mengubah apa pun. Isinya konteks proyek dan keputusan
 
 ## Aturan umum
 
-- Informasi teknis (versi, sintaks, perilaku GitHub Actions / Composer / Packagist / Laravel) harus diverifikasi dari sumber resmi atau pencarian, bukan dari ingatan. Jika tidak bisa diverifikasi, tulis "belum diverifikasi".
+- Informasi teknis (versi, sintaks, serta perilaku GitHub Actions / Composer / Packagist / Laravel) harus diverifikasi dari sumber resmi atau pencarian, bukan dari ingatan. Jika tidak bisa diverifikasi, tulis "belum diverifikasi".
 - Jangan mengubah struktur proyek tanpa alasan. Periksa kondisi aktual repo sebelum bertindak.
 - Perintah destruktif (`migrate:fresh`, `rm -rf`, dsb.) jangan dijalankan pada database atau folder default. Pakai SQLite sementara atau salinan terisolasi.
 - Balas dalam bahasa Indonesia.
