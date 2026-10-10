@@ -8,6 +8,16 @@ use Illuminate\Support\Str;
 class MakeMigrationCommand extends MigrateMakeCommand
 {
     /**
+     * Laravel discovers commands by constructing them to read their signatures.
+     * Resolve the same services used by Laravel's built-in migration command
+     * explicitly, since MigrationCreator has a required custom stub path.
+     */
+    public function __construct()
+    {
+        parent::__construct(app('migration.creator'), app('composer'));
+    }
+
+    /**
      * The console command signature.
      *
      * @var string

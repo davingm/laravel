@@ -31,7 +31,7 @@ class PreviewCommand extends Command
 
         // Write a temporary preview flag file that MinifyHtmlMiddleware reads.
         // We write the current PID so middleware can verify the process is alive.
-        $flagFile = base_path('.auto/.preview');
+        $flagFile = base_path('.laravel/.preview');
         file_put_contents($flagFile, (string) getmypid());
 
         register_shutdown_function(static function () use ($flagFile): void {

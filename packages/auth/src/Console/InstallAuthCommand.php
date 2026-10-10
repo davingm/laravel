@@ -9,7 +9,7 @@ class InstallAuthCommand extends Command
 {
     protected $signature = 'auth:install {--force : Replace existing package files}';
 
-    protected $description = 'Install AutoLaravel username and password authentication';
+    protected $description = 'Install Laravel username and password authentication';
 
     public function handle(Filesystem $files): int
     {

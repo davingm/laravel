@@ -72,7 +72,7 @@ class MinifyHtmlMiddleware
             return true;
         }
 
-        $flagFile = base_path('.auto/.preview');
+        $flagFile = base_path('.laravel/.preview');
         if (! file_exists($flagFile)) {
             return false;
         }

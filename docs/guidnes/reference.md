@@ -1,7 +1,7 @@
 # davingm/laravel — Reference Documentation
 
 > Framework documentation for the **davingm** Laravel starter.
-> PHP >= 8.3 · Node.js >= 18 · Laravel 13
+> PHP >= 8.3 · Node.js >= 20.19 or >= 22.12 · Laravel 13
 
 ---
 
@@ -45,19 +45,19 @@ cd nama-proyek
 artisan dev
 ```
 
-Setelah `composer create-project`, Composer menyiapkan database, menginstall npm dependencies dari `package-lock.json`, membangun asset frontend, dan memasang CLI `artisan` secara global via `setup.js`. Launcher mencari `.davingm/cli.js` dari direktori kerja saat ini ke direktori induk, sehingga satu instalasi global bisa digunakan di beberapa project. Jalankan `artisan dev` dari direktori project atau subdirektorinya.
+Setelah `composer create-project`, Composer menyiapkan database, menginstall npm dependencies dari `package-lock.json`, membangun asset frontend, dan memasang CLI `artisan` secara global via `setup.js`. Launcher mencari `.laravel/cli.js` dari direktori kerja saat ini ke direktori induk, sehingga satu instalasi global bisa digunakan di beberapa project. Jalankan `artisan dev` dari direktori project atau subdirektorinya.
 
 Jika launcher global yang sudah ada masih menunjuk ke lokasi project lama, jalankan ulang setup dari root project:
 
 ```bash
-node .davingm/setup.js
+node .laravel/setup.js
 ```
 
 ---
 
 ## The artisan CLI
 
-`artisan` adalah wrapper Node.js (`.davingm/cli.js`) yang memperluas perintah standar `php artisan`. Berbeda dengan `php artisan` biasa, CLI ini:
+`artisan` adalah wrapper Node.js (`.laravel/cli.js`) yang memperluas perintah standar `php artisan`. Berbeda dengan `php artisan` biasa, CLI ini:
 
 - Menjalankan beberapa proses sekaligus (`php artisan serve`, `queue:work`, `npm run dev`)
 - Menampilkan output dengan color-coding dan formatting yang bersih
@@ -345,7 +345,7 @@ php artisan preview --build
 | HTML minifikasi | Tidak | Ya |
 | Error detail | Ditampilkan | Disembunyikan |
 
-Preview mode menulis file flag `.davingm/.preview` yang dibaca middleware untuk mengaktifkan minifikasi HTML. File ini otomatis dihapus saat server berhenti.
+Preview mode menulis file flag `.laravel/.preview` yang dibaca middleware untuk mengaktifkan minifikasi HTML. File ini otomatis dihapus saat server berhenti.
 
 ---
 
@@ -364,7 +364,7 @@ php artisan frontend:generate --clear
 |---|---|
 | `--clear` | Hapus view cache sebelum generate ulang |
 
-Manifest disimpan di `.davingm/cache/manifest.json` dan di-ignore Git. Perintah ini dijalankan otomatis setiap `artisan dev` dimulai.
+Manifest disimpan di `.laravel/cache/manifest.json` dan di-ignore Git. Perintah ini dijalankan otomatis setiap `artisan dev` dimulai.
 
 ---
 
@@ -529,7 +529,7 @@ $payload = Frontend::payload('barang.index');
 
 ### Frontend Manifest
 
-Manifest adalah daftar semua halaman yang terdaftar, disimpan di `.davingm/cache/manifest.json`:
+Manifest adalah daftar semua halaman yang terdaftar, disimpan di `.laravel/cache/manifest.json`:
 
 ```json
 {
@@ -770,10 +770,10 @@ Komponen header global (`src/components/site-header.blade.php`). Menampilkan bra
 
 ## Cache and Runtime Files
 
-Semua file runtime disimpan di `.davingm/cache/` dan **di-ignore Git**:
+Semua file runtime disimpan di `.laravel/cache/` dan **di-ignore Git**:
 
 ```
-.davingm/
+.laravel/
 ├── cache/
 │   ├── manifest.json           <- Daftar semua halaman terdaftar
 │   └── payloads/
@@ -807,7 +807,7 @@ Composer menjalankan `setup.js` otomatis setelah install, yang:
 ### Instalasi manual (jika auto-setup gagal)
 
 ```bash
-cd .davingm
+cd .laravel
 npm install
 npm link
 ```
@@ -817,9 +817,9 @@ Setelah `npm link`, perintah `artisan` tersedia secara global.
 Atau jalankan langsung tanpa link:
 
 ```bash
-node .davingm/cli.js dev
-node .davingm/cli.js build
-node .davingm/cli.js migrate
+node .laravel/cli.js dev
+node .laravel/cli.js build
+node .laravel/cli.js migrate
 ```
 
 ### Requirements

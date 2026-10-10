@@ -39,7 +39,7 @@ The application source is under `playground/`. The Nuxt-inspired page convention
 
 ## Frontend
 
-The project includes a server-rendered page frontend. Pages are in `src/pages` and shared layouts are in `src/layouts`, relative to `playground/`. Generated frontend manifest and payload files are stored in `playground/.davingm/cache` and ignored by Git.
+The project includes a server-rendered page frontend. Pages are in `src/pages` and shared layouts are in `src/layouts`, relative to `playground/`. Generated frontend manifest and payload files are stored in `playground/.laravel/cache` and ignored by Git.
 
 Build frontend assets from `playground/`:
 
@@ -56,7 +56,7 @@ Packages are maintained in `packages/<name>` and split to move for individual Gi
 The `artisan` helper is part of the playground CLI. To link it for local use, run:
 
 ```bash
-cd playground/.davingm
+cd playground/.laravel
 npm install
 npm link
 ```
@@ -67,7 +67,7 @@ Then run `artisan` from the playground project directory. Standard `php artisan`
 
 - PHP >= 8.3
 - Composer
-- Node.js >= 18
+- Node.js >= 20.19 or >= 22.12
 
 ## License
 

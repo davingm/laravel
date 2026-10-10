@@ -35,9 +35,9 @@ auto-src::layouts.app
 
 ## 3. CLI dan direktori runtime
 
-Direktori internal `.davingm/` pada aplikasi telah diganti menjadi `.auto/`. Script Composer dan CLI menggunakan lokasi baru, termasuk cache frontend dan flag preview.
+Source CLI, cache frontend, dan flag preview kini berada di `.laravel/`. Script Composer, launcher, dan perintah Artisan menggunakan direktori ini. Output CLI memakai label `[laravel]`.
 
-Variabel environment preview yang digunakan sekarang adalah `AUTO_PREVIEW`. Kode JavaScript aplikasi menyediakan `window.__AUTO_LARAVEL__` dan mengirim event `auto:navigated` setelah navigasi.
+Nama Composer `auto/laravel`, namespace `AutoLaravel`, variabel environment preview `AUTO_PREVIEW`, serta API JavaScript `window.__AUTO_LARAVEL__` dan event `auto:navigated` tetap dipertahankan untuk menjaga kompatibilitas.
 
 ## 4. Nama command Artisan
 
@@ -76,6 +76,6 @@ composer validate --no-check-publish --no-check-lock --working-dir=packages/auth
 ## Catatan
 
 - Gunakan `auto/laravel` dan `auto/auth` untuk nama package baru.
-- Jangan mengembalikan referensi direktori `.davingm/`, konfigurasi `davingm-auth`, atau namespace PHP `Davingm\Auth` pada kode baru.
-- Project yang sudah disalin sebelum rebranding mungkin masih memiliki direktori `.davingm/` atau memakai `DAVINGM_PREVIEW`; sesuaikan file dan environment tersebut dengan nama baru.
+- Jangan mengembalikan referensi direktori `.davingm/` atau `.auto/`, konfigurasi `davingm-auth`, atau namespace PHP `Davingm\Auth` pada kode baru.
+- Project yang sudah disalin sebelum rebranding mungkin masih memiliki direktori `.davingm/` atau `.auto/`; cache lama dapat dibuat ulang oleh aplikasi setelah source dipindah ke `.laravel/`.
 - File aplikasi utama berada di `playground/`; perubahan bootstrap package dan validasi materializer berada di root repository.

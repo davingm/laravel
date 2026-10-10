@@ -19,7 +19,7 @@ class FrontendGenerateCommand extends Command
 
         $manifest = Frontend::generateManifest();
         $this->info('Frontend manifest generated: '.count($manifest['pages']).' page(s).');
-        $this->line('Runtime output: .auto/cache (ignored by Git)');
+        $this->line('Runtime output: .laravel/cache (ignored by Git)');
 
         return self::SUCCESS;
     }

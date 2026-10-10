@@ -13,11 +13,19 @@ The installer prepares the environment, runs database migrations, and builds the
 
 ## Development
 
-Start the development environment:
+For a fresh monorepo checkout, run once from `playground/`:
 
 ```bash
-composer run dev
+composer run setup
 ```
+
+Start the custom development environment from `playground/`:
+
+```bash
+artisan dev
+```
+
+If the global launcher is stale or not available on `PATH`, run `node .laravel/cli.js dev` instead. This starts the Laravel server, queue worker, and Vite dev server.
 
 Use `php artisan <command>` for Artisan commands, for example `php artisan route:list` or `php artisan test`.
 
@@ -29,7 +37,7 @@ Pages live in `src/pages` and shared layouts live in `src/layouts`. Run `npm run
 
 - PHP >= 8.3
 - Composer
-- Node.js >= 18
+- Node.js >= 20.19 or >= 22.12
 
 ## License
 

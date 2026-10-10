@@ -58,7 +58,7 @@
             "@php artisan migrate --graceful --ansi",
             "npm ci --ignore-scripts",
             "npm run build",
-            "node .auto/setup.js"
+            "node .laravel/setup.js"
         ]
     },
     "extra": {

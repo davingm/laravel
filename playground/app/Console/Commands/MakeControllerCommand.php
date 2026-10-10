@@ -14,7 +14,7 @@ class MakeControllerCommand extends Command
         {--model=       : The model class for type-hints (inferred from name when omitted)}
         {--plain        : Generate an empty controller without any methods}';
 
-    protected $description = 'Create a new controller (AutoLaravel style with Frontend imports)';
+    protected $description = 'Create a new controller with frontend imports';
 
     public function handle(): int
     {

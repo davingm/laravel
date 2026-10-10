@@ -1,7 +1,7 @@
 {
     "name": "@auto/cli",
     "version": "1.0.0",
-    "description": "AutoLaravel development CLI",
+    "description": "Laravel development CLI",
     "type": "module",
     "bin": {
         "artisan": "./cli.js"

@@ -71,7 +71,7 @@ npm run build
 Catatan lingkungan (Windows, Git Bash / PowerShell):
 
 - Jika `rm -rf public` gagal "Device or resource busy", biasanya ada proses PHP server uji yang tertinggal. Hentikan proses `php` dulu.
-- Beberapa test gagal karena izin tulis pada `bootstrap/cache` dan `.davingm/cache` di sandbox. Ini masalah izin, bukan bug Laravel.
+- Beberapa test gagal karena izin tulis pada `bootstrap/cache` dan `.laravel/cache` di sandbox. Ini masalah izin, bukan bug Laravel.
 - Build frontend di sandbox pernah gagal memuat binding native Tailwind. Dengan izin yang sesuai build berhasil.
 
 ## Keputusan yang belum final

@@ -6,7 +6,7 @@ Tutorial ini menjelaskan cara membuat CRUD `Barang` pada project Laravel ini. Im
 - View berada di `resources/views/pages`.
 - Auto-routing memakai `App\Support\PageRouter`.
 - Rendering halaman memakai `App\Support\Frontend`.
-- Payload frontend disimpan otomatis ke `.davingm/cache`.
+- Payload frontend disimpan otomatis ke `.laravel/cache`.
 - Navigasi antar halaman dapat memakai `data-navigate`.
 - View partial diawali `_` agar tidak dianggap sebagai halaman oleh auto-router.
 v
@@ -524,10 +524,10 @@ resources/views/pages/barang/_form.blade.php
 Payload ditulis ke:
 
 ```text
-.davingm/cache/payloads/barang.index.json
+.laravel/cache/payloads/barang.index.json
 ```
 
-Folder `.davingm/cache` di-ignore Git. Cache tersebut adalah hasil generate lokal, bukan source code yang perlu dibawa ke repository.
+Folder `.laravel/cache` di-ignore Git. Cache tersebut adalah hasil generate lokal, bukan source code yang perlu dibawa ke repository.
 
 Layout `resources/views/layouts/app.blade.php` memakai:
 
