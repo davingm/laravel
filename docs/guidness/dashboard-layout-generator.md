@@ -1,8 +1,8 @@
 # Panduan Dashboard Layout Generator
 
-Panduan ini menjelaskan cara membuat layout Blade sidebar atau navbar menggunakan command `make:dashboard` di aplikasi `playground`.
+Panduan ini menjelaskan cara membuat layout Blade sidebar atau navbar menggunakan command `make:dashboard`.
 
-> Jalankan semua command dari folder `playground/`. Generator tidak menimpa `src/layouts/app.blade.php` yang sudah ada.
+> Jalankan semua command dari root aplikasi, yaitu folder yang berisi file `artisan`. Generator tidak menimpa `src/layouts/app.blade.php` yang sudah ada.
 
 ## 1. Pilih tipe layout
 
@@ -14,12 +14,6 @@ Generator mendukung dua pilihan:
 Jika opsi `--layout` tidak diberikan, generator menggunakan `sidebar`.
 
 ## 2. Buat layout sidebar
-
-Dari root repository, masuk ke aplikasi:
-
-```bash
-cd playground
-```
 
 Jalankan command tanpa opsi untuk memakai layout sidebar:
 
@@ -53,7 +47,7 @@ File tersebut menjadi layout Blade utama karena `src/` adalah root view aplikasi
 
 Jika `src/layouts/app.blade.php` sudah ada, command menampilkan warning dan melewati proses penulisan. File tidak diubah, termasuk saat opsi `--layout` yang berbeda diberikan.
 
-Karena aplikasi ini sudah memiliki layout pada lokasi tersebut, menjalankan command di checkout ini akan melewatinya. Pilih sidebar atau navbar sebelum membuat layout pada project baru; tinjau dan ubah layout yang ada secara manual bila ingin mengganti desainnya.
+Jika layout sudah ada, command menampilkan warning dan melewati proses penulisan. Pilih sidebar atau navbar sebelum membuat layout; tinjau dan ubah layout yang ada secara manual bila ingin mengganti desainnya.
 
 ## 5. Gunakan layout pada halaman CRUD
 
@@ -75,7 +69,7 @@ File CRUD yang sudah ada tetap dilewati dan tidak ditimpa.
 
 ## 6. Build asset dan jalankan test
 
-Utility Tailwind pada stub layout ikut dipindai saat build asset. Jalankan dari folder `playground/`:
+Utility Tailwind pada stub layout ikut dipindai saat build asset. Jalankan dari root aplikasi:
 
 ```bash
 npm run build

@@ -19,7 +19,7 @@ Thank you for considering contributing to this project. This document outlines t
 
 Before contributing, please:
 
-1. Read the [reference documentation](docs/guidnes/reference.md) to understand how the framework works.
+1. Read the available [framework feature guides](docs/README.md) before changing related behavior. Documents under `docs/discussion/` may be outdated or still under review.
 2. Search existing [issues](https://github.com/davingm/laravel/issues) and [pull requests](https://github.com/davingm/laravel/pulls) to avoid duplicating effort.
 3. Open an issue before starting work on a significant change. This allows the maintainers to discuss the direction before implementation begins.
 
@@ -174,7 +174,7 @@ Pull requests that do not have tests, break existing tests, or fail the Pint che
 
 ---
 
-Package releases use tags in the form `<package>-vX.Y.Z` (for example, `auth-v1.0.0`). Follow [the package release guide](docs/package-split-releases.md) instead of creating a generic version tag.
+Package releases use tags in the form `<package>-vX.Y.Z` (for example, `auth-v1.0.0`). The release documentation is currently under review; see the [package split discussion](docs/discussion/package-split-releases.md) before creating or pushing a release tag.
 
 ## Reporting Bugs
 
@@ -201,4 +201,3 @@ Open a [GitHub Issue](https://github.com/davingm/laravel/issues) with the label 
 - Alternatives you have considered
 
 Features that significantly expand the scope or add dependencies will require broader discussion before implementation.
-

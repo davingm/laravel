@@ -1,5 +1,7 @@
 # Tutorial CRUD Barang dari Nol
 
+> **Status: perlu diperbarui.** Tutorial ini menggunakan struktur lama seperti `resources/views/pages`; implementasi framework saat ini menyimpan halaman di `src/pages`. Jangan ikuti path tutorial ini tanpa menyesuaikannya dengan struktur terbaru.
+
 Tutorial ini menjelaskan cara membuat CRUD `Barang` pada project Laravel ini. Implementasi mengikuti arsitektur yang sudah dipakai project:
 
 - Backend memakai Laravel Resource Controller.

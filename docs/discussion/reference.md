@@ -1,5 +1,7 @@
 # davingm/laravel — Reference Documentation
 
+> **Status: referensi lama, belum menjadi panduan siap pakai.** Dokumen ini masih memuat nama `davingm/laravel` dan API frontend lama. Cocokkan setiap command, path, dan API dengan implementasi saat ini sebelum menggunakannya sebagai acuan.
+
 > Framework documentation for the **davingm** Laravel starter.
 > PHP >= 8.3 · Node.js >= 20.19 or >= 22.12 · Laravel 13
 
