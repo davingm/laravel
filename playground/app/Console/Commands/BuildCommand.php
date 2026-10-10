@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Support\Frontend;
 use Illuminate\Console\Command;
+use Symfony\Component\Process\Process;
 
 class BuildCommand extends Command
 {
@@ -28,9 +29,9 @@ class BuildCommand extends Command
     {
         $startMs = (int) (microtime(true) * 1000);
 
-        $this->newLine();
-        $this->line('  <fg=red;options=bold>Building for production…</>');
-        $this->newLine();
+        $this->plainLine('');
+        $this->plainLine('Building for production');
+        $this->plainLine('');
 
         // ── 1. Tests ──────────────────────────────────────────────────────────
         if (! $this->option('skip-tests')) {
@@ -38,7 +39,7 @@ class BuildCommand extends Command
             $exitCode = $this->runTests();
 
             if ($exitCode !== 0) {
-                $this->printError('Tests failed — build aborted. Run with --skip-tests to bypass.');
+                $this->printError('Tests failed - build aborted. Run with --skip-tests to bypass.');
 
                 return self::FAILURE;
             }
@@ -54,7 +55,7 @@ class BuildCommand extends Command
             $exitCode = $this->runNpm();
 
             if ($exitCode !== 0) {
-                $this->printError('npm run build failed — build aborted.');
+                $this->printError('npm run build failed - build aborted.');
 
                 return self::FAILURE;
             }
@@ -95,9 +96,9 @@ class BuildCommand extends Command
 
         // ── Done ──────────────────────────────────────────────────────────────
         $elapsed = round((microtime(true) * 1000 - $startMs) / 1000, 1);
-        $this->newLine();
-        $this->line("  <fg=green;options=bold>✓</> Build complete <fg=gray>({$elapsed}s)</>");
-        $this->newLine();
+        $this->plainLine('');
+        $this->plainLine("OK Build complete ({$elapsed}s)");
+        $this->plainLine('');
 
         return self::SUCCESS;
     }
@@ -105,29 +106,28 @@ class BuildCommand extends Command
     private function step(string $key): void
     {
         $label = $this->steps[$key];
-        $this->line("  <fg=gray>…</> {$label}");
+        $this->plainLine(".. {$label}");
     }
 
     private function stepDone(string $key, string $extra = ''): void
     {
         $label = $this->steps[$key];
-        $suffix = $extra !== '' ? " <fg=gray>{$extra}</>" : '';
-        // Move cursor up one line and overwrite
-        $this->output->write("\x1b[1A\r");
-        $this->line("  <fg=green>✓</> {$label}{$suffix}");
+        $suffix = $extra !== '' ? " {$extra}" : '';
+        // Keep each status on its own line for Git Bash compatibility.
+        $this->plainLine("OK {$label}{$suffix}");
     }
 
     private function stepSkipped(string $key): void
     {
         $label = $this->steps[$key];
-        $this->line("  <fg=gray>–</> {$label} <fg=gray>skipped</>");
+        $this->plainLine("-- {$label} skipped");
     }
 
     private function printError(string $message): void
     {
-        $this->newLine();
-        $this->line("  <fg=red>✗</> {$message}");
-        $this->newLine();
+        $this->plainLine('');
+        $this->plainLine("ERROR {$message}");
+        $this->plainLine('');
     }
 
     private function runTests(): int
@@ -142,60 +142,50 @@ class BuildCommand extends Command
                 'CACHE_STORE' => 'array',
                 'DB_CONNECTION' => 'sqlite',
                 'DB_DATABASE' => ':memory:',
+                'NO_COLOR' => '1',
+                'FORCE_COLOR' => '0',
+                'TERM' => 'dumb',
             ]),
             'is_string'
         );
 
-        $process = proc_open(
-            [PHP_BINARY, 'artisan', 'test', '--compact'],
-            [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
-            $pipes,
-            base_path(),
-            $env,
-        );
+        $process = new Process([PHP_BINARY, 'artisan', 'test', '--compact'], base_path(), $env, timeout: null);
+        $exitCode = $process->run();
 
-        if (! is_resource($process)) {
-            return 1;
-        }
+        if ($exitCode !== 0) {
+            $output = $process->getOutput().$process->getErrorOutput();
+            $output = preg_replace('/\x1B\[[0-?]*[ -\/]*[@-~]/', '', $output) ?? $output;
+            $output = str_replace(["\r\n", "\r"], "\n", $output);
 
-        while (! feof($pipes[1])) {
-            $line = fgets($pipes[1]);
-            if ($line !== false && trim($line) !== '') {
-                $this->line('     '.$line, null, 'v');
+            foreach (explode("\n", trim($output)) as $line) {
+                if ($line !== '') {
+                    $this->plainLine('     '.$line);
+                }
             }
         }
 
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-
-        return proc_close($process);
+        return $exitCode;
     }
 
     private function runNpm(): int
     {
-        $isWindows = PHP_OS_FAMILY === 'Windows';
+        $process = Process::fromShellCommandline(
+            'npm run build',
+            base_path(),
+            ['NO_COLOR' => '1', 'FORCE_COLOR' => '0', 'TERM' => 'dumb'],
+            timeout: null,
+        );
 
-        // On Windows use cmd /c to resolve npm.cmd via PATH, merge stderr into stdout
-        $cmd = $isWindows
-            ? 'cmd /c npm run build 2>&1'
-            : 'npm run build 2>&1';
+        return $process->run(function (string $type, string $buffer): void {
+            $buffer = preg_replace('/\x1B\[[0-?]*[ -\/]*[@-~]/', '', $buffer) ?? $buffer;
+            $buffer = str_replace(["\r\n", "\r"], "\n", $buffer);
 
-        $output = [];
-        $exitCode = 0;
+            $this->output->write($buffer, false);
+        });
+    }
 
-        exec($cmd, $output, $exitCode);
-
-        if ($exitCode !== 0) {
-            // Show full output on failure so developer knows what went wrong
-            $this->newLine();
-            foreach ($output as $line) {
-                if (trim($line) !== '') {
-                    $this->line('     <fg=red>'.htmlspecialchars($line, ENT_NOQUOTES).'</>');
-                }
-            }
-            $this->newLine();
-        }
-
-        return $exitCode;
+    private function plainLine(string $message): void
+    {
+        $this->output->write($message."\n", false);
     }
 }
