@@ -68,11 +68,11 @@ class MinifyHtmlMiddleware
 
     private function isPreviewActive(): bool
     {
-        if (env('DAVINGM_PREVIEW') === '1' || env('DAVINGM_PREVIEW') === true) {
+        if (env('AUTO_PREVIEW') === '1' || env('AUTO_PREVIEW') === true) {
             return true;
         }
 
-        $flagFile = base_path('.davingm/.preview');
+        $flagFile = base_path('.auto/.preview');
         if (! file_exists($flagFile)) {
             return false;
         }

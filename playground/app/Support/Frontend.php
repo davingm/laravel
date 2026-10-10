@@ -62,7 +62,7 @@ class Frontend
 
     public static function manifest(): array
     {
-        $path = storage_path('../.davingm/cache/manifest.json');
+        $path = storage_path('../.auto/cache/manifest.json');
 
         if (! File::exists($path)) {
             return [];
@@ -92,7 +92,7 @@ class Frontend
             'generated_at' => now()->toIso8601String(),
             'pages' => $pages,
         ];
-        $path = storage_path('../.davingm/cache/manifest.json');
+        $path = storage_path('../.auto/cache/manifest.json');
         File::ensureDirectoryExists(dirname($path));
         File::put($path, json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
@@ -103,6 +103,6 @@ class Frontend
     {
         $safeName = str_replace(['/', '\\'], '.', trim($page, '.'));
 
-        return storage_path('../.davingm/cache/payloads/'.$safeName.'.json');
+        return storage_path('../.auto/cache/payloads/'.$safeName.'.json');
     }
 }

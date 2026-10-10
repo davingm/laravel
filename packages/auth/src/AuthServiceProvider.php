@@ -1,8 +1,8 @@
 <?php
 
-namespace Davingm\Auth;
+namespace AutoLaravel\Auth;
 
-use Davingm\Auth\Console\InstallAuthCommand;
+use AutoLaravel\Auth\Console\InstallAuthCommand;
 use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -14,17 +14,17 @@ class AuthServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'davingm-auth');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'auto-auth');
 
         if (is_dir(base_path('src'))) {
-            $this->loadViewsFrom(base_path('src'), 'davingm-src');
+            $this->loadViewsFrom(base_path('src'), 'auto-src');
         }
 
         if ($this->app->runningInConsole()) {
             $this->commands([InstallAuthCommand::class]);
         }
 
-        if (config('davingm-auth.enabled', false)) {
+        if (config('auto-auth.enabled', false)) {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         }
     }

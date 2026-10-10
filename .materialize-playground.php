@@ -90,7 +90,7 @@ try {
     $applicationManifestPath = $projectRoot.DIRECTORY_SEPARATOR.'composer.json';
     $applicationManifest = json_decode(file_get_contents($applicationManifestPath), true, flags: JSON_THROW_ON_ERROR);
 
-    if (($applicationManifest['name'] ?? null) !== 'davingm/laravel' || ($applicationManifest['type'] ?? null) !== 'project') {
+    if (($applicationManifest['name'] ?? null) !== 'auto/laravel' || ($applicationManifest['type'] ?? null) !== 'project') {
         throw new RuntimeException('The playground files did not replace the bootstrap Composer manifest.');
     }
 

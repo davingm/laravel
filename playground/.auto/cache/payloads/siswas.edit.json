@@ -1,0 +1,17 @@
+{
+    "page": "siswas.edit",
+    "url": "http://localhost:8000/siswas/5/edit",
+    "path": "siswas/5/edit",
+    "data": {
+        "siswa": {
+            "id": 5,
+            "created_at": "2026-10-08T12:55:45.000000Z",
+            "updated_at": "2026-10-08T12:55:45.000000Z",
+            "nama": "dapin",
+            "kelas": "XII PPLG 1",
+            "no_absen": 6
+        }
+    },
+    "meta": [],
+    "generated_at": "2026-10-08T12:55:49+00:00"
+}

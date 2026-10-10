@@ -1,6 +1,6 @@
 <?php
 
-use Davingm\Auth\Http\Controllers\AuthenticatedSessionController;
+use AutoLaravel\Auth\Http\Controllers\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function (): void {
@@ -11,5 +11,5 @@ Route::middleware('web')->group(function (): void {
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('logout');
 
-    Route::view('/dashboard', 'davingm-auth::dashboard')->middleware('auth')->name('dashboard');
+    Route::view('/dashboard', 'auto-auth::dashboard')->middleware('auth')->name('dashboard');
 });

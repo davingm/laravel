@@ -15,7 +15,7 @@
         <a class="rounded-lg bg-gray-950 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-700" href="https://laravel.com/docs" target="_blank" rel="noreferrer">
             Read the Laravel docs
         </a>
-        <a class="rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-50" href="https://github.com/davingm/laravel" target="_blank" rel="noreferrer">
+        <a class="rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-50" href="https://github.com/auto/laravel" target="_blank" rel="noreferrer">
             Explore the framework
         </a>
     </div>

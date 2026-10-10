@@ -10,7 +10,7 @@ use Throwable;
 
 class CrudGenerateCommand extends Command
 {
-    protected $signature = 'crud:generate {name : Model name, e.g. Product}';
+    protected $signature = 'crud:generate {model : Nama Model} {--role= : Nama role untuk middleware}';
 
     protected $description = 'Generate CRUD files from the active database schema';
 
@@ -18,7 +18,7 @@ class CrudGenerateCommand extends Command
 
     public function handle(): int
     {
-        $inputName = Str::snake(trim((string) $this->argument('name')));
+        $inputName = Str::snake(trim((string) $this->argument('model')));
         $modelInput = Str::endsWith($inputName, 's') ? substr($inputName, 0, -1) : $inputName;
         $modelName = Str::studly($modelInput);
         if (! preg_match('/^[A-Z][A-Za-z0-9]*$/', $modelName)) {
@@ -27,6 +27,11 @@ class CrudGenerateCommand extends Command
             return self::FAILURE;
         }
 
+        $role = $this->option('role');
+        $table = Str::snake(Str::pluralStudly($modelName));
+        $routePrefix = Str::kebab($table);
+        $pageDirectory = Str::kebab($table);
+
         $tableCandidates = Str::endsWith($inputName, 's')
             ? [$inputName, $modelInput]
             : [$inputName.'s', $inputName];
@@ -34,7 +39,7 @@ class CrudGenerateCommand extends Command
         $stubDirectory = base_path('stubs/crud');
         $routeFile = base_path('app/routes/web.php');
 
-        foreach (['model', 'controller', 'index', 'create', 'edit'] as $stubName) {
+        foreach (['model', 'controller', 'view_index', 'view_form', 'edit'] as $stubName) {
             if (! File::exists("{$stubDirectory}/{$stubName}.stub")) {
                 $this->error("CRUD stub not found: stubs/crud/{$stubName}.stub");
 
@@ -53,8 +58,7 @@ class CrudGenerateCommand extends Command
                 ->first(fn (string $candidate) => Schema::hasTable($candidate));
 
             if ($table === null) {
-                $expectedTables = implode('" or "', array_unique($tableCandidates));
-                $this->error("Neither table \"{$expectedTables}\" exists. A migration file alone does not create its table; run `artisan migrate` first.");
+                $this->error("Table \"{$tableCandidates[0]}\" does not exist.");
 
                 return self::FAILURE;
             }
@@ -130,8 +134,8 @@ class CrudGenerateCommand extends Command
         $files = [
             app_path("Models/{$modelName}.php") => 'model',
             app_path("Http/Controllers/{$modelName}Controller.php") => 'controller',
-            base_path("src/pages/{$pageDirectory}/index.blade.php") => 'index',
-            base_path("src/pages/{$pageDirectory}/create.blade.php") => 'create',
+            base_path("src/pages/{$pageDirectory}/index.blade.php") => 'view_index',
+            base_path("src/pages/{$pageDirectory}/create.blade.php") => 'view_form',
             base_path("src/pages/{$pageDirectory}/edit.blade.php") => 'edit',
         ];
 
@@ -151,7 +155,7 @@ class CrudGenerateCommand extends Command
             }
 
             File::ensureDirectoryExists(dirname($path));
-            $templateContext = in_array($stubName, ['create', 'edit'], true)
+            $templateContext = in_array($stubName, ['view_form', 'edit'], true)
                 ? ($stubName === 'edit' ? $editContext : $createContext)
                 : $createContext;
             $contents = strtr(File::get("{$stubDirectory}/{$stubName}.stub"), $templateContext);
@@ -159,7 +163,7 @@ class CrudGenerateCommand extends Command
             $this->line("  <fg=green>✓</> {$relativePath} created");
         }
 
-        [$routeAdded, $routeError] = $this->registerResourceRoute($routeFile, $routePrefix, $modelName);
+        [$routeAdded, $routeError] = $this->registerResourceRoute($routeFile, $routePrefix, $modelName, $role);
         if ($routeError !== null) {
             $this->error($routeError);
 
@@ -392,12 +396,19 @@ class CrudGenerateCommand extends Command
     }
 
     /** @return array{bool, string|null} */
-    private function registerResourceRoute(string $routeFile, string $routePrefix, string $modelName): array
+    private function registerResourceRoute(string $routeFile, string $routePrefix, string $modelName, ?string $role = null): array
     {
         $original = File::get($routeFile);
         $content = $original;
+        $roleLabel = trim((string) ($role ?? ''));
+        $modelMarker = "// CRUD Routes for {$modelName}";
+        $routeExists = str_contains($content, $modelMarker);
+
         $routePattern = '/Route\s*::\s*resource\s*\(\s*([\'\"])'.preg_quote($routePrefix, '/').'\1\s*,/';
-        $routeExists = preg_match($routePattern, $content) === 1;
+        if (! $routeExists) {
+            $routeExists = preg_match($routePattern, $content) === 1;
+        }
+
         $registerPosition = strpos($content, 'PageRouter::register');
 
         if ($registerPosition !== false) {
@@ -431,8 +442,14 @@ class CrudGenerateCommand extends Command
         }
 
         if (! $routeExists) {
-            $routeLine = "Route::resource('{$routePrefix}', \\App\\Http\\Controllers\\{$modelName}Controller::class);";
-            $content = rtrim($content)."\n\n{$routeLine}\n";
+            if ($roleLabel !== '') {
+                $roleAlias = 'role.'.Str::snake($roleLabel);
+                $routeBlock = "// CRUD Routes for {$modelName} (Role: {$roleLabel})\nRoute::middleware(['auth', '{$roleAlias}'])->group(function () {\n    Route::resource('{$routePrefix}', \\App\\Http\\Controllers\\{$modelName}Controller::class);\n});";
+            } else {
+                $routeBlock = "// CRUD Routes for {$modelName}\nRoute::resource('{$routePrefix}', \\App\\Http\\Controllers\\{$modelName}Controller::class);";
+            }
+
+            $content = rtrim($content)."\n\n{$routeBlock}\n";
         }
 
         if ($content !== $original) {

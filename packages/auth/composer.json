@@ -1,6 +1,6 @@
 {
-    "name": "davingm/auth",
-    "description": "Authentication starter for the davingm Laravel framework.",
+    "name": "auto/auth",
+    "description": "Authentication starter for the AutoLaravel framework.",
     "type": "library",
     "license": "MIT",
     "require": {
@@ -12,13 +12,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Davingm\\Auth\\": "src/"
+            "AutoLaravel\\Auth\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Davingm\\Auth\\AuthServiceProvider"
+                "AutoLaravel\\Auth\\AuthServiceProvider"
             ]
         }
     }

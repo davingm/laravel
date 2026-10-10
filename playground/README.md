@@ -1,11 +1,11 @@
-# davingm/laravel
+# auto/laravel
 
-Laravel framework project by [davingm](https://github.com/davingm).
+Laravel framework project by [AutoLaravel](https://github.com/auto).
 
 ## Create a project
 
 ```bash
-composer create-project davingm/laravel app
+composer create-project auto/laravel app
 cd app
 ```
 

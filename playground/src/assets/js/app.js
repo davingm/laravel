@@ -1,7 +1,7 @@
 const payloadElement = document.querySelector('[data-page-payload]');
 const payload = payloadElement ? JSON.parse(payloadElement.textContent) : null;
 
-window.__DAVINGM__ = {
+window.__AUTO_LARAVEL__ = {
 	payload,
 	navigate(url) {
 		return fetch(url, {
@@ -23,7 +23,7 @@ window.__DAVINGM__ = {
 			document.title = documentFromResponse.title;
 			history.pushState({}, '', url);
 			window.scrollTo({ top: 0, behavior: 'instant' });
-			window.dispatchEvent(new CustomEvent('davingm:navigated', { detail: { url } }));
+			window.dispatchEvent(new CustomEvent('auto:navigated', { detail: { url } }));
 		}).catch(() => window.location.assign(url));
 	},
 };
@@ -32,7 +32,7 @@ document.addEventListener('click', (event) => {
 	const link = event.target.closest('[data-navigate]');
 	if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 	event.preventDefault();
-	window.__DAVINGM__.navigate(link.dataset.navigate || link.href);
+	window.__AUTO_LARAVEL__.navigate(link.dataset.navigate || link.href);
 });
 
 document.addEventListener('submit', (event) => {
