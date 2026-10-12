@@ -94,6 +94,14 @@ try {
         throw new RuntimeException('The playground files did not replace the bootstrap Composer manifest.');
     }
 
+    if (($applicationManifest['require']['davingm/laravel-runtime'] ?? null) !== '^1.0') {
+        throw new RuntimeException('The playground Composer manifest must require davingm/laravel-runtime so Composer generates the .laravel runtime during installation.');
+    }
+
+    if (($applicationManifest['config']['allow-plugins']['davingm/laravel-runtime'] ?? false) !== true) {
+        throw new RuntimeException('The playground Composer manifest must allow the davingm/laravel-runtime Composer plugin.');
+    }
+
     // The path repository is only for monorepo development. Installed apps
     // resolve the runtime plugin from Packagist and do not contain packages/.
     unset($applicationManifest['repositories']);
@@ -110,7 +118,7 @@ try {
 
     $applicationGitignore = file_get_contents($projectRoot.DIRECTORY_SEPARATOR.'.gitignore');
 
-    if (! is_string($applicationGitignore) || ! preg_match('/^\/\.laravel\/$/m', $applicationGitignore)) {
+    if (! is_string($applicationGitignore) || ! preg_match('/^\/\.laravel\/\r?$/m', $applicationGitignore)) {
         throw new RuntimeException('The materialized application .gitignore must ignore the generated .laravel runtime directory.');
     }
 
