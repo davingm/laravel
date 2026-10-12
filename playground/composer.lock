@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "966c32298d473d182f0273f7c6410cfd",
+    "content-hash": "adec9a6e1c5ec96935b6817c3d834f44",
     "packages": [
         {
             "name": "brick/math",
@@ -142,11 +142,17 @@
         },
         {
             "name": "davingm/laravel-runtime",
-            "version": "1.0.0",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/davingm/laravel-runtime.git",
+                "reference": "236845d739cd0b16bcc1201c864925de51dc4885"
+            },
             "dist": {
-                "type": "path",
-                "url": "../packages/laravel",
-                "reference": "8a9744177b1702c554dd09c7fd6e5375c1787c79"
+                "type": "zip",
+                "url": "https://api.github.com/repos/davingm/laravel-runtime/zipball/236845d739cd0b16bcc1201c864925de51dc4885",
+                "reference": "236845d739cd0b16bcc1201c864925de51dc4885",
+                "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^2.2",
@@ -161,14 +167,16 @@
                     "Davingm\\LaravelRuntime\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "AGPL-3.0-or-later"
             ],
             "description": "Internal Composer plugin that installs the Laravel runtime directory.",
-            "transport-options": {
-                "symlink": false,
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/davingm/laravel-runtime/issues",
+                "source": "https://github.com/davingm/laravel-runtime/tree/v1.0.0"
+            },
+            "time": "2026-10-12T12:24:17+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
