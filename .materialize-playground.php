@@ -102,10 +102,16 @@ try {
         throw new RuntimeException('Unable to write the installed application Composer manifest.');
     }
 
-    foreach (['artisan', 'bootstrap'.DIRECTORY_SEPARATOR.'app.php', 'package.json'] as $requiredFile) {
+    foreach (['.gitignore', 'artisan', 'bootstrap'.DIRECTORY_SEPARATOR.'app.php', 'package.json'] as $requiredFile) {
         if (! is_file($projectRoot.DIRECTORY_SEPARATOR.$requiredFile)) {
             throw new RuntimeException("The materialized project is missing a required file: {$requiredFile}");
         }
+    }
+
+    $applicationGitignore = file_get_contents($projectRoot.DIRECTORY_SEPARATOR.'.gitignore');
+
+    if (! is_string($applicationGitignore) || ! preg_match('/^\/\.laravel\/$/m', $applicationGitignore)) {
+        throw new RuntimeException('The materialized application .gitignore must ignore the generated .laravel runtime directory.');
     }
 
     removeDirectoryTree($playgroundPath);
