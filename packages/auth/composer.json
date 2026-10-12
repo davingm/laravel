@@ -1,5 +1,6 @@
+
 {
-    "name": "auto/auth",
+    "name": "davingm/auth",
     "description": "Authentication starter for the AutoLaravel framework.",
     "type": "library",
     "license": "MIT",

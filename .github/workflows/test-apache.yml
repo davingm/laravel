@@ -1,0 +1,91 @@
+name: Test Laravel application with Apache
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apache-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Composer, tests, frontend, and Apache smoke test
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: playground
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Install Apache and PHP module
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes apache2 libapache2-mod-php8.3
+          sudo a2enmod rewrite
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: curl, dom, fileinfo, mbstring, openssl, pdo_sqlite, sqlite3, tokenizer, xml
+          tools: composer:v2
+          coverage: none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: playground/package-lock.json
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare application environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate --force
+          mkdir -p app/database
+          touch app/database/database.sqlite
+          chmod -R u+rwX,go+rX storage bootstrap/cache .laravel/cache app/database
+          php artisan migrate --force
+
+      - name: Run Laravel tests
+        run: php artisan test --compact
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Configure Apache for the playground
+        run: |
+          sudo tee /etc/apache2/sites-available/000-default.conf > /dev/null <<EOF
+          <VirtualHost *:80>
+              DocumentRoot $GITHUB_WORKSPACE/playground/public
+              <Directory $GITHUB_WORKSPACE/playground/public>
+                  AllowOverride All
+                  Require all granted
+          </Directory>
+              ErrorLog \${APACHE_LOG_DIR}/error.log
+              CustomLog \${APACHE_LOG_DIR}/access.log combined
+          </VirtualHost>
+          EOF
+          sudo systemctl restart apache2
+
+      - name: Smoke test through Apache
+        run: |
+          for attempt in {1..10}; do
+            if curl --fail --silent --show-error http://127.0.0.1/ --output /tmp/laravel-homepage.html; then
+              break
+            fi
+            sleep 2
+          done
+          test -s /tmp/laravel-homepage.html
+          grep -q 'A clean start for your next idea.' /tmp/laravel-homepage.html

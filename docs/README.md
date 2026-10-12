@@ -26,6 +26,10 @@ Baca bab dasar secara berurutan. Setiap bab adalah halaman mandiri untuk navigas
 - [Dashboard Layout Generator](./guidness/dashboard-layout-generator.md) — membuat layout sidebar atau navbar.
 - [Role Middleware Generator](./guidness/role-middleware-generator.md) — membuat middleware role dan menggunakannya pada route atau CRUD.
 
+## CI
+
+Workflow `.github/workflows/test-apache.yml` berjalan pada setiap push dan pull request. Workflow memasang dependency Composer di `playground/`, menjalankan test Laravel, membangun asset frontend, lalu memastikan halaman utama merespons melalui Apache dengan document root `playground/public`.
+
 ## `discussion/`
 
 Rancangan arsitektur, catatan perubahan, serta dokumen yang masih perlu disinkronkan atau diverifikasi. Jangan menganggap dokumen di sini sebagai panduan siap pakai sebelum statusnya diperbarui.
