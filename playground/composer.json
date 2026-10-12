@@ -63,6 +63,7 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php scripts/install-framework.php",
             "@php artisan package:discover --ansi",
             "node .laravel/setup.js"
         ],

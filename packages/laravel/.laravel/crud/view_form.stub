@@ -1,0 +1,33 @@
+@extends('layouts.app')
+
+@section('content')
+<section class="crud-shell narrow-shell">
+    <header class="crud-form-heading">
+        <a href="{{ route('{{ROUTE_PREFIX}}.index') }}" class="back-link">&larr; Kembali ke daftar</a>
+        <p class="eyebrow">Data baru</p>
+        <h1 class="crud-title">Tambah {{MODEL}}</h1>
+        <p class="crud-description">Isi informasi {{MODEL}}.</p>
+    </header>
+
+    <form method="POST" action="{{ route('{{ROUTE_PREFIX}}.store') }}" class="barang-form">
+        @csrf
+        @if ($errors->any())
+            <div class="form-error-summary" role="alert">
+                <strong>Periksa kembali isian berikut:</strong>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <div class="barang-form-grid">
+{{FORM_FIELDS}}
+        </div>
+        <div class="crud-form-actions">
+            <a href="{{ route('{{ROUTE_PREFIX}}.index') }}" class="button button-secondary">Batal</a>
+            <button type="submit" class="button button-primary">Simpan</button>
+        </div>
+    </form>
+</section>
+@endsection

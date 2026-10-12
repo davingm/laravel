@@ -19,8 +19,10 @@
 /.vscode/** export-ignore
 /docs export-ignore
 /docs/** export-ignore
-/packages export-ignore
-/packages/** export-ignore
+/packages/auth export-ignore
+/packages/auth/** export-ignore
+/packages/dev export-ignore
+/packages/dev/** export-ignore
 AGENTS.md export-ignore
 boost.json export-ignore
 CHANGELOG.md export-ignore

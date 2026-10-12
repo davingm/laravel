@@ -11,18 +11,19 @@ Baca file ini dulu sebelum mengubah apa pun. Isinya konteks proyek dan keputusan
 
 ## Tujuan proyek
 
-Membuat ekosistem Laravel milik sendiri dengan gaya repository Nuxt: satu repository pusat pengembangan (`davingm/laravel`) berisi banyak package Composer dan satu aplikasi playground. Setiap package dipublikasikan otomatis ke repository GitHub terpisah, lalu didistribusikan lewat Packagist.
+Membuat ekosistem Laravel milik sendiri dengan gaya repository Nuxt: satu repository pengembangan berisi source framework di `packages/laravel` dan satu aplikasi playground. Folder runtime `.laravel` dihasilkan oleh Composer dari source tersebut dan diabaikan Git.
 
-Pola: **Nuxt-style monorepo + Composer package split + Packagist distribution.**
+Pola: **Nuxt-style monorepo + Composer-generated runtime directory.**
 
 ## Struktur target
 
 ```
 laravel-davingm/
 ├── packages/
-│   ├── auth/         → dipublikasikan sebagai davingm/auth
-│   ├── dev/          → davingm/dev (saat ini masih kosong)
-│   └── <package>/    → konvensi: davingm/<nama-folder>
+│   ├── laravel/      → source untuk runtime .laravel
+│   ├── auth/         → package auth
+│   ├── dev/          → placeholder
+│   └── <package>/    → package tambahan
 ├── playground/       → aplikasi Laravel utama (kerangka kerja pengguna), tempat menguji package
 ├── docs/
 ├── scripts/
@@ -32,7 +33,9 @@ laravel-davingm/
 └── README.md
 ```
 
-- `playground/` adalah lingkungan pengembangan dan pengujian. Bukan package yang di-split.
+- `playground/` adalah aplikasi pengembangan dan pengujian.
+- Source framework `.laravel/` berada di `packages/laravel/.laravel/`. Composer menyalinnya ke `playground/.laravel/` atau root aplikasi hasil instalasi setelah autoload dibuat.
+- `.laravel/` hasil generate diabaikan Git; source yang diedit harus berada di `packages/laravel/.laravel/`.
 - Jangan memakai nama `packages/laravel` untuk starter utama. Starter ada di `playground/`.
 - Folder `public/` di root sudah dihapus dan tidak dipakai. Yang aktif adalah `playground/public`.
 
@@ -44,18 +47,12 @@ laravel-davingm/
 4. Workflow split dibuat dan diaudit (lihat bawah).
 5. Semua file Laravel dipindahkan manual ke `playground/`. `.gitignore` dan `.gitattributes` disesuaikan. Di `playground/`: `artisan about` dan `route:list` jalan, `php artisan test` lulus 8 test / 21 assertion, `npm run build` berhasil.
 
-## Workflow split (`.github/workflows/split-packages.yml`)
+## CI (`.github/workflows/test-apache.yml`)
 
-- Pemicu: tag `<package>-vX.Y.Z` (contoh `auth-v1.0.0`).
-- Memakai `git subtree split` pada `packages/<package>`, memeriksa nama Composer `davingm/<package>`, lalu push branch `main` dan tag bersih `vX.Y.Z` ke `davingm/<package>`.
-- Secret: `MONOREPO_SPLIT_TOKEN` (jangan hardcode kredensial).
-- Push atomic, tanpa force. Aman diulang untuk tag dan commit yang sama.
-- Repository tujuan **harus dibuat manual** dan kosong (branch `main`). Workflow tidak membuatnya.
-- Workflow menolak split ke repo yang sama dengan sumber.
-- Webhook Packagist tidak diatur workflow. Harus dikonfigurasi terpisah pada repo tujuan.
-- Risiko: repo tujuan yang sudah punya commit atau tag berbeda akan menolak push (tidak ditimpa).
-- Dokumen package split ada di `docs/discussion/package-split-releases.md` dan perlu diselaraskan sebelum dipakai untuk rilis.
-- Workflow belum pernah dijalankan sungguhan.
+- Berjalan pada setiap push dan pull request.
+- Memasang dependency Composer dari `playground/`, yang membangkitkan `.laravel/` dari `../packages/laravel/.laravel/`.
+- Menjalankan test Laravel, build frontend, lalu HTTP smoke test lewat Apache.
+- Workflow split package sudah dihapus dan dokumen lamanya diarsipkan.
 
 ## Perintah yang dipakai
 
@@ -74,18 +71,12 @@ Catatan lingkungan (Windows, Git Bash / PowerShell):
 - Beberapa test gagal karena izin tulis pada `bootstrap/cache` dan `.laravel/cache` di sandbox. Ini masalah izin, bukan bug Laravel.
 - Build frontend di sandbox pernah gagal memuat binding native Tailwind. Dengan izin yang sesuai build berhasil.
 
-## Keputusan yang belum final
+## Distribusi starter
 
-**Distribusi `composer create-project davingm/laravel app`.** `composer.json` aplikasi kini ada di `playground/`, bukan di root. Composer membaca root repo, jadi `.gitattributes` bisa mengecualikan file tetapi tidak memindahkan isi `playground/` ke root hasil instalasi. Pilihan yang perlu diputuskan pemilik proyek:
-
-1. Hasil instalasi berada di `app/playground/`, atau
-2. Hasil instalasi langsung di `app/` (butuh mekanisme lain, misalnya repo distribusi terpisah yang di-split dari `playground/`).
-
-Jangan memilih sendiri. Tanyakan ke pemilik proyek sebelum mengubah `composer.json`, `.gitattributes`, atau workflow terkait distribusi.
+Root Composer mematerialisasi isi `playground/`. Source `packages/laravel/.laravel/` disertakan dalam archive starter agar `composer install` dapat meregenerasi folder runtime pada project baru maupun clone berikutnya. Package internal `auth` dan `dev` tetap dikecualikan dari archive.
 
 ## Yang perlu dicek berikutnya
 
-- Apakah `.gitattributes` (`export-ignore`) sudah sesuai dengan opsi distribusi yang dipilih.
-- Menentukan cara menguji workflow split dengan aman (repo tujuan uji, token dengan akses terbatas).
+- Memastikan archive `composer create-project` menyertakan `packages/laravel/.laravel/` dan mengecualikan package internal lain.
 - Mengisi `packages/dev` dan menambah package lain dengan konvensi `davingm/<nama-folder>`.
 - Sinkronkan `composer.lock` jika ada perubahan manifest (sebelumnya gagal karena koneksi Packagist ditolak).

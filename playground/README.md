@@ -19,6 +19,8 @@ For a fresh monorepo checkout, run once from `playground/`:
 composer run setup
 ```
 
+The `.laravel/` runtime directory is generated from `../packages/laravel/.laravel/` by Composer and ignored by Git. If it is removed, run `composer install` again to restore it.
+
 Start the custom development environment from `playground/`:
 
 ```bash

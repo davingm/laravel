@@ -34,7 +34,7 @@ Workflow `.github/workflows/test-apache.yml` berjalan pada setiap push dan pull 
 
 Rancangan arsitektur, catatan perubahan, serta dokumen yang masih perlu disinkronkan atau diverifikasi. Jangan menganggap dokumen di sini sebagai panduan siap pakai sebelum statusnya diperbarui.
 
-- [Package split releases](./discussion/package-split-releases.md) — alur publikasi masih perlu diselaraskan dengan manifest `auto/*` dan workflow yang memeriksa `davingm/*`.
+- [Package split releases](./discussion/package-split-releases.md) � catatan historis; workflow split sudah tidak aktif.
 - [Framework reference](./discussion/reference.md) — referensi lama; nama API dan sejumlah detail perlu dicocokkan lagi dengan implementasi saat ini.
 - [CRUD Barang dari Nol](./discussion/crud-barang-dari-nol.md) — tutorial memakai path view lama (`resources/views/pages`), sedangkan implementasi saat ini memakai `src/pages`.
 - [Rebranding AutoLaravel](./discussion/rebranding-autolaravel.md) — catatan historis perubahan nama dan namespace.

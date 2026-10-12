@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\{{MODEL}};
+use App\Support\Frontend;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+{{FOREIGN_IMPORTS}}
+class {{MODEL}}Controller extends Controller
+{
+    public function index(): View
+    {
+        return Frontend::render('{{PAGE_DIRECTORY}}.index', '{{PAGE_DIRECTORY}}.index', [
+            '{{MODEL_PLURAL}}' => {{MODEL}}::query()->paginate(15),
+        ]);
+    }
+
+    public function create(): View
+    {
+        return Frontend::render('{{PAGE_DIRECTORY}}.create', '{{PAGE_DIRECTORY}}.create', [
+{{FOREIGN_DATA}}
+        ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        {{MODEL}}::create($request->validate([
+{{VALIDATION_RULES}}
+        ]));
+
+        return redirect()->route('{{ROUTE_PREFIX}}.index')->with('success', 'Data berhasil ditambahkan.');
+    }
+
+    public function show({{MODEL}} ${{MODEL_VARIABLE}}): RedirectResponse
+    {
+        return redirect()->route('{{ROUTE_PREFIX}}.edit', ${{MODEL_VARIABLE}});
+    }
+
+    public function edit({{MODEL}} ${{MODEL_VARIABLE}}): View
+    {
+        return Frontend::render('{{PAGE_DIRECTORY}}.edit', '{{PAGE_DIRECTORY}}.edit', [
+            '{{MODEL_VARIABLE}}' => ${{MODEL_VARIABLE}},
+{{FOREIGN_DATA}}
+        ]);
+    }
+
+    public function update(Request $request, {{MODEL}} ${{MODEL_VARIABLE}}): RedirectResponse
+    {
+        ${{MODEL_VARIABLE}}->update($request->validate([
+{{VALIDATION_RULES}}
+        ]));
+
+        return redirect()->route('{{ROUTE_PREFIX}}.index')->with('success', 'Data berhasil diperbarui.');
+    }
+
+    public function destroy({{MODEL}} ${{MODEL_VARIABLE}}): RedirectResponse
+    {
+        ${{MODEL_VARIABLE}}->delete();
+
+        return redirect()->route('{{ROUTE_PREFIX}}.index')->with('success', 'Data berhasil dihapus.');
+    }
+}

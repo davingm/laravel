@@ -4,7 +4,7 @@
 
 Laravel framework project by [davingm](https://github.com/davingm), powered by the [Laravel](https://laravel.com) framework.
 
-This repository is a monorepo: Composer packages live in `packages/`, while the Laravel framework project lives in `playground/`. The root Composer manifest bootstraps the framework from `playground/`, so users install a normal Laravel project rather than the whole monorepo.
+This repository is a monorepo: reusable framework source lives in `packages/laravel/.laravel/`, while the Laravel application used for development and testing lives in `playground/`. Composer copies the framework source into the application's ignored `.laravel/` directory after autoload generation.
 
 ## Create a project
 
@@ -13,7 +13,7 @@ composer create-project davingm/laravel app
 cd app
 ```
 
-Composer materializes the contents of `playground/` at the new project's root before installing dependencies. After installation, it generates the app key, runs migrations, and builds frontend assets.
+Composer materializes the contents of `playground/` at the new project's root. The framework source in `packages/laravel/.laravel/` is included in the starter archive; Composer recreates the ignored `.laravel/` directory from that source when dependencies are installed. After installation, it generates the app key, runs migrations, and builds frontend assets.
 
 ## Develop in this repository
 
@@ -37,7 +37,7 @@ php artisan route:list
 php artisan test
 ```
 
-The application source is under `playground/`. The Nuxt-inspired page conventions live in `playground/src/pages` and layouts in `playground/src/layouts`.
+The application source is under `playground/`. Framework runtime and generator source is under `packages/laravel/.laravel/`; the generated `playground/.laravel/` copy is ignored. The Nuxt-inspired page conventions live in `playground/src/pages` and layouts in `playground/src/layouts`.
 
 ## Frontend
 
@@ -51,7 +51,7 @@ npm run build
 
 ## Composer package releases
 
-Packages are maintained in `packages/<name>` and split to move for individual GitHub repositories on version tags. The release process is being aligned with the Composer package names; see the [package split discussion](docs/discussion/package-split-releases.md) before attempting a release. Browse the [documentation index](docs/README.md) for feature guides and ongoing design notes.
+Other packages are maintained in `packages/<name>`. The former package-split workflow is inactive; CI tests the playground through Apache on pushes and pull requests. Browse the [documentation index](docs/README.md) for feature guides and ongoing design notes.
 
 ## CLI setup (optional)
 

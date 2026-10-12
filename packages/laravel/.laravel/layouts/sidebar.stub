@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @hasSection('seo')
+        @yield('seo')
+    @else
+        @hasSection('title')
+            <title>@yield('title') | {{ config('app.name', 'Laravel') }}</title>
+        @endif
+        @pageMeta
+    @endif
+    @stack('head')
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['src/assets/css/app.css', 'src/assets/js/app.js'])
+    @endif
+</head>
+<body class="min-h-screen bg-neutral-100 text-neutral-900 antialiased">
+    <div class="min-h-screen md:flex">
+        <aside class="bg-neutral-800 px-6 py-5 text-white md:min-h-screen md:w-64 md:shrink-0">
+            <a href="{{ url('/') }}" class="text-lg font-semibold">{{ config('app.name', 'Laravel') }}</a>
+            <nav aria-label="Sidebar navigation" class="mt-8 flex gap-2 md:flex-col">
+                <a href="{{ url('/') }}" class="rounded px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-700 hover:text-white">Dashboard</a>
+            </nav>
+        </aside>
+        <main id="page-view" data-page="{{ $frontendPage ?? '' }}" class="min-w-0 flex-1 bg-white p-6 md:p-10">
+            @yield('content')
+        </main>
+    </div>
+    @payload
+</body>
+</html>

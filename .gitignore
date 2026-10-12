@@ -17,6 +17,8 @@
 /auth.json
 /node_modules
 /playground/node_modules
+/.laravel/
+/playground/.laravel/
 /.laravel/node_modules
 /playground/.laravel/node_modules
 /.laravel/cache
