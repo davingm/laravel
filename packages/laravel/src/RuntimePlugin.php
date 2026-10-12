@@ -20,6 +20,10 @@ final class RuntimePlugin implements PluginInterface, EventSubscriberInterface
     public function activate(Composer $composer, IOInterface $io): void
     {
         $this->runtimeSource = dirname(__DIR__).DIRECTORY_SEPARATOR.'.laravel';
+
+        // Materialize before Composer writes the optimized autoloader. The
+        // application maps Laravel\Generators to files inside this directory.
+        $this->installRuntimeDirectory();
     }
 
     public function deactivate(Composer $composer, IOInterface $io): void
@@ -38,6 +42,11 @@ final class RuntimePlugin implements PluginInterface, EventSubscriberInterface
     }
 
     public function installRuntime(Event $event): void
+    {
+        $this->installRuntimeDirectory();
+    }
+
+    private function installRuntimeDirectory(): void
     {
         $projectRoot = getcwd();
 
