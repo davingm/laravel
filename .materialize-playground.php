@@ -94,13 +94,13 @@ try {
         throw new RuntimeException('The playground files did not replace the bootstrap Composer manifest.');
     }
 
-    if (($applicationManifest['require']['davingm/laravel-runtime'] ?? null) !== '^1.0') {
-        throw new RuntimeException('The playground Composer manifest must require davingm/laravel-runtime so Composer generates the .laravel runtime during installation.');
-    }
-
-    if (($applicationManifest['config']['allow-plugins']['davingm/laravel-runtime'] ?? false) !== true) {
-        throw new RuntimeException('The playground Composer manifest must allow the davingm/laravel-runtime Composer plugin.');
-    }
+    // Keep runtime installation guaranteed even if a published playground
+    // manifest was packaged before this dependency was added there.
+    $applicationManifest['require'] ??= [];
+    $applicationManifest['require']['davingm/laravel-runtime'] ??= '^1.0';
+    $applicationManifest['config'] ??= [];
+    $applicationManifest['config']['allow-plugins'] ??= [];
+    $applicationManifest['config']['allow-plugins']['davingm/laravel-runtime'] = true;
 
     // The path repository is only for monorepo development. Installed apps
     // resolve the runtime plugin from Packagist and do not contain packages/.
