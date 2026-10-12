@@ -30,6 +30,10 @@ Baca bab dasar secara berurutan. Setiap bab adalah halaman mandiri untuk navigas
 
 Workflow `.github/workflows/test-apache.yml` berjalan pada setiap push dan pull request. Workflow memasang dependency Composer di `playground/`, menjalankan test Laravel, membangun asset frontend, lalu memastikan halaman utama merespons melalui Apache dengan document root `playground/public`.
 
+## `dev/` — panduan pengembangan
+
+- [Rilis package runtime](./dev/publish-runtime-package.md) — memisahkan `packages/laravel` ke repository GitHub tersendiri dan menerbitkan `davingm/laravel-runtime` di Packagist.
+
 ## CI
 
 Workflow `.github/workflows/test-apache.yml` berjalan pada setiap push dan pull request. Workflow memasang dependency Composer di `playground/`, menjalankan test Laravel, membangun asset frontend, lalu memastikan halaman utama merespons melalui Apache dengan document root `playground/public`.
