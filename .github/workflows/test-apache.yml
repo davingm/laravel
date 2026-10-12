@@ -46,6 +46,11 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      - name: Verify generated framework runtime
+        run: |
+          test -f .laravel/cli.js
+          test -f .laravel/generators/MakeRolesCommand.php
+
       - name: Prepare application environment
         run: |
           cp .env.example .env

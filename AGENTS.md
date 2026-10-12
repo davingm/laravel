@@ -26,15 +26,14 @@ laravel-davingm/
 │   └── <package>/    → package tambahan
 ├── playground/       → aplikasi Laravel utama (kerangka kerja pengguna), tempat menguji package
 ├── docs/
-├── scripts/
-├── .github/workflows/split-packages.yml
+├── .github/workflows/test-apache.yml
 ├── .gitattributes
 ├── .gitignore
 └── README.md
 ```
 
 - `playground/` adalah aplikasi pengembangan dan pengujian.
-- Source framework `.laravel/` berada di `packages/laravel/.laravel/`. Composer menyalinnya ke `playground/.laravel/` atau root aplikasi hasil instalasi setelah autoload dibuat.
+- Runtime source `.laravel/` dan Composer plugin berada di `packages/laravel/`. Plugin membuat folder runtime di root aplikasi setelah autoload dibuat.
 - `.laravel/` hasil generate diabaikan Git; source yang diedit harus berada di `packages/laravel/.laravel/`.
 - Jangan memakai nama `packages/laravel` untuk starter utama. Starter ada di `playground/`.
 - Folder `public/` di root sudah dihapus dan tidak dipakai. Yang aktif adalah `playground/public`.
@@ -50,9 +49,9 @@ laravel-davingm/
 ## CI (`.github/workflows/test-apache.yml`)
 
 - Berjalan pada setiap push dan pull request.
-- Memasang dependency Composer dari `playground/`, yang membangkitkan `.laravel/` dari `../packages/laravel/.laravel/`.
+- Memasang dependency Composer dari `playground/`; plugin `davingm/laravel-runtime` membangkitkan `.laravel/`.
 - Menjalankan test Laravel, build frontend, lalu HTTP smoke test lewat Apache.
-- Workflow split package sudah dihapus dan dokumen lamanya diarsipkan.
+- Workflow split package sudah dihapus. Runtime plugin perlu dirilis terpisah agar project aplikasi tidak membawa source internal.
 
 ## Perintah yang dipakai
 
@@ -73,10 +72,10 @@ Catatan lingkungan (Windows, Git Bash / PowerShell):
 
 ## Distribusi starter
 
-Root Composer mematerialisasi isi `playground/`. Source `packages/laravel/.laravel/` disertakan dalam archive starter agar `composer install` dapat meregenerasi folder runtime pada project baru maupun clone berikutnya. Package internal `auth` dan `dev` tetap dikecualikan dari archive.
+Root Composer mematerialisasi isi `playground/`. Package runtime disediakan sebagai dependency Composer dan folder `packages/laravel` dikecualikan dari archive starter. Package `davingm/laravel-runtime` harus tersedia di Packagist agar `create-project` dan clone aplikasi bisa memasang plugin tanpa membawa source internal ke repo aplikasi.
 
 ## Yang perlu dicek berikutnya
 
-- Memastikan archive `composer create-project` menyertakan `packages/laravel/.laravel/` dan mengecualikan package internal lain.
+- Merilis package plugin `davingm/laravel-runtime` agar create-project dan clone aplikasi dapat memasangnya dari Packagist.
 - Mengisi `packages/dev` dan menambah package lain dengan konvensi `davingm/<nama-folder>`.
 - Sinkronkan `composer.lock` jika ada perubahan manifest (sebelumnya gagal karena koneksi Packagist ditolak).

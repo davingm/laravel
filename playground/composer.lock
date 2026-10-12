@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "48ddf4de780edd2e2ea7706432be1244",
+    "content-hash": "966c32298d473d182f0273f7c6410cfd",
     "packages": [
         {
             "name": "brick/math",
@@ -139,6 +139,36 @@
                 }
             ],
             "time": "2026-09-06T14:11:38+00:00"
+        },
+        {
+            "name": "davingm/laravel-runtime",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "../packages/laravel",
+                "reference": "8a9744177b1702c554dd09c7fd6e5375c1787c79"
+            },
+            "require": {
+                "composer-plugin-api": "^2.2",
+                "php": "^8.3"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Davingm\\LaravelRuntime\\RuntimePlugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Davingm\\LaravelRuntime\\": "src/"
+                }
+            },
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "description": "Internal Composer plugin that installs the Laravel runtime directory.",
+            "transport-options": {
+                "symlink": false,
+                "relative": true
+            }
         },
         {
             "name": "dflydev/dot-access-data",
@@ -8842,5 +8872,5 @@
         "php": "^8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

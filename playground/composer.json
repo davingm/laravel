@@ -1,11 +1,11 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "auto/laravel",
+    "name": "davingm/laravel",
     "type": "project",
     "description": "Laravel starter project by AutoLaravel.",
     "keywords": ["laravel", "starter", "auto"],
     "license": "MIT",
-    "homepage": "https://github.com/auto/laravel",
+    "homepage": "https://github.com/davingm/laravel",
     "authors": [
         {
             "name": "AutoLaravel",
@@ -14,6 +14,7 @@
     ],
     "require": {
         "php": "^8.3",
+        "davingm/laravel-runtime": "^1.0",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0"
     },
@@ -27,6 +28,18 @@
         "nunomaduro/collision": "^8.6",
         "phpunit/phpunit": "^12.5.12"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../packages/laravel",
+            "options": {
+                "symlink": false,
+                "versions": {
+                    "davingm/laravel-runtime": "1.0.0"
+                }
+            }
+        }
+    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/",
@@ -63,9 +76,7 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php scripts/install-framework.php",
-            "@php artisan package:discover --ansi",
-            "node .laravel/setup.js"
+            "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
@@ -94,6 +105,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
+            "davingm/laravel-runtime": true,
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
         }

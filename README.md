@@ -4,7 +4,7 @@
 
 Laravel framework project by [davingm](https://github.com/davingm), powered by the [Laravel](https://laravel.com) framework.
 
-This repository is a monorepo: reusable framework source lives in `packages/laravel/.laravel/`, while the Laravel application used for development and testing lives in `playground/`. Composer copies the framework source into the application's ignored `.laravel/` directory after autoload generation.
+This repository is a monorepo: the Composer runtime plugin and framework source live in `packages/laravel/`, while the Laravel application used for development and testing lives in `playground/`. The plugin creates the application's ignored `.laravel/` directory after autoload generation.
 
 ## Create a project
 
@@ -13,7 +13,7 @@ composer create-project davingm/laravel app
 cd app
 ```
 
-Composer materializes the contents of `playground/` at the new project's root. The framework source in `packages/laravel/.laravel/` is included in the starter archive; Composer recreates the ignored `.laravel/` directory from that source when dependencies are installed. After installation, it generates the app key, runs migrations, and builds frontend assets.
+Composer materializes the contents of `playground/` at the new project's root. The internal runtime plugin is installed as a Composer dependency and creates the ignored `.laravel/` directory. The plugin must be published as `davingm/laravel-runtime` before external `create-project` installs can resolve it. After installation, the starter generates the app key, runs migrations, and builds frontend assets.
 
 ## Develop in this repository
 

@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "auto/laravel",
+    "name": "davingm/laravel",
     "type": "project",
     "description": "Laravel starter project by AutoLaravel.",
     "keywords": [
@@ -9,7 +9,7 @@
         "auto"
     ],
     "license": "MIT",
-    "homepage": "https://github.com/auto/laravel",
+    "homepage": "https://github.com/davingm/laravel",
     "authors": [
         {
             "name": "AutoLaravel",
@@ -57,8 +57,7 @@
             "@php -r \"file_exists('app/database/database.sqlite') || touch('app/database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi",
             "npm ci --ignore-scripts",
-            "npm run build",
-            "node .laravel/setup.js"
+            "npm run build"
         ]
     },
     "extra": {

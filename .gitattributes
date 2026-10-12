@@ -11,6 +11,7 @@
 # Composer export-ignore: files/folders excluded from `composer create-project`
 /.gitattributes export-ignore
 /README.md export-ignore
+/composer.lock export-ignore
 /.devContainer export-ignore
 /.devContainer/** export-ignore
 /.github export-ignore
@@ -23,6 +24,8 @@
 /packages/auth/** export-ignore
 /packages/dev export-ignore
 /packages/dev/** export-ignore
+/packages/laravel export-ignore
+/packages/laravel/** export-ignore
 AGENTS.md export-ignore
 boost.json export-ignore
 CHANGELOG.md export-ignore
@@ -35,6 +38,7 @@ SECURITY.md export-ignore
 resault.html export-ignore
 /playground/.env.preview export-ignore
 /playground/.env export-ignore
+/playground/composer.lock export-ignore
 /playground/.phpunit.result.cache export-ignore
 /playground/.styleci.yml export-ignore
 /playground/node_modules export-ignore

@@ -90,8 +90,16 @@ try {
     $applicationManifestPath = $projectRoot.DIRECTORY_SEPARATOR.'composer.json';
     $applicationManifest = json_decode(file_get_contents($applicationManifestPath), true, flags: JSON_THROW_ON_ERROR);
 
-    if (($applicationManifest['name'] ?? null) !== 'auto/laravel' || ($applicationManifest['type'] ?? null) !== 'project') {
+    if (($applicationManifest['name'] ?? null) !== 'davingm/laravel' || ($applicationManifest['type'] ?? null) !== 'project') {
         throw new RuntimeException('The playground files did not replace the bootstrap Composer manifest.');
+    }
+
+    // The path repository is only for monorepo development. Installed apps
+    // resolve the runtime plugin from Packagist and do not contain packages/.
+    unset($applicationManifest['repositories']);
+
+    if (file_put_contents($applicationManifestPath, json_encode($applicationManifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL) === false) {
+        throw new RuntimeException('Unable to write the installed application Composer manifest.');
     }
 
     foreach (['artisan', 'bootstrap'.DIRECTORY_SEPARATOR.'app.php', 'package.json'] as $requiredFile) {

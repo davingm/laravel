@@ -4,4 +4,4 @@
 
 Dokumen ini dipertahankan sebagai catatan historis. Package `auth` dan package internal lain di `packages/` tidak dipublikasikan otomatis.
 
-Source runtime framework berada di `packages/laravel/.laravel/`. Source tersebut ikut dalam archive starter. Hook Composer di `playground/scripts/install-framework.php` menyalinnya ke `.laravel/` setelah autoload dibuat; hasil salinan diabaikan Git dan dapat dibuat ulang dengan `composer install`.
+Source runtime dan Composer plugin berada di package `packages/laravel`. Package ini harus dirilis sebagai `davingm/laravel-runtime`; pluginnya membuat `.laravel/` setelah Composer membangun autoloader. Folder hasil generate diabaikan Git dan dipulihkan dengan `composer install`.

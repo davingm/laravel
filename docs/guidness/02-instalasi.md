@@ -25,7 +25,7 @@ Pastikan ekstensi PHP dan driver database yang diperlukan oleh pilihan database 
 Jika package AutoLaravel tersedia pada Composer registry yang Anda gunakan, buat project baru dengan Composer:
 
 ```bash
-composer create-project auto/laravel nama-aplikasi
+composer create-project davingm/laravel nama-aplikasi
 cd nama-aplikasi
 ```
 
