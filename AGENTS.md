@@ -4,6 +4,8 @@ Baca file ini dulu sebelum mengubah apa pun. Isinya konteks proyek dan keputusan
 
 ## Aturan umum
 
+- Sebelum merencanakan atau mengubah proyek, selalu tinjau `docs/README.md` dan baca dokumentasi di `docs/` yang relevan dengan tugas. Jangan menganggap diskusi historis sebagai spesifikasi implementasi terkini.
+- Pahami pembagian dokumentasi: `docs/dev/` berisi panduan developer yang mengembangkan framework; `docs/guidness/` berisi panduan pengguna framework dan fitur yang tersedia; `docs/discussion/` berisi diskusi teknis, rancangan, dan catatan arah/tujuan pengembangan. Periksa status dan kesesuaian dokumen discussion terhadap source sebelum menjadikannya dasar perubahan.
 - Informasi teknis (versi, sintaks, serta perilaku GitHub Actions / Composer / Packagist / Laravel) harus diverifikasi dari sumber resmi atau pencarian, bukan dari ingatan. Jika tidak bisa diverifikasi, tulis "belum diverifikasi".
 - Jangan mengubah struktur proyek tanpa alasan. Periksa kondisi aktual repo sebelum bertindak.
 - Perintah destruktif (`migrate:fresh`, `rm -rf`, dsb.) jangan dijalankan pada database atau folder default. Pakai SQLite sementara atau salinan terisolasi.
@@ -12,6 +14,14 @@ Baca file ini dulu sebelum mengubah apa pun. Isinya konteks proyek dan keputusan
 ## Tujuan proyek
 
 Membuat ekosistem Laravel milik sendiri dengan gaya repository Nuxt: satu repository pengembangan berisi source framework di `packages/laravel` dan satu aplikasi playground. Folder runtime `.laravel` dihasilkan oleh Composer dari source tersebut dan diabaikan Git.
+
+## Dokumentasi proyek
+
+Sebelum mengerjakan tugas, baca `docs/README.md` untuk memahami indeks dan status dokumentasi. Baca dokumen terkait sebelum mengubah implementasi atau dokumentasi, lalu sinkronkan dokumentasi yang terdampak.
+
+- `docs/dev/`: panduan khusus developer yang membangun, menguji, dan merilis framework atau package-nya. Contoh: mengembangkan source `packages/laravel` melalui `playground/` dan menerbitkan runtime package terpisah.
+- `docs/guidness/`: dokumentasi framework untuk pengguna, mencakup cara memakai framework dan fitur-fiturnya. Jaga instruksi dan contoh agar sesuai dengan implementasi saat ini.
+- `docs/discussion/`: ruang diskusi teknis mengenai rancangan, alternatif arsitektur, serta arah dan tujuan pengembangan framework. Dokumen di sini dapat berupa catatan historis atau proposal; verifikasi status dan implementasinya sebelum memperlakukannya sebagai keputusan aktif.
 
 # Direktory Referensi
 
