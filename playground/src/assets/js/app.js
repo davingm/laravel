@@ -1,3 +1,46 @@
+const devTelemetryEnabled = import.meta.env.VITE_LARAVEL_CLI_TELEMETRY === '1';
+const devTelemetryUrl = typeof window !== 'undefined'
+	? `${window.location.origin}/__laravel/cli/telemetry`
+	: '';
+
+if (devTelemetryEnabled && typeof window !== 'undefined') {
+	const report = (event) => {
+		try {
+			navigator.sendBeacon(devTelemetryUrl, new Blob([JSON.stringify(event)], { type: 'text/plain' }));
+		} catch {
+			// Telemetry is best-effort and must never block application requests.
+		}
+	};
+	const requestPath = (input) => {
+		try {
+			return new URL(input, window.location.href).pathname;
+		} catch {
+			return String(input);
+		}
+	};
+	const markPageReady = () => requestAnimationFrame(() => requestAnimationFrame(() => report({ type: 'page-ready' })));
+	if (document.readyState === 'complete') queueMicrotask(markPageReady);
+	else window.addEventListener('load', markPageReady, { once: true });
+
+	const seenResources = new Set();
+	const reportResource = (entry) => {
+		if (['fetch', 'xmlhttprequest'].includes(entry.initiatorType) || entry.name.startsWith(devTelemetryUrl)) return;
+		if (new URL(entry.name).origin === window.location.origin) return;
+		const key = `${entry.name}:${entry.startTime}`;
+		if (seenResources.has(key)) return;
+		seenResources.add(key);
+		const id = `resource-${key}`;
+		report({ type: 'start', id, method: 'GET', path: requestPath(entry.name) });
+		report({ type: 'complete', id, method: 'GET', path: requestPath(entry.name), milliseconds: entry.duration });
+	};
+	for (const entry of performance.getEntriesByType('resource')) reportResource(entry);
+	try {
+		new PerformanceObserver((list) => list.getEntries().forEach(reportResource)).observe({ type: 'resource', buffered: true });
+	} catch {
+		// PerformanceObserver is optional; fetch tracking still works.
+	}
+}
+
 const payloadElement = document.querySelector('[data-page-payload]');
 const payload = payloadElement ? JSON.parse(payloadElement.textContent) : null;
 

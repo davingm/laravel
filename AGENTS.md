@@ -13,6 +13,10 @@ Baca file ini dulu sebelum mengubah apa pun. Isinya konteks proyek dan keputusan
 
 Membuat ekosistem Laravel milik sendiri dengan gaya repository Nuxt: satu repository pengembangan berisi source framework di `packages/laravel` dan satu aplikasi playground. Folder runtime `.laravel` dihasilkan oleh Composer dari source tersebut dan diabaikan Git.
 
+# Direktory Referensi
+
+Proyek ini tidak di bangun dari ide murni semua ide terbentuknya framowks besar ini adalah gabungan dari bebrapa referensi dari proyek open source lain. jadi biasakan selalu buka </references/**> untuk melihat draft folder referensi. pastikan folder ini selalu di ignore baik untuk git dan juga packages, Notes jangan ubah apa apa di folder itu
+
 Pola: **Nuxt-style monorepo + Composer-generated runtime directory.**
 
 ## Struktur target

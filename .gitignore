@@ -9,6 +9,7 @@ Thumbs.db
 /.zed/
 /.phpactor.json
 *.log
+references
 
 # Local environment and credentials
 /.env

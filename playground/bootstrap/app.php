@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\MinifyHtmlMiddleware;
+use App\Http\Middleware\CliRequestTelemetryMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -33,6 +34,10 @@ $app = Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             MinifyHtmlMiddleware::class,
+            CliRequestTelemetryMiddleware::class,
+        ]);
+        $middleware->api(append: [
+            CliRequestTelemetryMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

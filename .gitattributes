@@ -1,5 +1,6 @@
 * text=auto eol=lf
 
+references
 *.blade.php diff=html
 *.css diff=css
 *.html diff=html

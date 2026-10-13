@@ -56,7 +56,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "@php artisan dev"
+            "node .laravel/cli.js dev"
         ],
         "test": [
             "@php artisan config:clear --ansi @no_additional_args",
