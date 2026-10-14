@@ -5,6 +5,8 @@
 <a href="https://packagist.org/packages/davingm/laravel"><img src="https://img.shields.io/packagist/dt/davingm/laravel" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/davingm/laravel"><img src="https://img.shields.io/packagist/v/davingm/laravel" alt="Latest Stable Version"></a>
 <a href="https://packagist.org/packages/davingm/laravel"><img src="https://img.shields.io/packagist/l/davingm/laravel" alt="License"></a>
+<a href="php.net"><img src="https://img.shields.io/badge/php-v8.5-28CF8D?style=flat&colorA=777BB3" alt="NPM Version"></a>
+ <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-18181B?style=flat&logo=laravel&logoColor=FF2D20" alt="Laravel"></a>
 
 Laravel framework project by [davingm](https://github.com/davingm), powered by the [Laravel](https://laravel.com) framework.
 
