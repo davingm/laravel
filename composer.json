@@ -17,7 +17,7 @@
         "Laravel DevTools",
         "Laravel SEO"
     ],
-    "license": "AGPL-3.0",
+    "license": "AGPL-3.0-only",
     "homepage": "https://github.com/davingm/laravel",
     "authors": [
         {
