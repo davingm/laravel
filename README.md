@@ -1,6 +1,6 @@
 # davingm/laravel
 
-<a href="https://nuxt.com"><img width="830" height="213" src="./docs/public/image.png" alt="framework banner"></a>
+<a href="https://nuxt.com"><img width="830" src="./docs/public/image.png" alt="framework banner"></a>
 [![Ask DeepWiki](/docs/public/deepwiki.svg)](https://deepwiki.com/davingm/laravel)
 <a href="https://packagist.org/packages/davingm/laravel"><img src="https://img.shields.io/packagist/dt/davingm/laravel" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/davingm/laravel"><img src="https://img.shields.io/packagist/v/davingm/laravel" alt="Latest Stable Version"></a>
