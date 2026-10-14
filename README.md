@@ -1,6 +1,6 @@
 # davingm/laravel
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/davingm/laravel)
+[![Ask DeepWiki](/docs/public/deepwiki.svg)](https://deepwiki.com/davingm/laravel)
 
 Laravel framework project by [davingm](https://github.com/davingm), powered by the [Laravel](https://laravel.com) framework.
 

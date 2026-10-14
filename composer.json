@@ -2,18 +2,27 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "davingm/laravel",
     "type": "project",
-    "description": "Laravel starter project by AutoLaravel.",
+    "description": "The Intuitive High End framework for Laravel. — Keep It Simple Guys",
     "keywords": [
-        "laravel",
-        "starter",
-        "auto"
+        "laravel framework",
+        "Starter Laravel",
+        "Auto CRUD ( Create, Read, Update, Delete )",
+        "Laravel Command Line Interface",
+        "Laravel CLI",
+        "Blade Hydration",
+        "Auto Router",
+        "Page Router",
+        "Client Navigation",
+        "Laravel Minimal Starter",
+        "Laravel DevTools",
+        "Laravel SEO"
     ],
-    "license": "MIT",
+    "license": "AGPL-3.0",
     "homepage": "https://github.com/davingm/laravel",
     "authors": [
         {
-            "name": "AutoLaravel",
-            "homepage": "https://github.com/auto"
+            "name": "davingm",
+            "homepage": "https://davingm.com"
         }
     ],
     "require": {
