@@ -8,8 +8,8 @@
     "homepage": "https://github.com/davingm/laravel",
     "authors": [
         {
-            "name": "AutoLaravel",
-            "homepage": "https://github.com/auto"
+            "name": "davingm",
+            "homepage": "https://davingm.com"
         }
     ],
     "require": {
