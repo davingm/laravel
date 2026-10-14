@@ -90,3 +90,5 @@ Then run `artisan` from the playground project directory. Standard `php artisan`
 ## License
 
 GNU Affero General Public License v3.0
+
+Project-authored code is licensed under AGPL-3.0-only. Third-party materials, including the Laravel skills in `.github/skills/`, and dependencies retain their respective upstream licenses.

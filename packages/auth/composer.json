@@ -3,7 +3,7 @@
     "name": "davingm/auth",
     "description": "Authentication starter for the AutoLaravel framework.",
     "type": "library",
-    "license": "MIT",
+    "license": "AGPL-3.0-only",
     "require": {
         "php": "^8.3",
         "illuminate/console": "^13.0",

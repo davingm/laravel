@@ -43,4 +43,6 @@ Pages live in `src/pages` and shared layouts live in `src/layouts`. Run `npm run
 
 ## License
 
-MIT
+GNU Affero General Public License v3.0
+
+Project-authored code is licensed under AGPL-3.0-only. Dependencies retain their respective upstream licenses.

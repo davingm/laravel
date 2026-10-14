@@ -3,7 +3,7 @@
     "name": "davingm/laravel-runtime",
     "type": "composer-plugin",
     "description": "Internal Composer plugin that installs the Laravel runtime directory.",
-    "license": "AGPL-3.0-or-later",
+    "license": "AGPL-3.0-only",
     "require": {
         "php": "^8.3",
         "composer-plugin-api": "^2.2"
