@@ -176,7 +176,7 @@ test(page-router): add coverage for wildcard exclude patterns
 4. From `playground/`, ensure all tests pass:
 
 ```bash
-php artisan test
+node .laravel/cli.js test
 ```
 
 5. Run Pint to format your code:

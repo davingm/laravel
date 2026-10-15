@@ -9,7 +9,7 @@ class PreviewCommand extends Command
 {
     protected $signature = 'preview
         {--port=8000 : Port to serve on}
-        {--build     : Run artisan build before starting preview}';
+        {--build     : Run the framework build before starting preview}';
 
     protected $description = 'Serve the application in production preview mode (no .env changes)';
 
@@ -41,7 +41,7 @@ class PreviewCommand extends Command
         });
 
         $process = new Process(
-            [PHP_BINARY, 'artisan', 'serve', '--port='.$port],
+            [PHP_BINARY, base_path('.laravel/artisan.php'), 'serve', '--port='.$port],
             base_path(),
             [
                 'APP_ENV' => 'production',

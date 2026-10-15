@@ -49,19 +49,20 @@ jobs:
       - name: Verify generated framework runtime
         run: |
           test -f .laravel/cli.js
+          test -f .laravel/artisan.php
           test -f .laravel/generators/MakeRolesCommand.php
 
       - name: Prepare application environment
         run: |
           cp .env.example .env
-          php artisan key:generate --force
+          node .laravel/cli.js key:generate --force
           mkdir -p app/database
           touch app/database/database.sqlite
           chmod -R u+rwX,go+rX storage bootstrap/cache .laravel/cache app/database
-          php artisan migrate --force
+          node .laravel/cli.js migrate --force
 
       - name: Run Laravel tests
-        run: php artisan test --compact
+        run: node .laravel/cli.js test --compact
 
       - name: Install frontend dependencies
         run: npm ci

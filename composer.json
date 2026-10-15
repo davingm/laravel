@@ -25,7 +25,7 @@
     ],
     "require": {
         "php": "^8.3",
-        "davingm/laravel-runtime": "^1.0",
+        "davingm/laravel-runtime": "^1.0.2",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0"
     },
@@ -61,9 +61,9 @@
         "post-create-project-cmd": [
             "@composer dump-autoload --no-interaction",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate --ansi",
+            "node .laravel/cli.js key:generate --ansi",
             "@php -r \"file_exists('app/database/database.sqlite') || touch('app/database/database.sqlite');\"",
-            "@php artisan migrate --graceful --ansi",
+            "node .laravel/cli.js migrate --graceful --ansi",
             "npm ci --ignore-scripts",
             "npm run build"
         ]

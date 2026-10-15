@@ -44,7 +44,7 @@ const out = (pre, msg) => {
 
 function printLogo() {
     const L = [
-        '    __                               __     ',
+        '    __                                __     ',
         '   / /   ____ __________ __   _____  / /    ',
         '  / /   / __ `/ ___/ __ `/ | / / _ \\/ /   ',
         ' / /___/ /_/ / /  / /_/ /| |/ /  __/ /     ',
@@ -61,7 +61,12 @@ function findProjectRoot(startDirectory) {
     let directory = resolve(startDirectory);
 
     while (true) {
-        if (existsSync(resolve(directory, 'artisan')) && existsSync(resolve(directory, '.laravel', 'cli.js'))) {
+        if (
+            existsSync(resolve(directory, 'composer.json'))
+            && existsSync(resolve(directory, 'bootstrap', 'app.php'))
+            && existsSync(resolve(directory, '.laravel', 'cli.js'))
+            && existsSync(resolve(directory, '.laravel', 'artisan.php'))
+        ) {
             return directory;
         }
 
@@ -75,7 +80,7 @@ const projectRoot = findProjectRoot(process.cwd());
 
 // ─── Laravel serve output parser ─────────────────────────────────────────────
 //
-// `php artisan serve` outputs per-request like:
+// The hidden `.laravel/artisan.php serve` entrypoint outputs per-request like:
 //
 //   2026-09-22 11:13:03          ← timestamp line
 //   /                            ← path line
@@ -247,7 +252,7 @@ function createDevUI(url, startedAt, enabled) {
     function routeRefresh() {
         if (state.routeRefreshRunning) return;
         state.routeRefreshRunning = true;
-        const child = spawn('php', ['artisan', 'route:list', '--json'], { cwd: projectRoot, stdio: ['ignore', 'pipe', 'pipe'] });
+        const child = spawn('php', [resolve(projectRoot, '.laravel', 'artisan.php'), 'route:list', '--json'], { cwd: projectRoot, stdio: ['ignore', 'pipe', 'pipe'] });
         let output = '';
         let errorOutput = '';
         child.stdout.on('data', chunk => { output += chunk.toString(); });
@@ -730,7 +735,7 @@ function startDev(extraArgs = []) {
 
     function clearCachesThen(callback) {
         ui.log('clearing Laravel caches…');
-        const child = spawn('php', ['artisan', 'optimize:clear'], { cwd: projectRoot, stdio: ['ignore', 'pipe', 'pipe'] });
+        const child = spawn('php', [resolve(projectRoot, '.laravel', 'artisan.php'), 'optimize:clear'], { cwd: projectRoot, stdio: ['ignore', 'pipe', 'pipe'] });
         let output = '';
         let completed = false;
         const finish = () => {
@@ -765,7 +770,7 @@ function startDev(extraArgs = []) {
 
     function launchServer() {
         artisanListening = false;
-        const child = spawn('bash', ['-c', `stdbuf -oL -eL php artisan serve --host=0.0.0.0 --port=${port} 2>&1`], {
+        const child = spawn('bash', ['-c', `stdbuf -oL -eL php .laravel/artisan.php serve --host=0.0.0.0 --port=${port} 2>&1`], {
             cwd: projectRoot,
             stdio: ['ignore', 'pipe', 'pipe'],
             env: { ...process.env, PHP_CLI_SERVER_WORKERS: '1', LARAVEL_CLI_TELEMETRY_URL: telemetryUrl },
@@ -820,7 +825,7 @@ function startDev(extraArgs = []) {
             ui.log(`frontend request tracking unavailable: ${error.message}`);
         }
 
-        queue = spawn('php', ['artisan', 'queue:work', '--tries=3'], {
+        queue = spawn('php', [resolve(projectRoot, '.laravel', 'artisan.php'), 'queue:work', '--tries=3'], {
             cwd: projectRoot,
             stdio: ['ignore', 'pipe', 'pipe'],
             env: { ...process.env },
@@ -926,7 +931,7 @@ function startDev(extraArgs = []) {
         if (frontendPreparationStarted || shuttingDown) return;
         frontendPreparationStarted = true;
         ui.setProgress(12, 'preparing app', 35, 3);
-        prepare = spawn('php', ['artisan', 'frontend:generate'], { cwd: projectRoot, stdio: ['ignore', 'pipe', 'pipe'] });
+        prepare = spawn('php', [resolve(projectRoot, '.laravel', 'artisan.php'), 'frontend:generate'], { cwd: projectRoot, stdio: ['ignore', 'pipe', 'pipe'] });
         captureChildLogs(prepare.stdout, 'build');
         captureChildLogs(prepare.stderr, 'build');
         prepare.on('error', error => finishPreparation(1, error));
@@ -934,7 +939,7 @@ function startDev(extraArgs = []) {
     }
 
     ui.setProgress(0, 'refreshing development routes', 12, 3);
-    prepare = spawn('php', ['artisan', 'route:clear'], { cwd: projectRoot, stdio: ['ignore', 'pipe', 'pipe'] });
+    prepare = spawn('php', [resolve(projectRoot, '.laravel', 'artisan.php'), 'route:clear'], { cwd: projectRoot, stdio: ['ignore', 'pipe', 'pipe'] });
     captureChildLogs(prepare.stdout, 'runtime');
     captureChildLogs(prepare.stderr, 'runtime');
     prepare.on('error', error => {
@@ -953,7 +958,7 @@ function startPreview(extraArgs) {
 // ─── startBuild ───────────────────────────────────────────────────────────────
 
 function startBuild(extraArgs) {
-    // Forward to php artisan build — the PHP command handles all steps
+    // Forward to the internal Artisan bootstrap — the PHP command handles all steps
     // including npm via proc_open. We just forward and inherit stdio.
     printLogo();
     out(PRE_WHITE, `${B}${WHITE}artisan build${R}`);
@@ -964,7 +969,7 @@ function startBuild(extraArgs) {
 // ─── forwardArtisan ───────────────────────────────────────────────────────────
 
 function forwardArtisan(args) {
-    const child = spawn('php', ['artisan', ...args], {
+    const child = spawn('php', [resolve(projectRoot, '.laravel', 'artisan.php'), ...args], {
         cwd: projectRoot,
         stdio: 'inherit',
         env: { ...process.env },
@@ -999,7 +1004,7 @@ if (args.length === 0) {
     out(PRE_WHITE, `  ${CYAN}artisan dev --no-tui${R}     plain output without the terminal panel`);
     out(PRE_WHITE, `  ${CYAN}artisan build${R}            build for production`);
     out(PRE_WHITE, `  ${CYAN}artisan preview${R}          serve in production preview mode`);
-    out(PRE_WHITE, `  ${CYAN}artisan <command>${R}        php artisan <command>`);
+    out(PRE_WHITE, `  ${CYAN}artisan <command>${R}        run a Laravel command`);
     process.stdout.write('\n');
     out(PRE_WHITE, `  ${D}artisan migrate${R}`);
     out(PRE_WHITE, `  ${D}artisan make:model User${R}`);

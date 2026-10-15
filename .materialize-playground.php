@@ -97,7 +97,9 @@ try {
     // Keep runtime installation guaranteed even if a published playground
     // manifest was packaged before this dependency was added there.
     $applicationManifest['require'] ??= [];
-    $applicationManifest['require']['davingm/laravel-runtime'] ??= '^1.0';
+    // The monorepo playground uses a local path repository. Generated starter
+    // applications consume the released package from Packagist instead.
+    $applicationManifest['require']['davingm/laravel-runtime'] = '^1.0.2';
     $applicationManifest['config'] ??= [];
     $applicationManifest['config']['allow-plugins'] ??= [];
     $applicationManifest['config']['allow-plugins']['davingm/laravel-runtime'] = true;
@@ -110,7 +112,7 @@ try {
         throw new RuntimeException('Unable to write the installed application Composer manifest.');
     }
 
-    foreach (['.gitignore', 'artisan', 'bootstrap'.DIRECTORY_SEPARATOR.'app.php', 'package.json'] as $requiredFile) {
+    foreach (['.gitignore', 'bootstrap'.DIRECTORY_SEPARATOR.'app.php', 'package.json'] as $requiredFile) {
         if (! is_file($projectRoot.DIRECTORY_SEPARATOR.$requiredFile)) {
             throw new RuntimeException("The materialized project is missing a required file: {$requiredFile}");
         }

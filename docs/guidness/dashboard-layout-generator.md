@@ -2,7 +2,7 @@
 
 Panduan ini menjelaskan cara membuat layout Blade sidebar atau navbar menggunakan command `make:dashboard`.
 
-> Jalankan semua command dari root aplikasi, yaitu folder yang berisi file `artisan`. Generator tidak menimpa `src/layouts/app.blade.php` yang sudah ada.
+> Jalankan semua command dari root aplikasi, yaitu folder yang berisi `composer.json` dan `bootstrap/app.php`. Generator tidak menimpa `src/layouts/app.blade.php` yang sudah ada.
 
 ## 1. Pilih tipe layout
 

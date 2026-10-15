@@ -4,7 +4,7 @@ Dokumentasi dipisahkan berdasarkan kesiapan dan tujuannya:
 
 ## `guidness/` — panduan framework
 
-Baca bab dasar secara berurutan. Setiap bab adalah halaman mandiri untuk navigasi sidebar, dengan tautan ke bab sebelumnya dan berikutnya. Jalankan command dari root aplikasi, yaitu folder project yang berisi file `artisan`.
+Baca bab dasar secara berurutan. Setiap bab adalah halaman mandiri untuk navigasi sidebar, dengan tautan ke bab sebelumnya dan berikutnya. Jalankan command dari root aplikasi, yaitu folder project yang berisi `composer.json` dan `bootstrap/app.php`.
 
 ### Panduan utama
 

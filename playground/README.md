@@ -30,7 +30,7 @@ Start the development environment from `playground/`:
 composer run dev
 ```
 
-This starts the Laravel server, queue worker, and Vite development server. Use `php artisan <command>` for Artisan commands, for example `php artisan route:list` or `php artisan test`.
+This starts the Laravel server, queue worker, and Vite development server. Use `artisan <command>` for framework commands, for example `artisan route:list` or `artisan test`. If the global launcher is unavailable, run `node .laravel/cli.js <command>` from the project root.
 
 ## Frontend
 

@@ -2,7 +2,7 @@
 
 Fitur Auto CRUD membuat sebagian besar file CRUD dari schema database. Developer menulis migration untuk tabel dan relasinya, menjalankan migration, lalu menjalankan satu command generator.
 
-> Jalankan semua command dari root aplikasi, yaitu folder yang berisi file `artisan`. Gunakan database development, bukan production.
+> Jalankan semua command dari root aplikasi, yaitu folder yang berisi `composer.json` dan `bootstrap/app.php`. Gunakan database development, bukan production.
 
 ## Alur singkat
 

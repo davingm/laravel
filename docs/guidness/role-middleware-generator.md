@@ -2,7 +2,7 @@
 
 Panduan ini menjelaskan cara membuat middleware role otomatis dengan command `make:roles` dan cara menggunakannya bersama `crud:generate --role`.
 
-> Jalankan semua perintah dari root aplikasi, yaitu folder yang berisi file `artisan`.
+> Jalankan semua perintah dari root aplikasi, yaitu folder yang berisi `composer.json` dan `bootstrap/app.php`.
 
 ## 1. Buat middleware role otomatis
 

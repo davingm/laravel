@@ -26,7 +26,7 @@ php -l packages/laravel/src/RuntimePlugin.php
 Lalu dari `playground/`, jalankan test dan build yang relevan:
 
 ```bash
-php artisan test --compact
+node .laravel/cli.js test --compact
 npm run build
 ```
 
@@ -88,7 +88,8 @@ composer update davingm/laravel-runtime --with-dependencies --no-interaction
 composer show davingm/laravel-runtime
 composer install --no-interaction --prefer-dist
 test -f .laravel/cli.js
-php artisan test --compact
+test -f .laravel/artisan.php
+node .laravel/cli.js test --compact
 ```
 
 Jangan arahkan uji instalasi ke project atau database yang menyimpan data penting. Untuk menguji starter baru dari Packagist, jalankan `composer create-project davingm/laravel /path/to/temporary-directory --no-interaction` dengan path pengganti yang belum ada dan berada di lingkungan uji.

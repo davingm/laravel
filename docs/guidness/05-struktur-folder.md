@@ -1,6 +1,6 @@
 # 5. Struktur folder
 
-Path pada bab ini relatif terhadap **root aplikasi**, yaitu folder project yang berisi file `artisan`. Folder-folder berikut adalah bagian dari aplikasi yang digunakan developer.
+Path pada bab ini relatif terhadap **root aplikasi**, yaitu folder project yang berisi `composer.json` dan `bootstrap/app.php`. Folder-folder berikut adalah bagian dari aplikasi yang digunakan developer.
 
 ## Backend aplikasi
 
@@ -30,7 +30,7 @@ Path pada bab ini relatif terhadap **root aplikasi**, yaitu folder project yang 
 
 | Path | Isi dan tanggung jawab |
 |---|---|
-| `.laravel/` | Tooling framework: launcher `artisan`, generator, template generator, dan cache frontend. Developer biasanya memakai command-nya dan tidak perlu mengubah file cache. |
+| `.laravel/` | Tooling internal framework: CLI, bootstrap Artisan internal, generator, template, dan cache frontend. Folder ini dihasilkan Composer dan tidak perlu diedit developer aplikasi. |
 | `bootstrap/` | Inisialisasi Laravel dan pendaftaran konfigurasi aplikasi. |
 | `config/` | Pengaturan Laravel, seperti database, view, cache, dan layanan lain. |
 | `vite.config.js` | Konfigurasi build CSS dan JavaScript dengan Vite. |

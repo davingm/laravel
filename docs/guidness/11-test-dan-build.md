@@ -1,6 +1,6 @@
 # 11. Test dan build
 
-Jalankan perintah pada bab ini dari root aplikasi, yaitu folder yang berisi file `artisan`.
+Jalankan perintah pada bab ini dari root aplikasi, yaitu folder yang berisi `composer.json` dan `bootstrap/app.php`.
 
 ## Menjalankan test
 

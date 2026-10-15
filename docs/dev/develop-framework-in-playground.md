@@ -1,103 +1,71 @@
 # Mengembangkan framework melalui playground
 
-Panduan ini untuk pengembang `davingm/laravel`. Tujuannya membedakan source framework, aplikasi playground, dan runtime hasil instalasi Composer, serta menjelaskan cara menguji perubahan sebelum menerbitkan package runtime.
+Panduan ini menjelaskan cara mengubah source framework, mengujinya di aplikasi playground, dan menerbitkan runtime package yang source-nya berada di `packages/laravel`.
 
 ## Peta folder
 
-| Folder | Kegunaan | Jika ingin mengubah... |
-| --- | --- | --- |
-| `packages/laravel/src/` | Composer plugin yang memasang runtime | Cara package dipasang atau lifecycle plugin |
-| `packages/laravel/.laravel/` | Source runtime framework | CLI, generator, template, dan file runtime |
-| `playground/` | Aplikasi Laravel untuk mencoba framework | Aplikasi contoh, routes, middleware, dan integrasi package |
-| `playground/.laravel/` | Hasil generate dari plugin Composer; diabaikan Git | Jangan edit langsung. Ubah source di `packages/laravel/.laravel/` |
+| Folder | Kegunaan |
+| --- | --- |
+| `packages/laravel/src/` | Source Composer plugin runtime. |
+| `packages/laravel/.laravel/` | Source CLI, bootstrap Artisan internal, generator, dan tooling runtime. |
+| `playground/` | Aplikasi Laravel untuk pengembangan dan pengujian framework. |
+| `playground/.laravel/` | Runtime yang disalin Composer; output lokal dan diabaikan Git. Jangan mengeditnya langsung. |
 
-Plugin menyalin runtime dari package yang terpasang ke `.laravel/` pada root aplikasi. Karena itu, `playground/.laravel/` adalah hasil build lokal, bukan source utama.
+Plugin Composer menyalin isi runtime package ke `.laravel/` pada root aplikasi. Root aplikasi hasil `create-project` tidak memiliki file `artisan`; command Laravel dijalankan melalui CLI framework.
 
-## Menjalankan playground dengan versi package yang sudah dirilis
+## Setup dan pemeriksaan playground
 
-Jalankan dari folder `playground/`:
+Jalankan dari `playground/`:
 
 ```bash
 composer install
-php artisan about
-php artisan route:list
-php artisan test --compact
+node .laravel/cli.js about
+node .laravel/cli.js route:list
+node .laravel/cli.js test --compact
 npm ci
 npm run build
 ```
 
-Untuk menjalankan server pengembangan gunakan `composer run dev` dari folder tersebut. Perintah ini menjalankan CLI framework yang sudah terpasang oleh Composer.
+Untuk menjalankan server pengembangan, gunakan `composer run dev` atau `node .laravel/cli.js dev`. Jika launcher global framework telah tersedia, bentuk singkatnya adalah `artisan dev` atau `artisan route:list`.
 
-Pastikan runtime sudah terbentuk:
+## Menguji source lokal `packages/laravel`
+
+`playground/composer.json` menggunakan Composer path repository ke `../packages/laravel`, sehingga perubahan package lokal dapat langsung diuji tanpa menunggu rilis Packagist. Untuk menyegarkan package dan membangkitkan ulang runtime setelah perubahan:
 
 ```bash
-test -f .laravel/cli.js
+composer update davingm/laravel-runtime
+composer dump-autoload
+test -f .laravel/artisan.php
+node .laravel/cli.js about
+node .laravel/cli.js route:list
+node .laravel/cli.js test --compact
 ```
 
-Pada PowerShell, pemeriksaan terakhir dapat memakai `Test-Path .laravel/cli.js`.
+Jalankan perubahan aplikasi dari `playground/`. Jalankan `npm ci` jika dependency frontend belum ada dan `npm run build` jika perubahan menyentuh asset.
 
-## Menguji perubahan source lokal `packages/laravel`
+Path repository lokal hanya untuk monorepo. `.materialize-playground.php` menghapus konfigurasi repository lokal dan mengganti constraint `dev-main` menjadi `^1.0.2` saat membuat starter, sehingga pengguna menginstal runtime release yang menyediakan bootstrap internal ini dari Packagist. Karena runtime release baru harus diterbitkan lebih dulu, `create-project` belum dapat memakai CLI tanpa file root sampai versi tersebut tersedia. Path repository serta opsi versi package mengikuti [dokumentasi Composer](https://getcomposer.org/doc/05-repositories.md#path).
 
-Composer path repository membuat dependency menunjuk ke folder package lokal. Composer akan memakai symlink jika sistem mendukungnya, atau menyalin package sebagai fallback. Konfigurasi ini ditambahkan sementara ke `playground/composer.json`; jangan commit override lokal ini ke starter aplikasi.
+## Alur command tanpa file `artisan` di root
 
-1. Simpan perubahan kerja yang sedang ada pada `playground/composer.json` dan `playground/composer.lock`, agar bisa dikembalikan tanpa membuang pekerjaan lain.
-2. Edit `playground/composer.json`:
-   - Tambahkan repository berikut di tingkat root, sejajar dengan `require`:
+Bootstrap PHP berada di source `packages/laravel/.laravel/artisan.php` dan terpasang sebagai `.laravel/artisan.php`. CLI `packages/laravel/.laravel/cli.js` menemukenali project dari `composer.json`, `bootstrap/app.php`, dan runtime `.laravel/`, lalu meneruskan command Laravel ke bootstrap tersembunyi tersebut.
 
-     ```json
-     "repositories": [
-         {
-             "type": "path",
-             "url": "../packages/laravel",
-             "options": {
-                 "symlink": true
-             }
-         }
-     ],
-     ```
+Gunakan:
 
-   - Ubah sementara constraint `davingm/laravel-runtime` dalam `require` dari `^1.0` menjadi `dev-main`.
+```bash
+node .laravel/cli.js route:list
+node .laravel/cli.js test --compact
+composer run dev
+```
 
-   `dev-main` adalah versi branch `main` yang dikenali Composer. Jika branch monorepo yang sedang dipakai bukan `main`, gunakan constraint `dev-<nama-branch>` yang sesuai.
+Launcher global `artisan` juga meneruskan command ke CLI framework jika telah dipasang. Jangan memakai `php artisan` langsung: file itu memang tidak disediakan di root aplikasi. Saat mengubah runtime CLI, periksa juga Composer scripts, command build/preview, dokumentasi, dan workflow CI agar tidak kembali bergantung pada file root tersebut.
 
-3. Dari folder `playground/`, perbarui package dan jalankan ulang lifecycle Composer:
+## Rilis runtime package ke repository terpisah
 
-   ```bash
-   composer update davingm/laravel-runtime -W
-   composer show davingm/laravel-runtime
-   composer dump-autoload
-   ```
+Package Composer bernama `davingm/laravel-runtime`, dengan repository tujuan [github.com/davingm/laravel-runtime](https://github.com/davingm/laravel-runtime). Perintah Git berikut dijalankan dari root monorepo di Git Bash, WSL, Linux, atau macOS.
 
-   Output Composer seharusnya menunjukkan package bersumber dari `../packages/laravel`. Periksa juga bahwa file runtime yang berubah tersedia di `.laravel/`.
+### 1. Commit source monorepo
 
-4. Uji perubahan melalui aplikasi playground:
-
-   ```bash
-   php artisan about
-   php artisan route:list
-   php artisan test --compact
-   composer run dev
-   ```
-
-   Untuk perubahan asset frontend, jalankan `npm ci` jika dependency belum terpasang, lalu `npm run build`.
-
-5. Setelah selesai, kembalikan perubahan sementara pada `playground/composer.json` dan `playground/composer.lock` ke konfigurasi rilis (`^1.0` dan tanpa path repository), lalu jalankan:
-
-   ```bash
-   composer update davingm/laravel-runtime -W
-   ```
-
-   Periksa `git diff` sebelum commit. Jangan memakai `git restore` secara membabi buta jika file tersebut juga memiliki perubahan lain.
-
-> Catatan: Composer memuat konfigurasi repository dari root project. Path repository dan opsi symlink di atas mengikuti dokumentasi Composer untuk monorepo. Jika package path lokal terdeteksi dari branch lain, sesuaikan versi branch sebagaimana aturan versi branch Composer. [Path repository Composer](https://getcomposer.org/doc/05-repositories.md#path), [versi dan constraint Composer](https://getcomposer.org/doc/articles/versions.md).
-
-## Menerbitkan `packages/laravel` ke repository terpisah
-
-Package Composer bernama `davingm/laravel-runtime`; repository target-nya [github.com/davingm/laravel-runtime](https://github.com/davingm/laravel-runtime). Prosedur publikasi lengkap ada di [panduan rilis runtime](./publish-runtime-package.md). Contoh command shell pada bagian berikut memakai Bash; di Windows gunakan Git Bash atau WSL.
-
-### 1. Siapkan perubahan monorepo
-
-Commit perubahan source terlebih dahulu. Bila perubahan juga menyentuh playground, commit perubahan itu sesuai kebiasaan proyek, lalu push branch utama monorepo:
+Pastikan perubahan source sudah di-commit. Bila perubahan aplikasi atau dokumentasi ikut dirilis di monorepo, stage file terkait secara eksplisit.
 
 ```bash
 git status --short
@@ -106,22 +74,20 @@ git commit -m "Update Laravel runtime"
 git push origin main
 ```
 
-Jika commit juga mengubah file di luar `packages/laravel`, stage file-file tersebut secara eksplisit. `git subtree split` hanya membentuk riwayat dari folder package pada commit yang diberikan.
+### 2. Pastikan remote package tersedia
 
-### 2. Tambahkan remote package satu kali
-
-Lewati langkah ini jika remote `runtime` sudah ada:
+Tambahkan remote satu kali jika belum ada:
 
 ```bash
 git remote add runtime https://github.com/davingm/laravel-runtime.git
 git remote -v
 ```
 
-Repository tujuan harus sudah dibuat dan branch/tag yang akan dipush harus belum bertabrakan dengan riwayat berbeda.
+Pastikan remote `runtime` mengarah ke repository package. Remote `origin` tetap repository monorepo.
 
-### 3. Split source dan push branch
+### 3. Split folder dan push branch package
 
-Sebelum memilih versi baru, periksa tag remote dan metadata Packagist. Jangan menggunakan ulang atau memindahkan tag yang sudah terbit.
+Periksa tag yang sudah terbit dan pilih versi baru yang belum digunakan. Dari root monorepo:
 
 ```bash
 split_commit=$(git subtree split --prefix=packages/laravel) || exit 1
@@ -131,39 +97,31 @@ git show --stat --oneline "$split_commit"
 git push runtime "$split_commit:refs/heads/main"
 ```
 
-Hasil split menempatkan isi `packages/laravel` di root history package. Commit ID hasil split boleh ditinjau sebelum push. Perintah `git subtree split` menghasilkan commit synthetic untuk subtree; lihat [dokumentasi Git subtree](https://github.com/git/git/blob/master/contrib/subtree/git-subtree.adoc).
+Git Subtree membuat riwayat package dengan isi folder tersebut di root repository tujuan. Lihat [dokumentasi Git Subtree](https://github.com/git/git/blob/master/contrib/subtree/git-subtree.adoc).
 
-### 4. Push tag versi package
+### 4. Push tag release
 
-Push tag ke repository package dengan menunjuk langsung ke commit hasil split:
+Ganti `vX.Y.Z` dengan versi baru yang belum pernah dipakai:
 
 ```bash
 git push runtime "$split_commit:refs/tags/vX.Y.Z"
 git ls-remote runtime refs/heads/main "refs/tags/vX.Y.Z"
 ```
 
-Ganti `vX.Y.Z` dengan versi baru yang sudah diverifikasi belum pernah dipakai. Tag versi diterbitkan pada repo `laravel-runtime`, bukan pada riwayat aplikasi monorepo. Jangan memindahkan atau menimpa tag yang sudah diterbitkan, dan jangan gunakan force push untuk mengatasi penolakan remote.
+Tag release berada di repository `laravel-runtime`. Jangan menimpa tag lama atau memakai force push untuk melewati penolakan remote.
 
-### 5. Verifikasi package rilis
+### 5. Verifikasi rilis
 
-1. Pastikan GitHub repo `davingm/laravel-runtime` menampilkan source package di root, termasuk `composer.json`, `src/`, dan `.laravel/`.
-2. Pastikan Packagist menampilkan tag versi baru. Jika webhook belum aktif, sinkronkan package dari halaman Packagist.
-3. Uji konsumsi package dari checkout/salinan playground yang **tidak** memiliki repository path lokal. Dari folder aplikasi:
+Pastikan repo package menampilkan `composer.json`, `src/`, dan `.laravel/` pada root. Periksa sinkronisasi Packagist, lalu uji package dari checkout/salinan starter tanpa path repository lokal:
 
-   ```bash
-   composer clear-cache
-   composer update davingm/laravel-runtime --with-dependencies
-   composer show davingm/laravel-runtime
-   composer install
-   test -f .laravel/cli.js
-   php artisan test --compact
-   ```
+```bash
+composer clear-cache
+composer update davingm/laravel-runtime --with-dependencies --no-interaction
+composer show davingm/laravel-runtime
+composer install --no-interaction --prefer-dist
+test -f .laravel/cli.js
+test -f .laravel/artisan.php
+node .laravel/cli.js test --compact
+```
 
-Dokumentasi lengkap untuk validasi metadata, Packagist, dan troubleshooting ada di [publish-runtime-package.md](publish-runtime-package.md).
-
-## Catatan kerja
-
-- Perubahan framework ada di `packages/laravel`; perubahan aplikasi playground ada di `playground/`.
-- Jangan edit `playground/.laravel/` karena folder itu dihasilkan ulang oleh Composer.
-- Pastikan semua perubahan package sudah di-commit di monorepo sebelum split dan push.
-- Uji hasil rilis dari instalasi Composer biasa tanpa path repository lokal, supaya yang diuji benar-benar artifact package terbit.
+Untuk validasi manifest, Packagist, dan troubleshooting rilis, lihat [panduan publish runtime package](./publish-runtime-package.md).

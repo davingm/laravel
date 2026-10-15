@@ -149,7 +149,7 @@ class BuildCommand extends Command
             'is_string'
         );
 
-        $process = new Process([PHP_BINARY, 'artisan', 'test', '--compact'], base_path(), $env, timeout: null);
+        $process = new Process([PHP_BINARY, base_path('.laravel/artisan.php'), 'test', '--compact'], base_path(), $env, timeout: null);
         $exitCode = $process->run();
 
         if ($exitCode !== 0) {

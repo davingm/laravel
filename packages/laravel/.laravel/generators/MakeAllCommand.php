@@ -72,7 +72,7 @@ class MakeAllCommand extends Command
         $this->line('  <fg=gray>  1. Fill in the migration columns</>');
         $this->line("  <fg=gray>  2. Add #[Fillable([...])] to app/Models/{$name}.php</>");
         $this->line('  <fg=gray>  3. Add validation rules to Store/Update requests</>');
-        $this->line('  <fg=gray>  4. Run: php artisan migrate</>');
+        $this->line('  <fg=gray>  4. Run: artisan migrate</>');
         $this->newLine();
 
         return self::SUCCESS;

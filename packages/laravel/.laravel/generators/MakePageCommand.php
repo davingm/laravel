@@ -31,7 +31,7 @@ class MakePageCommand extends Command
         File::put($targetPath, $this->stub($name));
 
         if ($routeCacheExists) {
-            $this->warn('Route cache was preserved and may be stale. Run `php artisan route:clear` to load the new page, then `php artisan route:cache` to enable route caching again.');
+            $this->warn('Route cache was preserved and may be stale. Run `artisan route:clear` to load the new page, then `artisan route:cache` to enable route caching again.');
         } else {
             Artisan::call('route:clear');
         }

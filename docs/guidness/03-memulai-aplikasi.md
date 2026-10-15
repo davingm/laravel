@@ -2,7 +2,7 @@
 
 Bab ini memandu setup dan menjalankan project `davingm/laravel` yang sudah dibuat melalui Composer.
 
-Semua command dijalankan dari **root aplikasi**, yaitu folder project yang berisi `artisan`, `composer.json`, dan `package.json`.
+Semua command dijalankan dari **root aplikasi**, yaitu folder project yang berisi `composer.json` dan `package.json`.
 
 ## 1. Periksa konfigurasi database
 
@@ -30,7 +30,7 @@ Mulai development menggunakan launcher:
 artisan dev
 ```
 
-Jika launcher tidak terpasang atau PATH mengarah ke launcher lama:
+Jika launcher global tidak tersedia:
 
 ```bash
 node .laravel/cli.js dev
@@ -40,7 +40,7 @@ Mode ini menjalankan Laravel server, queue worker, dan Vite dev server. Biarkan 
 
 ## 4. Jalankan perintah Artisan
 
-Gunakan launcher `artisan` untuk menjalankan satu command:
+Gunakan launcher framework untuk menjalankan command:
 
 ```bash
 artisan about
@@ -48,7 +48,7 @@ artisan route:list
 artisan test
 ```
 
-Gunakan bentuk `artisan <command>` untuk command Laravel. Launcher ini meneruskan command seperti `about`, `route:list`, `test`, `migrate`, dan generator ke aplikasi.
+Gunakan bentuk `artisan <command>` untuk command Laravel. Launcher ini meneruskan command seperti `about`, `route:list`, `test`, `migrate`, dan generator ke aplikasi. Jika launcher global tidak tersedia, gunakan `node .laravel/cli.js <command>` dari root aplikasi. Bootstrap PHP internal berada di `.laravel/`; tidak ada file `artisan` di root aplikasi.
 
 ## 5. Buka aplikasi
 
@@ -56,10 +56,10 @@ Launcher menampilkan alamat server saat mulai. Buka alamat lokal tersebut di bro
 
 ## Masalah umum
 
-- **`artisan` tidak dikenali:** gunakan `node .laravel/cli.js dev` dari root aplikasi.
+- **`artisan` tidak dikenali:** gunakan `node .laravel/cli.js <command>` dari root aplikasi, misalnya `node .laravel/cli.js dev`.
 - **Asset belum muncul:** pastikan Vite aktif saat development, atau jalankan `npm run build`.
 - **Database error saat setup:** periksa `.env`, ketersediaan file SQLite, izin tulis, dan ekstensi PHP untuk driver database yang digunakan.
-- **Route halaman belum terlihat:** periksa bahwa file berada di `src/pages/` dan jalankan `artisan route:list`.
+- **Route halaman belum terlihat:** periksa bahwa file berada di `src/pages/` dan jalankan `artisan route:list` atau `node .laravel/cli.js route:list`.
 
 ## Langkah berikutnya
 

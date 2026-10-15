@@ -17,7 +17,7 @@ class MakeRolesCommand extends Command
         $roles = array_values(array_filter(array_map(fn ($role) => trim((string) $role), $this->argument('roles'))));
 
         if ($roles === []) {
-            $this->error('Please provide at least one role name. Example: php artisan make:roles admin author editor');
+            $this->error('Please provide at least one role name. Example: artisan make:roles admin author editor');
 
             return self::FAILURE;
         }

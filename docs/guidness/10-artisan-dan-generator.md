@@ -6,17 +6,17 @@ Daftar command yang benar-benar tersedia pada instalasi dapat diperiksa mengguna
 artisan list
 ```
 
-Jalankan command dari root aplikasi, yaitu folder yang berisi file `artisan`.
+Jalankan command dari root aplikasi, yaitu folder yang berisi `composer.json` dan `bootstrap/app.php`.
 
 ## Launcher `artisan`
 
-`artisan` adalah launcher framework. Command khusus `artisan dev` menjalankan Laravel server, queue worker, dan Vite dev server. Command lain diteruskan ke Artisan Laravel:
+Perintah `artisan` adalah launcher framework. File launcher berada di luar root aplikasi; bootstrap PHP Artisan disimpan sebagai tooling internal di `.laravel/`. Command khusus `artisan dev` menjalankan Laravel server, queue worker, dan Vite dev server. Command lain diteruskan ke Artisan Laravel:
 
 ```bash
 artisan route:list
 ```
 
-Jika launcher global `artisan` belum tersedia pada PATH, gunakan file launcher dari root aplikasi:
+Jika launcher global `artisan` belum tersedia pada PATH, gunakan CLI dari root aplikasi:
 
 ```bash
 node .laravel/cli.js route:list

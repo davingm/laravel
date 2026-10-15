@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "adec9a6e1c5ec96935b6817c3d834f44",
+    "content-hash": "bc606b150085d6870cf73fd1cab6bcb6",
     "packages": [
         {
             "name": "brick/math",
@@ -142,17 +142,11 @@
         },
         {
             "name": "davingm/laravel-runtime",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/davingm/laravel-runtime.git",
-                "reference": "236845d739cd0b16bcc1201c864925de51dc4885"
-            },
+            "version": "dev-main",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/davingm/laravel-runtime/zipball/236845d739cd0b16bcc1201c864925de51dc4885",
-                "reference": "236845d739cd0b16bcc1201c864925de51dc4885",
-                "shasum": ""
+                "type": "path",
+                "url": "../packages/laravel",
+                "reference": "1c4febafa64e9781cf653830ee3a72aec6db08a0"
             },
             "require": {
                 "composer-plugin-api": "^2.2",
@@ -167,16 +161,21 @@
                     "Davingm\\LaravelRuntime\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "AGPL-3.0-or-later"
+                "AGPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "davingm",
+                    "homepage": "https://davingm.com"
+                }
             ],
             "description": "Internal Composer plugin that installs the Laravel runtime directory.",
-            "support": {
-                "issues": "https://github.com/davingm/laravel-runtime/issues",
-                "source": "https://github.com/davingm/laravel-runtime/tree/v1.0.0"
-            },
-            "time": "2026-10-12T12:24:17+00:00"
+            "homepage": "https://github.com/davingm/laravel-runtime",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "dflydev/dot-access-data",
@@ -8873,7 +8872,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "davingm/laravel-runtime": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
