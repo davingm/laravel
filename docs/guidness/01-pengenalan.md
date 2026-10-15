@@ -1,10 +1,10 @@
 # 1. Pengenalan
 
-Selamat datang di AutoLaravel, framework berbasis Laravel untuk membangun aplikasi web dengan Blade, pola halaman berbasis file, dan tooling frontend yang sudah disiapkan.
+Selamat datang di `davingm/laravel`, framework berbasis Laravel untuk membangun aplikasi web dengan Blade, pola halaman berbasis file, dan tooling frontend yang sudah disiapkan.
 
 ## Apa yang disediakan?
 
-AutoLaravel menggabungkan kemampuan aplikasi Laravel dengan beberapa konvensi siap pakai:
+`davingm/laravel` menggabungkan kemampuan aplikasi Laravel dengan beberapa konvensi siap pakai:
 
 - **Backend Laravel:** routing, middleware, controller, model Eloquent, database, validasi, dan Artisan.
 - **Halaman Blade:** halaman berada di `src/pages/` dan dapat memperoleh route GET dari struktur file.
@@ -14,13 +14,13 @@ AutoLaravel menggabungkan kemampuan aplikasi Laravel dengan beberapa konvensi si
 
 ## Cara kerja frontend
 
-Halaman dirender di server menggunakan Blade. JavaScript menambahkan interaksi tertentu, seperti navigasi ringan pada link yang dipilih. AutoLaravel bukan Vue atau React SPA; link biasa tetap bekerja dengan navigasi browser.
+Halaman dirender di server menggunakan Blade. JavaScript menambahkan interaksi tertentu, seperti navigasi ringan pada link yang dipilih. `davingm/laravel` bukan Vue atau React SPA; link biasa tetap bekerja dengan navigasi browser.
 
 ## Untuk aplikasi seperti apa?
 
-AutoLaravel cocok sebagai awal untuk aplikasi Laravel server-rendered, dashboard, aplikasi CRUD, atau situs Blade yang memerlukan JavaScript ringan. Developer tetap dapat menggunakan model, controller, migration, dan fitur Laravel untuk membangun kebutuhan aplikasi.
+Framework ini dapat menjadi awal untuk aplikasi Laravel server-rendered, dashboard, aplikasi CRUD, atau situs Blade yang memerlukan JavaScript ringan. Developer tetap dapat menggunakan model, controller, migration, dan fitur Laravel untuk membangun kebutuhan aplikasi.
 
-Jika kebutuhan utama aplikasi adalah UI client-side yang kompleks atau SPA penuh, pertimbangkan frontend client-side khusus. Itu bukan pola frontend bawaan AutoLaravel.
+Jika kebutuhan utama aplikasi adalah UI client-side yang kompleks atau SPA penuh, pertimbangkan frontend client-side khusus. Itu bukan pola frontend bawaan framework ini.
 
 ## Urutan membaca
 

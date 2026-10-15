@@ -3,7 +3,7 @@
     "name": "davingm/laravel",
     "type": "project",
     "description": "Laravel starter project by davingm.",
-    "keywords": ["laravel", "starter", "auto"],
+    "keywords": ["laravel", "framework", "blade", "starter"],
     "license": "AGPL-3.0-only",
     "homepage": "https://github.com/davingm/laravel",
     "authors": [

@@ -1,6 +1,6 @@
 # 7. Backend: controller, model, dan validasi
 
-Backend aplikasi menggunakan Laravel. AutoLaravel menambahkan lokasi folder dan generator, tetapi pola dasarnya tetap request → route → middleware → controller → model/service → response.
+Backend aplikasi menggunakan Laravel. `davingm/laravel` menambahkan lokasi folder dan generator, tetapi pola dasarnya tetap request → route → middleware → controller → model/service → response.
 
 ## Route
 

@@ -1,6 +1,6 @@
 # 2. Instalasi dan persyaratan
 
-Bab ini menjelaskan perangkat yang diperlukan dan cara membuat project AutoLaravel baru.
+Bab ini menjelaskan perangkat yang diperlukan dan cara membuat project `davingm/laravel` baru.
 
 ## Persyaratan
 
@@ -22,16 +22,14 @@ Pastikan ekstensi PHP dan driver database yang diperlukan oleh pilihan database 
 
 ## Membuat project
 
-Jika package AutoLaravel tersedia pada Composer registry yang Anda gunakan, buat project baru dengan Composer:
+Buat project baru dari package yang dipublikasikan di Packagist:
 
 ```bash
 composer create-project davingm/laravel nama-aplikasi
 cd nama-aplikasi
 ```
 
-Ganti `nama-aplikasi` dengan nama folder project yang diinginkan. Composer membuat folder project dan menjalankan proses setup yang disediakan starter. Jika package belum tersedia pada registry, minta alamat distribusi atau versi yang benar dari pengelola framework.
-
-Ketersediaan versi `auto/laravel` pada Packagist belum diverifikasi. Jika Composer melaporkan bahwa package atau versi tidak ditemukan, pastikan registry dan versi rilis yang diberikan pengelola framework sebelum melanjutkan.
+Ganti `nama-aplikasi` dengan nama folder project yang diinginkan. Composer membuat folder project dan menjalankan setup starter. Jika Composer tidak menemukan package atau versi, periksa [halaman package di Packagist](https://packagist.org/packages/davingm/laravel) untuk memastikan status rilis terkini. Jika metadata author atau lisensi yang tampil masih lama, jalankan `composer clear-cache` dan periksa metadata pada versi atau branch yang benar-benar dipilih; mengubah `main` tidak mengubah metadata tag atau branch lain.
 
 ## Tentang dependency
 

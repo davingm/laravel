@@ -1,6 +1,9 @@
 # davingm/laravel
 
-Laravel framework project by [AutoLaravel](https://github.com/auto).
+Laravel starter project and framework tooling by [davingm](https://github.com/davingm).
+
+> [!WARNING]
+> This project is very new and still evolving. APIs, conventions, tooling, and documentation may change between releases. Evaluate it carefully and test it in an isolated environment before relying on it for production work.
 
 ## Create a project
 
@@ -9,11 +12,11 @@ composer create-project davingm/laravel app
 cd app
 ```
 
-The installer prepares the environment, runs database migrations, and builds the frontend assets.
+The installer prepares the environment, runs database migrations, and builds frontend assets. Review your local `.env` before running setup again; migrations affect the configured database.
 
 ## Development
 
-For a fresh monorepo checkout, run once from `playground/`:
+From a fresh monorepo checkout, run setup once from `playground/`:
 
 ```bash
 composer run setup
@@ -21,15 +24,13 @@ composer run setup
 
 The `.laravel/` runtime directory is installed by the `davingm/laravel-runtime` Composer plugin and ignored by Git. If it is removed, run `composer install` again to restore it.
 
-Start the custom development environment from `playground/`:
+Start the development environment from `playground/`:
 
 ```bash
-artisan dev
+composer run dev
 ```
 
-If the global launcher is stale or not available on `PATH`, run `node .laravel/cli.js dev` instead. This starts the Laravel server, queue worker, and Vite dev server.
-
-Use `php artisan <command>` for Artisan commands, for example `php artisan route:list` or `php artisan test`.
+This starts the Laravel server, queue worker, and Vite development server. Use `php artisan <command>` for Artisan commands, for example `php artisan route:list` or `php artisan test`.
 
 ## Frontend
 
@@ -37,12 +38,10 @@ Pages live in `src/pages` and shared layouts live in `src/layouts`. Run `npm run
 
 ## Requirements
 
-- PHP >= 8.3
-- Composer
-- Node.js >= 20.19 or >= 22.12
+- PHP `^8.3`
+- Composer 2
+- Node.js and npm compatible with the frontend dependencies
 
 ## License
 
-GNU Affero General Public License v3.0
-
-Project-authored code is licensed under AGPL-3.0-only. Dependencies retain their respective upstream licenses.
+Project-authored code is licensed under the [GNU Affero General Public License v3.0](https://github.com/davingm/laravel/blob/main/LICENSE) (`AGPL-3.0-only`). Dependencies retain their respective upstream licenses.

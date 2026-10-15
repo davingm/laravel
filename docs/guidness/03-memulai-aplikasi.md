@@ -1,6 +1,6 @@
 # 3. Memulai aplikasi
 
-Bab ini memandu setup dan menjalankan project AutoLaravel yang sudah dibuat melalui Composer.
+Bab ini memandu setup dan menjalankan project `davingm/laravel` yang sudah dibuat melalui Composer.
 
 Semua command dijalankan dari **root aplikasi**, yaitu folder project yang berisi `artisan`, `composer.json`, dan `package.json`.
 

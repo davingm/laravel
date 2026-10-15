@@ -1,8 +1,9 @@
 {
-    "name": "@auto/cli",
+    "name": "@davingm/laravel-cli",
     "version": "1.0.0",
     "description": "Laravel development CLI",
     "type": "module",
+    "private": true,
     "bin": {
         "artisan": "./cli.js"
     },
@@ -14,7 +15,7 @@
     },
     "keywords": [
         "laravel",
-        "auto",
+        "framework",
         "cli"
     ],
     "license": "AGPL-3.0-only"

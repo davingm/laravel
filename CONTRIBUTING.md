@@ -7,11 +7,13 @@ Thank you for considering contributing to this project. This document outlines t
 - [Getting Started](#getting-started)
 - [How to Contribute](#how-to-contribute)
 - [Development Setup](#development-setup)
+- [Dev Container](#dev-container)
 - [Coding Standards](#coding-standards)
 - [Commit Messages](#commit-messages)
 - [Pull Request Process](#pull-request-process)
 - [Reporting Bugs](#reporting-bugs)
 - [Feature Requests](#feature-requests)
+- [Code of Conduct](#code-of-conduct)
 
 ---
 
@@ -54,7 +56,7 @@ Before contributing, please:
 | Composer | >= 2.x |
 | Node.js | >= 20.19 or >= 22.12 |
 
-**Setup (checkout monorepo):**
+**Setup from a fresh checkout:**
 
 ```bash
 git clone https://github.com/davingm/laravel.git
@@ -63,7 +65,7 @@ cd playground
 composer run setup
 ```
 
-The Laravel application and its `.laravel` CLI source live in `playground/`. Run Composer, npm, and Artisan commands from that directory. `composer run setup` installs PHP and npm dependencies, creates `.env` and the SQLite database if missing, generates the application key, runs migrations, and builds the frontend. Run setup once for a fresh checkout; running it again can replace the local `APP_KEY`.
+`playground/` is the Laravel application used to develop and test the framework. Run Composer, npm, and Artisan commands from that directory. `composer run setup` installs dependencies, creates local environment and SQLite files when missing, generates an application key, runs migrations, and builds frontend assets. Run it once for a fresh checkout; before running it again, check your `.env` and database because setup runs migrations and may change local application configuration.
 
 **Start development environment:**
 
@@ -80,6 +82,24 @@ artisan dev
 ```
 
 In the monorepo, invoke the command from `playground/`; the launcher searches the current directory and its parents for `.laravel/cli.js`.
+
+### Dev Container
+
+The repository provides an isolated PHP, Composer, Node.js, and SQLite development environment:
+
+1. Install Docker Desktop or another compatible container engine, Visual Studio Code, and the Dev Containers extension.
+2. Open the repository root in VS Code.
+3. Run **Dev Containers: Reopen in Container**. On first creation, the container runs `composer run setup` in `playground/`.
+4. Open a container terminal and run:
+
+   ```bash
+   cd playground
+   composer run dev
+   ```
+
+The application is served on port `8000`. To rebuild the container after changing its base image or features, use **Dev Containers: Rebuild Container**. See `.devcontainer/devcontainer.json`.
+
+If you prefer not to use a container, install the requirements listed above and follow the host setup instructions.
 
 ---
 
@@ -170,15 +190,15 @@ vendor/bin/pint --dirty
 8. Reference any related issues using `Closes #123` in the PR description.
 9. A maintainer will review your pull request. Be prepared for feedback and revisions.
 
-Pull requests that do not have tests, break existing tests, or fail the Pint check will not be merged until those issues are resolved.
+Add or update tests for behavior changes. If a check cannot reasonably be run, explain why in the pull request rather than implying it passed. Run Pint for PHP changes and include the result in the pull request description when practical.
 
 ---
 
-Package releases use tags in the form `<package>-vX.Y.Z` (for example, `auth-v1.0.0`). The release documentation is currently under review; see the [package split discussion](docs/discussion/package-split-releases.md) before creating or pushing a release tag.
+Do not create release tags as part of an ordinary contribution. The runtime package has its own release repository and process; consult [the runtime package release guide](docs/dev/publish-runtime-package.md) and verify current tags and registry metadata before preparing a release. The package split discussion is historical and is not release guidance.
 
 ## Reporting Bugs
 
-Use the [GitHub Issues](https://github.com/davingm/laravel/issues) tracker. Before filing a report, search existing issues to see if it has already been reported.
+Use the [bug report form](https://github.com/davingm/laravel/issues/new?template=bug_report.yml). Search existing issues first. Do not post credentials, personal data, production secrets, or security vulnerabilities in a public issue.
 
 A good bug report includes:
 
@@ -194,10 +214,14 @@ For security vulnerabilities, do **not** open a public issue. See [SECURITY.md](
 
 ## Feature Requests
 
-Open a [GitHub Issue](https://github.com/davingm/laravel/issues) with the label `enhancement`. Describe:
+Use the [feature request form](https://github.com/davingm/laravel/issues/new?template=feature_request.yml). Describe:
 
 - The problem you are trying to solve
 - The proposed solution
 - Alternatives you have considered
 
-Features that significantly expand the scope or add dependencies will require broader discussion before implementation.
+Features that significantly expand the scope or add dependencies should be discussed with maintainers before implementation.
+
+## Code of Conduct
+
+Participation in this project is subject to the [Code of Conduct](CODE_OF_CONDUCT.md). Contact the maintainer privately using the options on the [GitHub profile](https://github.com/davingm) to report a conduct concern; do not disclose sensitive details in a public issue.

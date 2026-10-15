@@ -93,7 +93,7 @@ Composer path repository membuat dependency menunjuk ke folder package lokal. Co
 
 ## Menerbitkan `packages/laravel` ke repository terpisah
 
-Package Composer bernama `davingm/laravel-runtime`; repository target-nya [github.com/davingm/laravel-runtime](https://github.com/davingm/laravel-runtime). Kerjakan perintah Git berikut dari **root monorepo** di Git Bash. Git PowerShell pada lingkungan pengembang proyek ini tidak tersedia.
+Package Composer bernama `davingm/laravel-runtime`; repository target-nya [github.com/davingm/laravel-runtime](https://github.com/davingm/laravel-runtime). Prosedur publikasi lengkap ada di [panduan rilis runtime](./publish-runtime-package.md). Contoh command shell pada bagian berikut memakai Bash; di Windows gunakan Git Bash atau WSL.
 
 ### 1. Siapkan perubahan monorepo
 
@@ -121,7 +121,7 @@ Repository tujuan harus sudah dibuat dan branch/tag yang akan dipush harus belum
 
 ### 3. Split source dan push branch
 
-Pilih versi baru yang belum pernah dipakai. Karena `v1.0.1` sudah dirilis, `v1.0.2` hanya contoh untuk rilis patch berikutnya.
+Sebelum memilih versi baru, periksa tag remote dan metadata Packagist. Jangan menggunakan ulang atau memindahkan tag yang sudah terbit.
 
 ```bash
 split_commit=$(git subtree split --prefix=packages/laravel) || exit 1
@@ -138,11 +138,11 @@ Hasil split menempatkan isi `packages/laravel` di root history package. Commit I
 Push tag ke repository package dengan menunjuk langsung ke commit hasil split:
 
 ```bash
-git push runtime "$split_commit:refs/tags/v1.0.2"
-git ls-remote runtime refs/heads/main refs/tags/v1.0.2
+git push runtime "$split_commit:refs/tags/vX.Y.Z"
+git ls-remote runtime refs/heads/main "refs/tags/vX.Y.Z"
 ```
 
-Ganti `v1.0.2` dengan versi yang dipilih. Tag versi diterbitkan pada repo `laravel-runtime`, bukan pada riwayat aplikasi monorepo. Jangan memindahkan atau menimpa tag yang sudah diterbitkan, dan jangan gunakan force push untuk mengatasi penolakan remote.
+Ganti `vX.Y.Z` dengan versi baru yang sudah diverifikasi belum pernah dipakai. Tag versi diterbitkan pada repo `laravel-runtime`, bukan pada riwayat aplikasi monorepo. Jangan memindahkan atau menimpa tag yang sudah diterbitkan, dan jangan gunakan force push untuk mengatasi penolakan remote.
 
 ### 5. Verifikasi package rilis
 

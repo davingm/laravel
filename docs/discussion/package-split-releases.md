@@ -1,7 +1,7 @@
 # Package split releases
 
-> **Status: arsip, tidak aktif.** Workflow split package sudah diganti dengan CI aplikasi melalui Apache.
+> **Status: arsip historis.** Jangan gunakan dokumen ini sebagai status rilis atau prosedur. Periksa manifest, tag, registry, dan [panduan rilis runtime](../dev/publish-runtime-package.md) untuk kondisi terkini.
 
-Dokumen ini dipertahankan sebagai catatan historis. Package `auth` dan package internal lain di `packages/` tidak dipublikasikan otomatis.
+Dokumen ini dipertahankan sebagai catatan historis tentang workflow split package. Package internal di `packages/` tidak otomatis dipublikasikan hanya karena berada di monorepo.
 
-Source runtime dan Composer plugin berada di package `packages/laravel`. Package ini harus dirilis sebagai `davingm/laravel-runtime`; pluginnya membuat `.laravel/` setelah Composer membangun autoloader. Folder hasil generate diabaikan Git dan dipulihkan dengan `composer install`.
+Source runtime dan Composer plugin berada di `packages/laravel`. Package terpisah `davingm/laravel-runtime` memasang `.laravel/` setelah Composer membangun autoloader. Folder hasil generate diabaikan Git dan dibuat ulang melalui instalasi Composer.

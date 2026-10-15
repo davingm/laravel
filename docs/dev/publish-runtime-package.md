@@ -1,102 +1,104 @@
-﻿# Rilis package runtime
+# Merilis package runtime
 
-Panduan ini menerbitkan source `packages/laravel` sebagai package Composer terpisah bernama `davingm/laravel-runtime`. Source tetap dikembangkan di monorepo `davingm/laravel`; repository rilis berisi hasil split folder tersebut saja.
+Panduan ini menjelaskan cara merilis source `packages/laravel` sebagai package Composer `davingm/laravel-runtime`. Source dikembangkan di monorepo ini; repository rilis terpisah berisi isi `packages/laravel` di root-nya.
 
-## Gambaran alur
+> Jangan menganggap versi atau status sinkronisasi dalam catatan lama sebagai kondisi saat ini. Sebelum merilis, periksa branch dan tag repository package serta metadata [Packagist](https://packagist.org/packages/davingm/laravel-runtime). Jangan menimpa atau memindahkan tag yang sudah diterbitkan.
 
-1. Validasi package dan uji melalui playground.
-2. Buat repository GitHub kosong bernama `laravel-runtime` di akun/organisasi `davingm`.
-3. Bentuk riwayat Git yang hanya berisi `packages/laravel`, lalu push branch `main` dan tag versi.
-4. Daftarkan repository rilis di Packagist dan aktifkan sinkronisasi.
-5. Verifikasi package melalui checkout aplikasi yang tidak memakai path repository lokal.
+## Sebelum merilis
 
-Composer mendapatkan versi dari branch dan tag VCS. Packagist membaca `composer.json` di root repository, jadi isi `packages/laravel` harus berada di root repository hasil split. Lihat [versi Composer](https://getcomposer.org/doc/articles/versions.md), [publikasi package](https://getcomposer.org/doc/02-libraries.md#publishing-to-a-version-control-system), dan [Packagist](https://packagist.org/about).
+Pastikan:
 
-## Prasyarat
+- Perubahan source yang hendak dirilis sudah ditinjau dan diuji melalui `playground/`.
+- `packages/laravel/composer.json` memiliki nama package `davingm/laravel-runtime` dan class plugin yang benar.
+- Repository tujuan [github.com/davingm/laravel-runtime](https://github.com/davingm/laravel-runtime) dapat diakses dan remote `runtime` mengarah ke sana.
+- `git subtree` tersedia; perintah berikut dijalankan dari root monorepo.
+- Versi/tag yang dipilih belum pernah diterbitkan di repository tujuan.
 
-- Perubahan yang akan dirilis sudah masuk ke branch monorepo yang benar.
-- `packages/laravel/composer.json` bernama `davingm/laravel-runtime` dan mendefinisikan class plugin yang benar.
-- Git dengan perintah `git subtree` tersedia.
-- Anda punya hak push ke repository GitHub tujuan.
-- Repository `davingm/laravel-runtime` sudah dibuat **kosong**. Jangan inisialisasi README/license di GitHub karena riwayat itu tidak berhubungan dengan hasil split.
+## Validasi source
 
-## Validasi package
+Dari root monorepo:
 
-Jalankan dari root monorepo:
-
-```powershell
+```bash
 composer validate --strict --no-check-publish --working-dir=packages/laravel
 php -l packages/laravel/src/RuntimePlugin.php
 ```
 
-Uji perubahan runtime melalui playground sebelum rilis.
-
-## Split dan push versi pertama
-
-Jalankan dari root monorepo di Git Bash. Sesuaikan URL bila repository berada di organisasi/akun lain. `v1.0.0` adalah contoh; gunakan hanya jika tag tersebut belum pernah diterbitkan.
+Lalu dari `playground/`, jalankan test dan build yang relevan:
 
 ```bash
-$splitCommit = git subtree split --prefix=packages/laravel
-test -n "$splitCommit" || { echo "git subtree split gagal" >&2; exit 1; }
-
-git push https://github.com/davingm/laravel-runtime.git "$splitCommit:refs/heads/main" || exit 1
-
-git push https://github.com/davingm/laravel-runtime.git "$splitCommit:refs/tags/v1.0.0" || exit 1
+php artisan test --compact
+npm run build
 ```
 
-Tinjau commit dan tag sebelum push. Jangan force push atau memindahkan tag versi yang sudah diterbitkan. Jika `git subtree` belum tersedia, aktifkan/pasang Git Subtree sesuai sistem operasi; langkah instalasi spesifik OS belum dicakup di sini.
+## Siapkan remote dan versi
 
-## Daftarkan di Packagist
+Gunakan Git Bash, WSL, Linux, atau macOS untuk contoh Bash di bawah. Di Windows, pastikan `git subtree` tersedia pada lingkungan shell tersebut.
 
-1. Masuk ke [Packagist](https://packagist.org/) dengan akun yang berhak mengelola package.
-2. Pilih **Submit** dan masukkan `https://github.com/davingm/laravel-runtime`.
-3. Submit package yang terdeteksi sebagai `davingm/laravel-runtime`.
-4. Pastikan halaman package menampilkan versi `1.0.0`.
-5. Aktifkan sinkronisasi GitHub dan Packagist. Packagist dapat memasang service hook melalui akses akun; jika tidak, konfigurasikan webhook pada repository tujuan sesuai instruksi Packagist.
+Periksa remote dan tag package sebelum memilih versi:
 
-Package ini adalah Composer plugin. Project starter sudah mengizinkan `davingm/laravel-runtime` melalui `config.allow-plugins`. Untuk instalasi awal, Composer dapat meminta persetujuan plugin; pastikan nama dan sumbernya benar sebelum menyetujui. Lihat [dokumentasi plugin Composer](https://getcomposer.org/doc/articles/plugins.md).
+```bash
+git remote -v
+git ls-remote --heads --tags https://github.com/davingm/laravel-runtime.git
+```
 
-## Verifikasi konsumsi package
+Jika remote `runtime` belum ada, tambahkan sekali:
 
-Gunakan checkout atau salinan sementara aplikasi. Pastikan salinan itu **tidak** memiliki konfigurasi path repository lokal `../packages/laravel`.
+```bash
+git remote add runtime https://github.com/davingm/laravel-runtime.git
+```
 
-```powershell
+Pilih versi SemVer baru yang belum ada. Konfirmasikan juga versi dan metadata di halaman Packagist. Jangan membuat atau memindahkan tag hanya untuk memperbarui metadata rilis lama.
+
+## Split source dan push
+
+Pastikan perubahan yang diinginkan sudah ada pada commit monorepo yang benar. Perintah `git subtree split` hanya membawa riwayat dari `packages/laravel`.
+
+```bash
+git status --short
+split_commit=$(git subtree split --prefix=packages/laravel) || exit 1
+test -n "$split_commit" || { echo "git subtree split gagal" >&2; exit 1; }
+
+git show --stat --oneline "$split_commit"
+```
+
+Tinjau commit split sebelum push. Ganti `vX.Y.Z` pada perintah berikut dengan tag baru yang sudah dipastikan belum digunakan:
+
+```bash
+git push runtime "$split_commit:refs/heads/main"
+git push runtime "$split_commit:refs/tags/vX.Y.Z"
+git ls-remote runtime refs/heads/main "refs/tags/vX.Y.Z"
+```
+
+Jika push ditolak karena remote memiliki commit yang tidak ada pada riwayat split, hentikan dan tinjau riwayatnya. Jangan gunakan force push sebagai jalan pintas. Tag versi dipasang pada repository package runtime, bukan pada monorepo.
+
+## Sinkronkan dan verifikasi Packagist
+
+Packagist membaca manifest package dari root repository VCS. Setelah push:
+
+1. Pastikan repository package memiliki `composer.json`, `src/`, dan `.laravel/` pada root.
+2. Pastikan branch/tag baru terlihat pada GitHub.
+3. Tunggu webhook Packagist atau minta pembaruan manual dari halaman package bila webhook tidak tersedia.
+4. Periksa versi dan metadata pada [halaman package runtime](https://packagist.org/packages/davingm/laravel-runtime).
+
+Untuk menguji konsumsi rilis, gunakan checkout baru atau direktori sementara yang tidak memiliki path repository lokal ke `../packages/laravel`. Jalankan dari root aplikasi uji:
+
+```bash
 composer clear-cache
 composer update davingm/laravel-runtime --with-dependencies --no-interaction
 composer show davingm/laravel-runtime
 composer install --no-interaction --prefer-dist
-Test-Path .laravel/cli.js
-Test-Path .laravel/generators/MakeRolesCommand.php
+test -f .laravel/cli.js
 php artisan test --compact
 ```
 
-Dua perintah `Test-Path` seharusnya menghasilkan `True`. Jika Composer masih mengambil package lokal/versi lama, periksa `composer.json`, `composer.lock`, cache Composer, dan status sinkronisasi Packagist.
-
-Sesudah verifikasi, sinkronkan `playground/composer.lock` dengan package yang sudah dirilis dan uji `composer create-project davingm/laravel` dari direktori sementara.
-
-## Rilis berikutnya
-
-1. Ubah source di `packages/laravel`, lalu validasi dan uji melalui playground.
-2. Pilih tag semver baru, misalnya `v1.0.1` untuk perbaikan kompatibel atau `v1.1.0` untuk penambahan kompatibel.
-3. Split ulang dari commit monorepo terbaru yang memuat perubahan, lalu push branch dan tag baru:
-
-```bash
-$splitCommit = git subtree split --prefix=packages/laravel
-test -n "$splitCommit" || { echo "git subtree split gagal" >&2; exit 1; }
-git push https://github.com/davingm/laravel-runtime.git "$splitCommit:refs/heads/main" || exit 1
-git push https://github.com/davingm/laravel-runtime.git "$splitCommit:refs/tags/v1.0.1" || exit 1
-```
-
-4. Pastikan Packagist menampilkan versi baru. Jika webhook aktif, Packagist akan mendapat notifikasi push; jika tidak, jalankan pembaruan manual dari halaman package.
-5. Perbarui constraint/lock file aplikasi bila diperlukan, lalu uji instalasi kembali.
-
-Jangan menimpa tag lama. Pastikan perubahan kompatibilitas sesuai semantic versioning dan constraint package aplikasi.
+Jangan arahkan uji instalasi ke project atau database yang menyimpan data penting. Untuk menguji starter baru dari Packagist, jalankan `composer create-project davingm/laravel /path/to/temporary-directory --no-interaction` dengan path pengganti yang belum ada dan berada di lingkungan uji.
 
 ## Pemecahan masalah
 
-- **Packagist menolak repository/package tidak ditemukan:** pastikan `composer.json` ada di root hasil split, nama package tepat, dan repo dapat dibaca Packagist.
-- **Versi belum muncul:** pastikan tag ada di repository tujuan, lalu cek sinkronisasi atau minta Packagist memperbarui package.
-- **Composer meminta izin plugin:** periksa package `davingm/laravel-runtime` dan izinkan melalui `allow-plugins` project.
-- **Push ditolak:** remote mungkin tidak kosong atau branch/tag sudah ada. Periksa riwayat remote; jangan gunakan force push.
-- **`.laravel` tidak terbentuk:** pastikan plugin terpasang dan diizinkan, lalu jalankan `composer dump-autoload` untuk memicu event Composer.
+- **Versi baru belum muncul:** pastikan tag ada di repository tujuan, lalu cek webhook atau minta Packagist memperbarui package secara manual.
+- **Composer mengambil versi lama:** periksa constraint dan `composer.lock`, cache Composer, serta versi yang benar-benar tercatat di Packagist.
+- **Composer meminta izin plugin:** pastikan nama dan sumber package benar serta `davingm/laravel-runtime` diizinkan melalui `config.allow-plugins`.
+- **Folder `.laravel/` tidak dibuat:** pastikan plugin berhasil dipasang dan diizinkan, lalu jalankan `composer dump-autoload` untuk menjalankan lifecycle Composer.
+- **`git push` ditolak:** hentikan proses dan tinjau remote serta tag yang sudah ada. Jangan force-push atau menimpa tag.
 
+Informasi tentang branch, tag, dan package dapat berubah. Verifikasi dengan remote VCS dan Packagist setiap kali menyiapkan rilis.

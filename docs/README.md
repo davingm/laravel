@@ -32,17 +32,14 @@ Workflow `.github/workflows/test-apache.yml` berjalan pada setiap push dan pull 
 
 ## `dev/` — panduan pengembangan
 
+- [Mengembangkan framework melalui playground](./dev/develop-framework-in-playground.md) — perbedaan source runtime, aplikasi pengujian, dan cara menjalankan test.
 - [Rilis package runtime](./dev/publish-runtime-package.md) — memisahkan `packages/laravel` ke repository GitHub tersendiri dan menerbitkan `davingm/laravel-runtime` di Packagist.
-
-## CI
-
-Workflow `.github/workflows/test-apache.yml` berjalan pada setiap push dan pull request. Workflow memasang dependency Composer di `playground/`, menjalankan test Laravel, membangun asset frontend, lalu memastikan halaman utama merespons melalui Apache dengan document root `playground/public`.
 
 ## `discussion/`
 
-Rancangan arsitektur, catatan perubahan, serta dokumen yang masih perlu disinkronkan atau diverifikasi. Jangan menganggap dokumen di sini sebagai panduan siap pakai sebelum statusnya diperbarui.
+Rancangan arsitektur dan catatan historis. Dokumen di sini bukan panduan implementasi yang berwenang; cocokkan API, nama, path, dan status dengan source serta panduan aktif sebelum menggunakannya.
 
-- [Package split releases](./discussion/package-split-releases.md) — catatan historis; runtime plugin perlu dirilis ke Packagist.
+- [Package split releases](./discussion/package-split-releases.md) — catatan historis tentang pemisahan package; gunakan panduan rilis di `dev/` untuk prosedur.
 - [Framework reference](./discussion/reference.md) — referensi lama; nama API dan sejumlah detail perlu dicocokkan lagi dengan implementasi saat ini.
 - [CRUD Barang dari Nol](./discussion/crud-barang-dari-nol.md) — tutorial memakai path view lama (`resources/views/pages`), sedangkan implementasi saat ini memakai `src/pages`.
-- [Rebranding AutoLaravel](./discussion/rebranding-autolaravel.md) — catatan historis perubahan nama dan namespace.
+- [Proposal rebranding AutoLaravel](./discussion/rebranding-autolaravel.md) — arsip proposal lama; bukan sumber identitas package atau namespace saat ini.

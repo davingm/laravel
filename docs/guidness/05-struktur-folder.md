@@ -55,7 +55,7 @@ Di project ini:
 - Migration berada di `app/database/migrations/`.
 - Root Blade view berada di `src/`; halaman berada di `src/pages/`.
 
-Path tersebut adalah struktur aplikasi AutoLaravel. Saat membuat fitur, tempatkan file pada folder yang sesuai dan gunakan generator bila tersedia.
+Path tersebut adalah struktur aplikasi `davingm/laravel`. Saat membuat fitur, tempatkan file pada folder yang sesuai dan gunakan generator bila tersedia.
 
 ## Langkah berikutnya
 
