@@ -17,6 +17,10 @@ Laravel framework project by [davingm](https://github.com/davingm), powered by t
 
 This repository is a monorepo: the Composer runtime plugin and framework source live in `packages/laravel/`, while the Laravel application used for development and testing lives in `playground/`. The plugin creates the application's ignored `.laravel/` directory after autoload generation.
 
+>[!CAUTION]
+>
+> Please review this license before using this framework
+
 ## Create a project
 
 ```bash
