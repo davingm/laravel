@@ -7,11 +7,12 @@ Panduan ini menjelaskan cara mengubah source framework, mengujinya di aplikasi p
 | Folder | Kegunaan |
 | --- | --- |
 | `packages/laravel/src/` | Source Composer plugin runtime. |
-| `packages/laravel/.laravel/` | Source CLI, bootstrap Artisan internal, generator, dan tooling runtime. |
+| `packages/laravel/.laravel/` | Source CLI, bootstrap Artisan internal, JavaScript framework, generator, dan tooling runtime. |
 | `playground/` | Aplikasi Laravel untuk pengembangan dan pengujian framework. |
 | `playground/.laravel/` | Runtime yang disalin Composer; output lokal dan diabaikan Git. Jangan mengeditnya langsung. |
+| `playground/src/assets/js/app.js` | Entry JavaScript milik aplikasi playground, bukan implementasi runtime framework. |
 
-Plugin Composer menyalin isi runtime package ke `.laravel/` pada root aplikasi. Root aplikasi hasil `create-project` tidak memiliki file `artisan`; command Laravel dijalankan melalui CLI framework.
+Plugin Composer menyalin isi runtime package ke `.laravel/` pada root aplikasi. Root aplikasi hasil `create-project` tidak memiliki file `artisan`; command Laravel dijalankan melalui CLI framework. Entry JavaScript framework juga disediakan package dan dimuat dari `.laravel/`, sehingga source framework tidak diletakkan di `src/`.
 
 ## Setup dan pemeriksaan playground
 

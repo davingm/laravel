@@ -33,9 +33,11 @@ Data `title` dan `description` yang diberikan melalui `page()` atau `Frontend::r
 
 Payload dan manifest adalah file runtime di `.laravel/cache/`. Jangan mengedit hasil tersebut sebagai source; ubah halaman atau kode `Frontend`, lalu generate ulang bila diperlukan.
 
-## JavaScript
+## JavaScript aplikasi dan runtime framework
 
-Entry JavaScript saat ini adalah `src/assets/js/app.js`. Ia:
+Kode JavaScript framework berada di `packages/laravel/.laravel/frontend/framework.js`, didistribusikan melalui Composer, dan disalin ke `.laravel/frontend/framework.js`. Layout dan Vite memuat hasil generate itu sebagai entry terpisah. Jangan menyalin atau mengedit kode framework ke dalam `src/`; Composer dapat membuat ulang runtime internal.
+
+`src/assets/js/app.js` disediakan untuk JavaScript khusus aplikasi. Developer bebas mengubahnya. Perilaku framework berikut tetap berada di entry internal:
 
 - Membaca JSON payload dan mengekspos API di `window.__AUTO_LARAVEL__`.
 - Menangani link `data-navigate` dengan mengambil HTML dan mengganti `#page-view`.
@@ -111,7 +113,11 @@ import pluginTambahan from 'nama-plugin-vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['src/assets/css/app.css', 'src/assets/js/app.js'],
+            input: [
+                'src/assets/css/app.css',
+                '.laravel/frontend/framework.js',
+                'src/assets/js/app.js',
+            ],
             refresh: ['src/**/*.blade.php'],
             fonts: [
                 bunny('Instrument Sans', {
@@ -130,7 +136,7 @@ export default defineConfig({
 });
 ```
 
-Ganti `nama-plugin-vite` dan `pluginTambahan` dengan nama package dan export plugin yang sebenarnya. Bentuk pemanggilan plugin dapat berbeda; ikuti dokumentasi package. Pertahankan Laravel plugin, dua input entry, font, Tailwind, dan pengaturan watcher yang sudah ada kecuali dokumentasi plugin menyatakan perlu penyesuaian. Jangan mendaftarkan library browser biasa sebagai plugin Vite.
+Ganti `nama-plugin-vite` dan `pluginTambahan` dengan nama package dan export plugin yang sebenarnya. Bentuk pemanggilan plugin dapat berbeda; ikuti dokumentasi package. Pertahankan entry CSS aplikasi, entry JavaScript internal `.laravel/frontend/framework.js`, entry JavaScript aplikasi, font, Tailwind, dan pengaturan watcher yang sudah ada kecuali dokumentasi plugin menyatakan perlu penyesuaian. Jangan mendaftarkan library browser biasa sebagai plugin Vite.
 
 Jika menambah file JavaScript atau CSS sebagai **entry terpisah**, tambahkan path-nya ke `input` Laravel Vite plugin dan muat entry tersebut dari layout menggunakan `@vite`. Jika package hanya di-import oleh `app.js` atau `app.css`, biasanya tidak perlu menambah entry baru.
 
@@ -144,9 +150,10 @@ Lihat panduan resmi [Laravel Vite](https://laravel.com/docs/13.x/vite), [Vite Pl
 
 ## Vite
 
-`vite.config.js` mendaftarkan:
+`vite.config.js` mendaftarkan asset aplikasi dan entry runtime framework:
 
 - `src/assets/css/app.css`
+- `.laravel/frontend/framework.js` (source package berada di `packages/laravel/.laravel/frontend/framework.js`)
 - `src/assets/js/app.js`
 
 Saat development, `artisan dev` menjalankan Vite dev server. Build production dilakukan dengan:

@@ -50,6 +50,7 @@ jobs:
         run: |
           test -f .laravel/cli.js
           test -f .laravel/artisan.php
+          test -f .laravel/frontend/framework.js
           test -f .laravel/generators/MakeRolesCommand.php
 
       - name: Prepare application environment
