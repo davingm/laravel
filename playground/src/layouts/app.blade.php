@@ -22,7 +22,7 @@
         ])
     @endif
 </head>
-<body class="min-h-screen bg-white text-neutral-900 antialiased">
+<body class="min-h-screen antialiased">
     <main id="page-view" data-page="{{ $frontendPage ?? '' }}">
         @yield('content')
     </main>

@@ -1,0 +1,91 @@
+/* davingm-welcome — scoped styles for <x-welcomepage>
+   All selectors are prefixed [data-welcomepage] so they never leak. */
+
+[data-welcomepage] {
+    --wp-red: #ff2d20;
+    position: relative;
+    display: grid;
+    min-height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+    place-items: center;
+    background: #060504;
+    color: #f0ece8;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+[data-welcomepage-canvas] {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    touch-action: none;
+}
+
+[data-welcomepage-content] {
+    position: relative;
+    z-index: 1;
+    width: min(100% - 2rem, 36rem);
+    padding: 3rem 0;
+    text-align: center;
+}
+
+[data-welcomepage-logo] {
+    display: inline-flex;
+    margin-bottom: 1.5rem;
+    opacity: 0.88;
+}
+
+[data-welcomepage-logo] svg {
+    width: 2rem;
+    height: auto;
+    display: block;
+}
+
+[data-welcomepage-title] {
+    margin: 0;
+    color: #ede8e3;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(1.7rem, 3.8vw, 2.6rem);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+[data-welcomepage-description] {
+    margin: 1rem 0 0;
+    color: #6b635e;
+    font-size: 0.82rem;
+    line-height: 1.7;
+}
+
+[data-welcomepage-link] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.75rem;
+    padding: 0.35rem 0;
+    color: #9a8f89;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+[data-welcomepage-link] [data-welcomepage-arrow] {
+    color: var(--wp-red);
+}
+
+[data-welcomepage-link]:hover {
+    color: #ede8e3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-welcomepage-canvas] { transition: none; }
+    [data-welcomepage-link] { transition: none; }
+}
