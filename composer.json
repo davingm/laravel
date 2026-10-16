@@ -55,6 +55,9 @@
         }
     },
     "scripts": {
+        "bundle": [
+            "@php scripts/bundle.php"
+        ],
         "post-root-package-install": [
             "@php .materialize-playground.php"
         ],

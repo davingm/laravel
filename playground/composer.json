@@ -76,7 +76,7 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "node .laravel/cli.js package:discover --ansi"
+            "@php -r \"file_exists('.laravel/cli.js') && passthru('node .laravel/cli.js package:discover --ansi');\""
         ],
         "post-update-cmd": [
             "node .laravel/cli.js vendor:publish --tag=laravel-assets --ansi --force"

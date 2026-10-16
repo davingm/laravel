@@ -1,2 +1,2 @@
-import { boot } from 'davingm-welcome';
+import { boot } from '@davingm/welcome';
 boot();

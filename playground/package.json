@@ -19,6 +19,6 @@
         "@laravel/multiplex": "^0.4.1"
     },
     "dependencies": {
-        "davingm-welcome": "file:../packages/welcome"
+        "@davingm/welcome": "^1.0.1"
     }
 }

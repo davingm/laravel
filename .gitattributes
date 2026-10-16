@@ -27,6 +27,8 @@ references
 /packages/dev/** export-ignore
 /packages/laravel export-ignore
 /packages/laravel/** export-ignore
+/packages/welcome export-ignore
+/packages/welcome/** export-ignore
 AGENTS.md export-ignore
 boost.json export-ignore
 CHANGELOG.md export-ignore
@@ -74,3 +76,8 @@ resault.html export-ignore
 
 /dist export-ignore
 /dist/** export-ignore
+
+/.devcontainer/bundle export-ignore
+/.devcontainer/bundle/** export-ignore
+/scripts export-ignore
+/scripts/** export-ignore

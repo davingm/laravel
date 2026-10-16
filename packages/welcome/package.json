@@ -1,9 +1,9 @@
 {
   "$schema": "https://www.schemastore.org/package.json",
-  "name": "davingm-welcome",
-  "version": "0.1.0",
+  "name": "@davingm/welcome",
+  "version": "1.0.1",
   "description": "Animated Laravel welcome page component. Drop <x-welcomepage /> in your Blade view; delete it when you're ready to build.",
-  "license": "AGPL-3.0",
+  "license": "AGPL-3.0-only",
   "type": "module",
   "main": "./dist/welcomepage.js",
   "module": "./dist/welcomepage.js",

@@ -112,6 +112,32 @@ try {
         throw new RuntimeException('Unable to write the installed application Composer manifest.');
     }
 
+    // Patch package.json: replace any local file: paths with published npm versions.
+    $packageManifestPath = $projectRoot.DIRECTORY_SEPARATOR.'package.json';
+    if (is_file($packageManifestPath)) {
+        $packageManifest = json_decode(file_get_contents($packageManifestPath), true, flags: JSON_THROW_ON_ERROR);
+        $patched = false;
+
+        foreach (['dependencies', 'devDependencies', 'optionalDependencies'] as $section) {
+            if (! isset($packageManifest[$section])) {
+                continue;
+            }
+            foreach ($packageManifest[$section] as $pkg => $version) {
+                // Replace local path references with published npm version constraints
+                if (str_starts_with((string) $version, 'file:')) {
+                    $packageManifest[$section][$pkg] = '^1.0.0';
+                    $patched = true;
+                }
+            }
+        }
+
+        if ($patched) {
+            if (file_put_contents($packageManifestPath, json_encode($packageManifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR).PHP_EOL) === false) {
+                throw new RuntimeException('Unable to write the installed application package.json.');
+            }
+        }
+    }
+
     foreach (['.gitignore', 'bootstrap'.DIRECTORY_SEPARATOR.'app.php', 'package.json'] as $requiredFile) {
         if (! is_file($projectRoot.DIRECTORY_SEPARATOR.$requiredFile)) {
             throw new RuntimeException("The materialized project is missing a required file: {$requiredFile}");
