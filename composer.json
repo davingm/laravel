@@ -64,9 +64,9 @@
         "post-create-project-cmd": [
             "@composer dump-autoload --no-interaction",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "node .laravel/cli.js key:generate --ansi",
+            "@php -r \"(file_exists('.laravel/cli.js') && file_exists('bootstrap/app.php')) && passthru('node .laravel/cli.js key:generate --ansi');\"",
             "@php -r \"file_exists('app/database/database.sqlite') || touch('app/database/database.sqlite');\"",
-            "node .laravel/cli.js migrate --graceful --ansi",
+            "@php -r \"(file_exists('.laravel/cli.js') && file_exists('bootstrap/app.php')) && passthru('node .laravel/cli.js migrate --graceful --ansi');\"",
             "npm ci --ignore-scripts",
             "npm run build"
         ]
