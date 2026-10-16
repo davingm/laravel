@@ -1,8 +1,8 @@
 import fragmentSource from './mountains.frag.glsl?raw';
 import vertexSource from './mountains.vert.glsl?raw';
 
-const COLS = 520;
-const ROWS = 190;
+const COLS = 704;
+const ROWS = 260;
 const VERTICES = COLS * ROWS * 6;
 const MAX_PIXEL_RATIO = 1.6;
 const MAX_RENDER_WIDTH = 2400;
