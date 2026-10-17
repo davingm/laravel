@@ -18,11 +18,17 @@ class AppServiceProvider extends ServiceProvider
         // Register src/components for x-component syntax (anonymous components)
         Blade::anonymousComponentPath(base_path('src/components'));
 
-        // Register davingm-welcome package component
-        // npm package ships blade/ directory alongside dist/
-        $welcomeBladePath = base_path('node_modules/davingm-welcome/blade');
-        if (is_dir($welcomeBladePath)) {
-            Blade::anonymousComponentPath($welcomeBladePath, 'welcomepage');
+        // Register davingm-welcome package component.
+        // The published npm package is named @davingm/welcome and exposes the
+        // Blade component at the package root under blade/.
+        foreach ([
+            base_path('node_modules/@davingm/welcome/blade'),
+            base_path('node_modules/davingm-welcome/blade'),
+        ] as $welcomeBladePath) {
+            if (is_dir($welcomeBladePath)) {
+                Blade::anonymousComponentPath($welcomeBladePath);
+                break;
+            }
         }
 
         Blade::directive('pageMeta', function (): string {
