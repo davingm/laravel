@@ -17,6 +17,7 @@
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite([
             'src/assets/css/app.css',
+            'node_modules/@davingm/welcome/dist/welcomepage.css',
             '.laravel/frontend/framework.js',
             'src/assets/js/app.js',
         ])
