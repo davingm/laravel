@@ -10,6 +10,7 @@ Thumbs.db
 /.phpactor.json
 *.log
 references
+/docs/memory_ai/
 
 # Local environment and credentials
 /.env

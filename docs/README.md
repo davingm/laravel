@@ -33,6 +33,7 @@ Workflow `.github/workflows/test-apache.yml` berjalan pada setiap push dan pull 
 ## `dev/` — panduan pengembangan
 
 - [Mengembangkan framework melalui playground](./dev/develop-framework-in-playground.md) — perbedaan source runtime, aplikasi pengujian, dan cara menjalankan test.
+- [Struktur `packages/laravel`](./dev/packages-laravel.md) — isi package framework, folder yang tersedia, dan pemisahan source Composer `src/` dari runtime `.laravel/`.
 - [Rilis package runtime](./dev/publish-runtime-package.md) — memisahkan `packages/laravel` ke repository GitHub tersendiri dan menerbitkan `davingm/laravel-runtime` di Packagist.
 
 ## `discussion/`
