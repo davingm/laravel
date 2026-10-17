@@ -122,7 +122,13 @@ composer show davingm/laravel-runtime
 composer install --no-interaction --prefer-dist
 test -f .laravel/cli.js
 test -f .laravel/artisan.php
+test -f .laravel/frontend/framework.js
 node .laravel/cli.js test --compact
+npm ci --ignore-scripts
+npm ls @davingm/welcome
+npm run build
 ```
+
+Lockfile npm pada starter harus menunjuk ke paket registry, bukan path lokal seperti `../packages/welcome`, karena folder `packages/` tidak ada pada project hasil `create-project`.
 
 Untuk validasi manifest, Packagist, dan troubleshooting rilis, lihat [panduan publish runtime package](./publish-runtime-package.md).
