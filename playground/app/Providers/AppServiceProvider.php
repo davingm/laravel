@@ -19,14 +19,13 @@ class AppServiceProvider extends ServiceProvider
         Blade::anonymousComponentPath(base_path('src/components'));
 
         // Register davingm-welcome package component.
-        // The published npm package is named @davingm/welcome and exposes the
-        // Blade component at the package root under blade/.
+        // Namespace 'welcomepage' allows <x-welcomepage /> syntax.
         foreach ([
             base_path('node_modules/@davingm/welcome/blade'),
             base_path('node_modules/davingm-welcome/blade'),
         ] as $welcomeBladePath) {
             if (is_dir($welcomeBladePath)) {
-                Blade::anonymousComponentPath($welcomeBladePath);
+                Blade::anonymousComponentPath($welcomeBladePath, 'welcomepage');
                 break;
             }
         }
