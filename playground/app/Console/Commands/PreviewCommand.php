@@ -9,7 +9,7 @@ class PreviewCommand extends Command
 {
     protected $signature = 'preview
         {--port=8000 : Port to serve on}
-        {--build     : Run artisan build before starting preview}';
+        {--build     : Run the framework build before starting preview}';
 
     protected $description = 'Serve the application in production preview mode (no .env changes)';
 
@@ -27,11 +27,13 @@ class PreviewCommand extends Command
             }
         }
 
+        $this->removeStaleViteHotFile();
+
         $this->printBanner($port);
 
         // Write a temporary preview flag file that MinifyHtmlMiddleware reads.
         // We write the current PID so middleware can verify the process is alive.
-        $flagFile = base_path('.auto/.preview');
+        $flagFile = base_path('.laravel/.preview');
         file_put_contents($flagFile, (string) getmypid());
 
         register_shutdown_function(static function () use ($flagFile): void {
@@ -39,7 +41,7 @@ class PreviewCommand extends Command
         });
 
         $process = new Process(
-            [PHP_BINARY, 'artisan', 'serve', '--port='.$port],
+            [PHP_BINARY, base_path('.laravel/artisan.php'), 'serve', '--port='.$port],
             base_path(),
             [
                 'APP_ENV' => 'production',
@@ -116,5 +118,32 @@ class PreviewCommand extends Command
         $this->newLine();
         $this->line('  <fg=gray>Press Ctrl+C to stop.</>');
         $this->newLine();
+    }
+
+    private function removeStaleViteHotFile(): void
+    {
+        $hotFile = public_path('hot');
+
+        if (! is_file($hotFile)) {
+            return;
+        }
+
+        $url = trim((string) @file_get_contents($hotFile));
+        $host = parse_url($url, PHP_URL_HOST);
+        $port = parse_url($url, PHP_URL_PORT);
+
+        if (is_string($host) && is_int($port)) {
+            $host = trim($host, '[]');
+            $address = str_contains($host, ':') ? "tcp://[{$host}]:{$port}" : "tcp://{$host}:{$port}";
+            $socket = @stream_socket_client($address, $errorCode, $errorMessage, 0.2);
+
+            if (is_resource($socket)) {
+                fclose($socket);
+
+                return;
+            }
+        }
+
+        @unlink($hotFile);
     }
 }

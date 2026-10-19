@@ -1,23 +1,31 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "auto/laravel",
+    "name": "davingm/laravel",
     "type": "project",
-    "description": "Laravel starter project by AutoLaravel.",
+    "description": "Early-stage Laravel framework and starter with file-based Blade pages, generators, and frontend tooling.",
     "keywords": [
         "laravel",
-        "starter",
-        "auto"
+        "framework",
+        "php",
+        "blade",
+        "starter-kit",
+        "file-based-routing",
+        "artisan",
+        "crud-generator",
+        "vite",
+        "server-rendered"
     ],
-    "license": "MIT",
-    "homepage": "https://github.com/auto/laravel",
+    "license": "AGPL-3.0-only",
+    "homepage": "https://github.com/davingm/laravel",
     "authors": [
         {
-            "name": "AutoLaravel",
-            "homepage": "https://github.com/auto"
+            "name": "davingm",
+            "homepage": "https://davingm.com"
         }
     ],
     "require": {
         "php": "^8.3",
+        "davingm/laravel-runtime": "^1.0.3",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0"
     },
@@ -47,18 +55,20 @@
         }
     },
     "scripts": {
+        "bundle": [
+            "@php scripts/bundle.php"
+        ],
         "post-root-package-install": [
             "@php .materialize-playground.php"
         ],
         "post-create-project-cmd": [
             "@composer dump-autoload --no-interaction",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate --ansi",
+            "@php -r \"(file_exists('.laravel/cli.js') && file_exists('bootstrap/app.php')) && passthru('node .laravel/cli.js key:generate --ansi');\"",
             "@php -r \"file_exists('app/database/database.sqlite') || touch('app/database/database.sqlite');\"",
-            "@php artisan migrate --graceful --ansi",
+            "@php -r \"(file_exists('.laravel/cli.js') && file_exists('bootstrap/app.php')) && passthru('node .laravel/cli.js migrate --graceful --ansi');\"",
             "npm ci --ignore-scripts",
-            "npm run build",
-            "node .auto/setup.js"
+            "npm run build"
         ]
     },
     "extra": {
@@ -71,6 +81,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
+            "davingm/laravel-runtime": true,
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
         }

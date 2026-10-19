@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -11,20 +10,25 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
-        //
-    }
-
     /**
      * Bootstrap any application services.
      */
     public function boot(): void
     {
-        $this->app->bind(MigrationCreator::class, fn ($app) => $app['migration.creator']);
-
         // Register src/components for x-component syntax (anonymous components)
         Blade::anonymousComponentPath(base_path('src/components'));
+
+        // Register davingm-welcome package component.
+        // Namespace 'welcomepage' allows <x-welcomepage /> syntax.
+        foreach ([
+            base_path('node_modules/@davingm/welcome/blade'),
+            base_path('node_modules/davingm-welcome/blade'),
+        ] as $welcomeBladePath) {
+            if (is_dir($welcomeBladePath)) {
+                Blade::anonymousComponentPath($welcomeBladePath, 'welcomepage');
+                break;
+            }
+        }
 
         Blade::directive('pageMeta', function (): string {
             return <<<'PHP'

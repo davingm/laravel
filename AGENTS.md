@@ -1,91 +1,48 @@
-# AGENTS.md — davingm/laravel
+# Panduan agent — davingm/laravel
 
-Baca file ini dulu sebelum mengubah apa pun. Isinya konteks proyek dan keputusan yang sudah diambil, supaya tidak perlu dijelaskan ulang.
+Panduan ini berisi aturan kerja yang berlaku selama mengembangkan repository. Ini bukan changelog, daftar TODO, atau sumber status rilis; hapus atau perbarui aturan ketika tidak lagi sesuai.
 
-## Aturan umum
+## Pahami repository sebelum mengubahnya
 
-- Informasi teknis (versi, sintaks, perilaku GitHub Actions / Composer / Packagist / Laravel) harus diverifikasi dari sumber resmi atau pencarian, bukan dari ingatan. Jika tidak bisa diverifikasi, tulis "belum diverifikasi".
-- Jangan mengubah struktur proyek tanpa alasan. Periksa kondisi aktual repo sebelum bertindak.
-- Perintah destruktif (`migrate:fresh`, `rm -rf`, dsb.) jangan dijalankan pada database atau folder default. Pakai SQLite sementara atau salinan terisolasi.
-- Balas dalam bahasa Indonesia.
+- Baca `docs/README.md`, lalu baca panduan developer/pengguna yang relevan dengan tugas. Dokumentasi di `docs/discussion/` dapat berupa catatan historis; verifikasi setiap klaim terhadap source sebelum menggunakannya.
+- Source runtime Composer berada di `packages/laravel/`. Source framework yang disalin ke runtime berada di `packages/laravel/.laravel/`.
+- `playground/` adalah aplikasi Laravel untuk menjalankan dan menguji framework. Ubah source aplikasi di sana, bukan di hasil generate.
+- `playground/.laravel/`, `vendor/`, `node_modules/`, cache, dan hasil build adalah output lokal/dependency; jangan mengedit atau menambahkan output tersebut sebagai source.
+- Sebelum merencanakan perubahan, periksa daftar draft di `references/` dan baca referensi yang relevan. Isinya materi eksternal, bukan spesifikasi atau source of truth; jangan mengubah, memindahkan, atau memasukkannya ke package.
+- Root `composer.json` mematerialisasi aplikasi dari `playground/`. Periksa `.materialize-playground.php` dan `.gitattributes` sebelum mengubah perilaku distribusi starter.
 
-## Tujuan proyek
+## Cara bekerja
 
-Membuat ekosistem Laravel milik sendiri dengan gaya repository Nuxt: satu repository pusat pengembangan (`davingm/laravel`) berisi banyak package Composer dan satu aplikasi playground. Setiap package dipublikasikan otomatis ke repository GitHub terpisah, lalu didistribusikan lewat Packagist.
+- Periksa source, konfigurasi, dan test yang benar-benar terkait sebelum mengusulkan atau membuat perubahan. Cari pola yang sudah dipakai dan pertahankan antarmuka/perilaku yang tidak diminta untuk berubah.
+- Jangan menganggap riwayat diskusi, komentar TODO, lockfile, cache registry, atau pesan lama sebagai status saat ini. Verifikasi versi, ketersediaan package, perilaku Composer/npm, dan fitur GitHub dari manifest/source atau dokumentasi resmi terkini.
+- Jangan mengarang status rilis, stabilitas, kompatibilitas, atau hasil test. Jika tidak dapat diverifikasi, nyatakan dengan jelas bahwa hal itu belum diverifikasi.
+- Terapkan perubahan kecil yang menyelesaikan akar masalah. Jika perilaku berubah, perbarui dokumentasi dan test yang terkait.
+- Laporkan error secara jelas; jangan menyamarkan kegagalan sebagai keberhasilan.
+- Jangan memasukkan secret, token, kredensial, atau data lokal ke source, log, dokumentasi, maupun commit.
+- Jangan mengubah file di luar cakupan tugas. Jangan menjalankan migrasi destruktif terhadap database developer atau folder default; gunakan test SQLite in-memory atau lingkungan terisolasi.
+- Minta klarifikasi bila ada keputusan produk/perilaku yang berdampak besar dan tidak dapat ditentukan dari source atau permintaan.
 
-Pola: **Nuxt-style monorepo + Composer package split + Packagist distribution.**
+## Verifikasi
 
-## Struktur target
-
-```
-laravel-davingm/
-├── packages/
-│   ├── auth/         → dipublikasikan sebagai davingm/auth
-│   ├── dev/          → davingm/dev (saat ini masih kosong)
-│   └── <package>/    → konvensi: davingm/<nama-folder>
-├── playground/       → aplikasi Laravel utama (kerangka kerja pengguna), tempat menguji package
-├── docs/
-├── scripts/
-├── .github/workflows/split-packages.yml
-├── .gitattributes
-├── .gitignore
-└── README.md
-```
-
-- `playground/` adalah lingkungan pengembangan dan pengujian. Bukan package yang di-split.
-- Jangan memakai nama `packages/laravel` untuk starter utama. Starter ada di `playground/`.
-- Folder `public/` di root sudah dihapus dan tidak dipakai. Yang aktif adalah `playground/public`.
-
-## Riwayat singkat
-
-1. `packages/auth` dibuat: installer `auth:install`, route hanya dimuat jika `davingm-auth.enabled`, migrasi username, halaman login dan dashboard.
-2. Diuji lokal lewat Composer path repository (instalasi, migrasi SQLite sementara, alur login/logout), lalu dibersihkan kembali.
-3. Kerangka dikembalikan bersih tanpa integrasi auth, package auth tidak lagi menjadi path dependency.
-4. Workflow split dibuat dan diaudit (lihat bawah).
-5. Semua file Laravel dipindahkan manual ke `playground/`. `.gitignore` dan `.gitattributes` disesuaikan. Di `playground/`: `artisan about` dan `route:list` jalan, `php artisan test` lulus 8 test / 21 assertion, `npm run build` berhasil.
-
-## Workflow split (`.github/workflows/split-packages.yml`)
-
-- Pemicu: tag `<package>-vX.Y.Z` (contoh `auth-v1.0.0`).
-- Memakai `git subtree split` pada `packages/<package>`, memeriksa nama Composer `davingm/<package>`, lalu push branch `main` dan tag bersih `vX.Y.Z` ke `davingm/<package>`.
-- Secret: `MONOREPO_SPLIT_TOKEN` (jangan hardcode kredensial).
-- Push atomic, tanpa force. Aman diulang untuk tag dan commit yang sama.
-- Repository tujuan **harus dibuat manual** dan kosong (branch `main`). Workflow tidak membuatnya.
-- Workflow menolak split ke repo yang sama dengan sumber.
-- Webhook Packagist tidak diatur workflow. Harus dikonfigurasi terpisah pada repo tujuan.
-- Risiko: repo tujuan yang sudah punya commit atau tag berbeda akan menolak push (tidak ditimpa).
-- Panduan setup ada di `docs/package-split-releases.md`.
-- Workflow belum pernah dijalankan sungguhan.
-
-## Perintah yang dipakai
-
-Jalankan dari `playground/`:
+Jalankan perintah dari `playground/`, kecuali perintah menyebut lokasi lain:
 
 ```bash
+<<<<<<< HEAD
 artisan about
 artisan route:list
 artisan test --compact
+=======
+composer install
+php artisan test --compact
+npm ci
+>>>>>>> 0135ad8ab7292abc5570312413cb66b3edbd9741
 npm run build
 ```
 
-Catatan lingkungan (Windows, Git Bash / PowerShell):
+Pilih pemeriksaan terkecil yang mencakup perubahan. Untuk perubahan runtime, pastikan source di `packages/laravel/.laravel/` tersalin dengan benar ke runtime lokal setelah Composer membangunnya. Jangan mengandalkan hasil test lama; laporkan perintah yang benar-benar dijalankan dan hasilnya.
 
-- Jika `rm -rf public` gagal "Device or resource busy", biasanya ada proses PHP server uji yang tertinggal. Hentikan proses `php` dulu.
-- Beberapa test gagal karena izin tulis pada `bootstrap/cache` dan `.davingm/cache` di sandbox. Ini masalah izin, bukan bug Laravel.
-- Build frontend di sandbox pernah gagal memuat binding native Tailwind. Dengan izin yang sesuai build berhasil.
+## Dokumentasi dan komunikasi
 
-## Keputusan yang belum final
-
-**Distribusi `composer create-project davingm/laravel app`.** `composer.json` aplikasi kini ada di `playground/`, bukan di root. Composer membaca root repo, jadi `.gitattributes` bisa mengecualikan file tetapi tidak memindahkan isi `playground/` ke root hasil instalasi. Pilihan yang perlu diputuskan pemilik proyek:
-
-1. Hasil instalasi berada di `app/playground/`, atau
-2. Hasil instalasi langsung di `app/` (butuh mekanisme lain, misalnya repo distribusi terpisah yang di-split dari `playground/`).
-
-Jangan memilih sendiri. Tanyakan ke pemilik proyek sebelum mengubah `composer.json`, `.gitattributes`, atau workflow terkait distribusi.
-
-## Yang perlu dicek berikutnya
-
-- Apakah `.gitattributes` (`export-ignore`) sudah sesuai dengan opsi distribusi yang dipilih.
-- Menentukan cara menguji workflow split dengan aman (repo tujuan uji, token dengan akses terbatas).
-- Mengisi `packages/dev` dan menambah package lain dengan konvensi `davingm/<nama-folder>`.
-- Sinkronkan `composer.lock` jika ada perubahan manifest (sebelumnya gagal karena koneksi Packagist ditolak).
+- Jaga README, panduan pengguna, panduan developer, dan konfigurasi CI tetap sesuai implementasi saat ini.
+- Tulis dokumentasi repository mengikuti bahasa dan istilah yang sudah dipakai di file terkait; tanggapi pengguna dalam bahasa Indonesia.
+- Hindari menaruh snapshot waktu seperti versi “terbaru”, status publikasi, atau daftar tugas sementara di panduan tetap. Hubungkan ke sumber resmi/paket atau terangkan cara memverifikasi status tersebut.

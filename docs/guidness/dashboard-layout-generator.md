@@ -1,0 +1,90 @@
+# Panduan Dashboard Layout Generator
+
+Panduan ini menjelaskan cara membuat layout Blade sidebar atau navbar menggunakan command `make:dashboard`.
+
+> Jalankan semua command dari root aplikasi, yaitu folder yang berisi `composer.json` dan `bootstrap/app.php`. Generator tidak menimpa `src/layouts/app.blade.php` yang sudah ada.
+
+## 1. Pilih tipe layout
+
+Generator mendukung dua pilihan:
+
+- `sidebar`: navigasi di sisi kiri dan area konten di sebelah kanan.
+- `navbar`: navigasi horizontal di bagian atas dan area konten di bawahnya.
+
+Jika opsi `--layout` tidak diberikan, generator menggunakan `sidebar`.
+
+## 2. Buat layout sidebar
+
+Jalankan command tanpa opsi untuk memakai layout sidebar:
+
+```bash
+artisan make:dashboard
+```
+
+Pilihan default yang sama juga dapat ditulis secara eksplisit:
+
+```bash
+artisan make:dashboard --layout=sidebar
+```
+
+## 3. Buat layout navbar
+
+Untuk memilih navigasi horizontal di bagian atas, gunakan:
+
+```bash
+artisan make:dashboard --layout=navbar
+```
+
+Layout hasil generate disimpan di:
+
+```text
+src/layouts/app.blade.php
+```
+
+File tersebut menjadi layout Blade utama karena `src/` adalah root view aplikasi. Kedua pilihan menyediakan struktur HTML, styling Tailwind dasar dengan navigasi abu-abu dan area konten putih, serta `@yield('content')`.
+
+## 4. Perilaku file yang sudah ada
+
+Jika `src/layouts/app.blade.php` sudah ada, command menampilkan warning dan melewati proses penulisan. File tidak diubah, termasuk saat opsi `--layout` yang berbeda diberikan.
+
+Jika layout sudah ada, command menampilkan warning dan melewati proses penulisan. Pilih sidebar atau navbar sebelum membuat layout; tinjau dan ubah layout yang ada secara manual bila ingin mengganti desainnya.
+
+## 5. Gunakan layout pada halaman CRUD
+
+Stub CRUD menggunakan `@extends('layouts.app')` agar halaman yang dihasilkan memakai layout tersebut:
+
+```text
+.laravel/crud/view_index.stub  → src/pages/<resource>/index.blade.php
+.laravel/crud/view_form.stub   → src/pages/<resource>/create.blade.php
+.laravel/crud/edit.stub        → src/pages/<resource>/edit.blade.php
+```
+
+Jalankan generator CRUD seperti biasa setelah schema database siap:
+
+```bash
+artisan crud:generate Product
+```
+
+File CRUD yang sudah ada tetap dilewati dan tidak ditimpa.
+
+## 6. Build asset dan jalankan test
+
+Utility Tailwind pada stub layout ikut dipindai saat build asset. Jalankan dari root aplikasi:
+
+```bash
+npm run build
+artisan test --filter=MakeDashboardCommandTest
+```
+
+Feature test memeriksa default sidebar, opsi navbar, dan perilaku agar layout yang sudah ada tidak ditimpa. Untuk menjalankan seluruh test aplikasi:
+
+```bash
+artisan test
+```
+
+## Catatan
+
+- Nama opsi yang valid adalah `sidebar` dan `navbar`.
+- Generator membuat folder `src/layouts/` bila belum tersedia.
+- Layout mempertahankan hook metadata, asset Vite, payload frontend, dan elemen `#page-view` yang digunakan navigasi aplikasi.
+- Generator PHP ada di `.laravel/generators/` dan didaftarkan oleh bootstrap Laravel.

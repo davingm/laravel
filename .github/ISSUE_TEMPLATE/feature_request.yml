@@ -1,0 +1,29 @@
+name: Feature request
+description: Propose an improvement or capability
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search existing issues first. Focus on the problem and the outcome rather than prescribing an implementation.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What are you trying to do, and what currently gets in the way?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Desired outcome
+      description: Describe what a useful solution would enable.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Mention existing workarounds or approaches you considered.
+    validations:
+      required: false

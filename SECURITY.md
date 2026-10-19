@@ -2,14 +2,7 @@
 
 ## Supported Versions
 
-The following versions of davingm/laravel currently receive security updates:
-
-| Version | Supported |
-|---|---|
-| Latest (main) | Yes |
-| Older releases | No |
-
-This project follows a rolling release model. Only the latest version on the `main` branch is actively maintained. Users are encouraged to always use the most recent release.
+This project does not currently publish a formal security-support window for individual release lines. When reporting an issue, include the exact package version or commit and affected component. Maintainers will assess affected versions and remediation scope as part of triage; do not assume every historical release receives fixes.
 
 ---
 
@@ -20,7 +13,7 @@ This project follows a rolling release model. Only the latest version on the `ma
 If you discover a security vulnerability, please report it through one of the following channels:
 
 - **GitHub Security Advisories:** Use the ["Report a vulnerability"](https://github.com/davingm/laravel/security/advisories/new) button on the Security tab of this repository. This is the preferred channel.
-- **Email:** If GitHub Security Advisories are not available to you, contact the maintainer directly. The contact address is listed in the project's `composer.json` under `authors`.
+- **Maintainer contact:** If private vulnerability reporting is unavailable, contact the maintainer through the private contact options on the [GitHub profile](https://github.com/davingm). The Composer manifest does not publish a security email address.
 
 ### What to include in your report
 
@@ -36,14 +29,9 @@ To help us triage and resolve the issue quickly, please include as much of the f
 
 ## Response Process
 
-Upon receiving a security report, the maintainer will:
+The maintainer will review a report, assess its impact, and coordinate a fix and disclosure where appropriate. Response and release timing depend on severity and maintainer availability; no fixed response-time SLA is currently offered.
 
-1. Acknowledge receipt of the report within **72 hours**.
-2. Assess the severity and scope of the vulnerability.
-3. Work on a fix and, where appropriate, coordinate a disclosure timeline with the reporter.
-4. Release a patched version and publish a security advisory.
-
-We ask that reporters observe **responsible disclosure** and not publicly disclose the vulnerability until a fix has been released or a mutual disclosure timeline has been agreed upon.
+Please observe **responsible disclosure** and avoid public disclosure until a fix is released or a disclosure timeline has been agreed with the maintainer.
 
 ---
 
@@ -69,4 +57,4 @@ The following are generally out of scope:
 
 ## Disclosure Policy
 
-Once a security fix is released, we will publish a GitHub Security Advisory describing the vulnerability, affected versions, and the resolution. Credit will be given to the reporter unless they request otherwise.
+When appropriate and feasible, a security fix may be accompanied by a GitHub Security Advisory describing affected versions and the resolution. Reporter credit will be given only with their consent.

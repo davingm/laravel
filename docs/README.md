@@ -1,0 +1,45 @@
+# Dokumentasi
+
+Dokumentasi dipisahkan berdasarkan kesiapan dan tujuannya:
+
+## `guidness/` — panduan framework
+
+Baca bab dasar secara berurutan. Setiap bab adalah halaman mandiri untuk navigasi sidebar, dengan tautan ke bab sebelumnya dan berikutnya. Jalankan command dari root aplikasi, yaitu folder project yang berisi `composer.json` dan `bootstrap/app.php`.
+
+### Panduan utama
+
+1. [Pengenalan](./guidness/01-pengenalan.md)
+2. [Instalasi dan persyaratan](./guidness/02-instalasi.md)
+3. [Memulai aplikasi](./guidness/03-memulai-aplikasi.md)
+4. [Konfigurasi](./guidness/04-konfigurasi.md)
+5. [Struktur folder](./guidness/05-struktur-folder.md)
+6. [Routing dan halaman](./guidness/06-routing-dan-halaman.md)
+7. [Backend: controller, model, dan validasi](./guidness/07-backend.md)
+8. [Blade dan frontend](./guidness/08-blade-dan-frontend.md)
+9. [Database dan migration](./guidness/09-database-dan-migration.md)
+10. [Artisan dan generator](./guidness/10-artisan-dan-generator.md)
+11. [Test dan build](./guidness/11-test-dan-build.md)
+
+### Panduan fitur
+
+- [Auto CRUD](./guidness/auto-crud.md) — membuat CRUD dari schema database aktif.
+- [Dashboard Layout Generator](./guidness/dashboard-layout-generator.md) — membuat layout sidebar atau navbar.
+- [Role Middleware Generator](./guidness/role-middleware-generator.md) — membuat middleware role dan menggunakannya pada route atau CRUD.
+
+## CI
+
+Workflow `.github/workflows/test-apache.yml` berjalan pada setiap push dan pull request. Workflow memasang dependency Composer di `playground/`, menjalankan test Laravel, membangun asset frontend, lalu memastikan halaman utama merespons melalui Apache dengan document root `playground/public`.
+
+## `dev/` — panduan pengembangan
+
+- [Mengembangkan framework melalui playground](./dev/develop-framework-in-playground.md) — perbedaan source runtime, aplikasi pengujian, dan cara menjalankan test.
+- [Rilis package runtime](./dev/publish-runtime-package.md) — memisahkan `packages/laravel` ke repository GitHub tersendiri dan menerbitkan `davingm/laravel-runtime` di Packagist.
+
+## `discussion/`
+
+Rancangan arsitektur dan catatan historis. Dokumen di sini bukan panduan implementasi yang berwenang; cocokkan API, nama, path, dan status dengan source serta panduan aktif sebelum menggunakannya.
+
+- [Package split releases](./discussion/package-split-releases.md) — catatan historis tentang pemisahan package; gunakan panduan rilis di `dev/` untuk prosedur.
+- [Framework reference](./discussion/reference.md) — referensi lama; nama API dan sejumlah detail perlu dicocokkan lagi dengan implementasi saat ini.
+- [CRUD Barang dari Nol](./discussion/crud-barang-dari-nol.md) — tutorial memakai path view lama (`resources/views/pages`), sedangkan implementasi saat ini memakai `src/pages`.
+- [Proposal rebranding AutoLaravel](./discussion/rebranding-autolaravel.md) — arsip proposal lama; bukan sumber identitas package atau namespace saat ini.

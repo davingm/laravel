@@ -1,0 +1,34 @@
+{
+  "name": "davingm/laravel",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "22"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "dbaeumer.vscode-eslint",
+        "github.vscode-github-actions",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "remoteUser": "vscode",
+  "postCreateCommand": "cd playground && composer run setup",
+  "forwardPorts": [8000, 5173],
+  "portsAttributes": {
+    "8000": {
+      "label": "Laravel application",
+      "onAutoForward": "openBrowser"
+    },
+    "5173": {
+      "label": "Vite development server"
+    }
+  }
+}

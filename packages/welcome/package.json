@@ -1,0 +1,40 @@
+{
+  "$schema": "https://www.schemastore.org/package.json",
+  "name": "@davingm/welcome",
+  "version": "1.0.2",
+  "description": "Animated Laravel welcome page component. Drop <x-welcomepage /> in your Blade view; delete it when you're ready to build.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "main": "./dist/welcomepage.js",
+  "module": "./dist/welcomepage.js",
+  "sideEffects": true,
+  "exports": {
+    ".": "./dist/welcomepage.js",
+    "./style": "./dist/welcomepage.css",
+    "./dist/welcomepage.css": "./dist/welcomepage.css"
+  },
+  "files": [
+    "dist",
+    "blade",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch"
+  },
+  "devDependencies": {
+    "vite": "^8.0.0"
+  },
+  "keywords": [
+    "laravel",
+    "welcome",
+    "blade",
+    "webgl",
+    "starter"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davingm/laravel-welcome"
+  },
+  "homepage": "https://github.com/davingm/laravel-welcome"
+}

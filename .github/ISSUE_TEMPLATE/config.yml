@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and usage help
+    url: https://github.com/davingm/laravel/blob/main/docs/README.md
+    about: Read the current user guides first; GitHub Discussions are not enabled for this repository.
+  - name: Security vulnerability
+    url: https://github.com/davingm/laravel/security/advisories/new
+    about: Report security issues privately; do not open a public issue.
+  - name: Code of Conduct concern
+    url: https://github.com/davingm
+    about: Contact the maintainer privately using the options on the profile.

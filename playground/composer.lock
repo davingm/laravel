@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "48ddf4de780edd2e2ea7706432be1244",
+    "content-hash": "bc606b150085d6870cf73fd1cab6bcb6",
     "packages": [
         {
             "name": "brick/math",
@@ -139,6 +139,43 @@
                 }
             ],
             "time": "2026-09-06T14:11:38+00:00"
+        },
+        {
+            "name": "davingm/laravel-runtime",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../packages/laravel",
+                "reference": "1c4febafa64e9781cf653830ee3a72aec6db08a0"
+            },
+            "require": {
+                "composer-plugin-api": "^2.2",
+                "php": "^8.3"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Davingm\\LaravelRuntime\\RuntimePlugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Davingm\\LaravelRuntime\\": "src/"
+                }
+            },
+            "license": [
+                "AGPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "davingm",
+                    "homepage": "https://davingm.com"
+                }
+            ],
+            "description": "Internal Composer plugin that installs the Laravel runtime directory.",
+            "homepage": "https://github.com/davingm/laravel-runtime",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "dflydev/dot-access-data",
@@ -8835,12 +8872,14 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "davingm/laravel-runtime": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

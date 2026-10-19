@@ -92,6 +92,8 @@ class CrudGenerateCommandTest extends TestCase
             foreach ($generatedFiles as $path) {
                 File::delete($path);
             }
+
+            @rmdir(base_path('src/pages/crud_generator_products'));
         }
     }
 
@@ -128,6 +130,8 @@ class CrudGenerateCommandTest extends TestCase
                     File::delete($path);
                 }
             }
+
+            @rmdir(base_path('src/pages/crud_role_products'));
         }
     }
 

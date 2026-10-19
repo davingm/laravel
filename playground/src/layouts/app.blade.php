@@ -15,10 +15,15 @@
     @stack('head')
 
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['src/assets/css/app.css', 'src/assets/js/app.js'])
+        @vite([
+            'src/assets/css/app.css',
+            'node_modules/@davingm/welcome/dist/welcomepage.css',
+            '.laravel/frontend/framework.js',
+            'src/assets/js/app.js',
+        ])
     @endif
 </head>
-<body class="min-h-screen bg-white text-neutral-900 antialiased">
+<body class="min-h-screen antialiased">
     <main id="page-view" data-page="{{ $frontendPage ?? '' }}">
         @yield('content')
     </main>

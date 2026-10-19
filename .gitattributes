@@ -1,5 +1,6 @@
 * text=auto eol=lf
 
+references
 *.blade.php diff=html
 *.css diff=css
 *.html diff=html
@@ -11,20 +12,28 @@
 # Composer export-ignore: files/folders excluded from `composer create-project`
 /.gitattributes export-ignore
 /README.md export-ignore
-/.devContainer export-ignore
-/.devContainer/** export-ignore
+/composer.lock export-ignore
+/.devcontainer export-ignore
+/.devcontainer/** export-ignore
 /.github export-ignore
 /.github/** export-ignore
 /.vscode export-ignore
 /.vscode/** export-ignore
 /docs export-ignore
 /docs/** export-ignore
-/packages export-ignore
-/packages/** export-ignore
+/packages/auth export-ignore
+/packages/auth/** export-ignore
+/packages/dev export-ignore
+/packages/dev/** export-ignore
+/packages/laravel export-ignore
+/packages/laravel/** export-ignore
+/packages/welcome export-ignore
+/packages/welcome/** export-ignore
 AGENTS.md export-ignore
 boost.json export-ignore
 CHANGELOG.md export-ignore
 CONTRIBUTING.md export-ignore
+CODE_OF_CONDUCT.md export-ignore
 SECURITY.md export-ignore
 .env.preview export-ignore
 .phpunit.result.cache export-ignore
@@ -33,18 +42,21 @@ SECURITY.md export-ignore
 resault.html export-ignore
 /playground/.env.preview export-ignore
 /playground/.env export-ignore
+/playground/composer.lock export-ignore
 /playground/.phpunit.result.cache export-ignore
 /playground/.styleci.yml export-ignore
 /playground/node_modules export-ignore
 /playground/node_modules/** export-ignore
 /playground/vendor export-ignore
 /playground/vendor/** export-ignore
-/playground/.davingm/node_modules export-ignore
-/playground/.davingm/node_modules/** export-ignore
-/playground/.davingm/cache export-ignore
-/playground/.davingm/cache/** export-ignore
-/playground/.davingm/generated export-ignore
-/playground/.davingm/generated/** export-ignore
+/playground/.laravel/node_modules export-ignore
+/playground/.laravel/node_modules/** export-ignore
+/playground/.laravel/cache export-ignore
+/playground/.laravel/cache/** export-ignore
+/playground/.laravel/generated export-ignore
+/playground/.laravel/generated/** export-ignore
+/playground/.laravel/*.log export-ignore
+/playground/.laravel/.preview export-ignore
 /playground/bootstrap/cache/*.php export-ignore
 /playground/app/database/*.sqlite export-ignore
 /playground/app/database/*.db export-ignore
@@ -64,3 +76,8 @@ resault.html export-ignore
 
 /dist export-ignore
 /dist/** export-ignore
+
+/.devcontainer/bundle export-ignore
+/.devcontainer/bundle/** export-ignore
+/scripts export-ignore
+/scripts/** export-ignore

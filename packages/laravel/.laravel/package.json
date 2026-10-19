@@ -1,0 +1,22 @@
+{
+    "name": "@davingm/laravel-cli",
+    "version": "1.0.0",
+    "description": "Laravel development CLI",
+    "type": "module",
+    "private": true,
+    "bin": {
+        "artisan": "./cli.js"
+    },
+    "scripts": {
+        "link": "npm link"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "keywords": [
+        "laravel",
+        "framework",
+        "cli"
+    ],
+    "license": "AGPL-3.0-only"
+}

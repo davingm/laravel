@@ -1,8 +1,16 @@
+
 {
-    "name": "auto/auth",
-    "description": "Authentication starter for the AutoLaravel framework.",
+    "name": "davingm/auth",
+    "description": "Authentication starter package for davingm/laravel.",
     "type": "library",
-    "license": "MIT",
+    "license": "AGPL-3.0-only",
+    "homepage": "https://github.com/davingm/laravel",
+    "authors": [
+        {
+            "name": "davingm",
+            "homepage": "https://davingm.com"
+        }
+    ],
     "require": {
         "php": "^8.3",
         "illuminate/console": "^13.0",

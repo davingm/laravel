@@ -1,19 +1,32 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "auto/laravel",
+    "name": "davingm/laravel",
     "type": "project",
-    "description": "Laravel starter project by AutoLaravel.",
-    "keywords": ["laravel", "starter", "auto"],
-    "license": "MIT",
-    "homepage": "https://github.com/auto/laravel",
+    "description": "Laravel starter project by davingm.",
+    "keywords": ["laravel", "framework", "blade", "starter"],
+    "license": "AGPL-3.0-only",
+    "homepage": "https://github.com/davingm/laravel",
     "authors": [
         {
-            "name": "AutoLaravel",
-            "homepage": "https://github.com/auto"
+            "name": "davingm",
+            "homepage": "https://davingm.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../packages/laravel",
+            "options": {
+                "symlink": true,
+                "versions": {
+                    "davingm/laravel-runtime": "dev-main"
+                }
+            }
         }
     ],
     "require": {
         "php": "^8.3",
+        "davingm/laravel-runtime": "dev-main",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0"
     },
@@ -30,6 +43,7 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+        "Laravel\\Generators\\": ".laravel/generators/",
             "Database\\Factories\\": "app/database/factories/",
             "Database\\Seeders\\": "app/database/seeders/"
         },
@@ -46,34 +60,34 @@
         "setup": [
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate",
-            "@php artisan migrate --force",
+            "@php -r \"file_exists('app/database/database.sqlite') || touch('app/database/database.sqlite');\"",
+            "node .laravel/cli.js key:generate",
+            "node .laravel/cli.js migrate --force",
             "npm ci --ignore-scripts",
             "npm run build"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "@php artisan dev"
+            "node .laravel/cli.js dev"
         ],
         "test": [
-            "@php artisan config:clear --ansi @no_additional_args",
-            "@php artisan test"
+            "node .laravel/cli.js config:clear --ansi",
+            "node .laravel/cli.js test"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi",
-            "node .auto/setup.js"
+            "@php -r \"(file_exists('.laravel/cli.js') && file_exists('bootstrap/app.php')) && passthru('node .laravel/cli.js package:discover --ansi');\""
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "node .laravel/cli.js vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "@php artisan key:generate --ansi",
+            "@php -r \"(file_exists('.laravel/cli.js') && file_exists('bootstrap/app.php')) && passthru('node .laravel/cli.js key:generate --ansi');\"",
             "@php -r \"file_exists('app/database/database.sqlite') || touch('app/database/database.sqlite');\"",
-            "@php artisan migrate --graceful --ansi",
+            "@php -r \"(file_exists('.laravel/cli.js') && file_exists('bootstrap/app.php')) && passthru('node .laravel/cli.js migrate --graceful --ansi');\"",
             "npm ci --ignore-scripts",
             "npm run build"
         ],
@@ -91,6 +105,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
+            "davingm/laravel-runtime": true,
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
         }
