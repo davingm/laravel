@@ -22,17 +22,18 @@ cd playground
 composer install
 npm ci --ignore-scripts
 npm run build
-php artisan key:generate
-php artisan migrate
+artisan key:generate
+artisan migrate
 composer run dev
 ```
 
-`composer run dev` starts the Laravel development environment. You can also use `php artisan <command>` for any Artisan command, such as:
+`composer run dev` starts the Laravel development environment. Use `artisan <command>` for any Artisan command (no need for `php artisan`), such as:
 
 ```bash
-php artisan about
-php artisan route:list
-php artisan test
+artisan about
+artisan route:list
+artisan test
+artisan make:dashboard
 ```
 
 The application source is under `playground/`. The Nuxt-inspired page conventions live in `playground/src/pages` and layouts in `playground/src/layouts`.
@@ -51,17 +52,24 @@ npm run build
 
 Packages are maintained in `packages/<name>` and split to move for individual GitHub repositories on version tags. Repository setup, secrets, and release steps are documented in [docs/package-split-releases.md](docs/package-split-releases.md).
 
-## CLI setup (optional)
+## CLI setup
 
-The `artisan` helper is part of the playground CLI. To link it for local use, run:
+The playground ships an `artisan` wrapper (`.auto/cli.js` + `artisan.cmd` on Windows) so you can run commands without typing `php`:
 
 ```bash
-cd playground/.davingm
-npm install
-npm link
+artisan make:model Product -m
+artisan make:dashboard
+artisan route:list
 ```
 
-Then run `artisan` from the playground project directory. Standard `php artisan` commands also work without linking the helper.
+Composer installs a global launcher via `node .auto/setup.js` after `composer install`. If `artisan` is not found outside the project directory, run:
+
+```bash
+cd playground
+node .auto/setup.js
+```
+
+Inside `playground/`, `artisan.cmd` works immediately in PowerShell and Command Prompt.
 
 ## Requirements
 

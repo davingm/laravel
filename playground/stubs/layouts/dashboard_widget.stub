@@ -1,0 +1,4 @@
+<div class="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+    <p class="text-sm font-medium uppercase tracking-wide text-neutral-500">{{ class_basename($model) }}</p>
+    <p class="mt-2 text-3xl font-semibold tabular-nums text-neutral-900">{{ $model::count() }}</p>
+</div>

@@ -62,9 +62,9 @@ laravel-davingm/
 Jalankan dari `playground/`:
 
 ```bash
-php artisan about
-php artisan route:list
-php artisan test --compact
+artisan about
+artisan route:list
+artisan test --compact
 npm run build
 ```
 
