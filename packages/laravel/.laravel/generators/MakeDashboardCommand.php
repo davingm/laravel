@@ -20,7 +20,7 @@ class MakeDashboardCommand extends Command
             return self::FAILURE;
         }
 
-<<<<<<< HEAD:playground/app/Console/Commands/MakeDashboardCommand.php
+
         if (! $this->generateLayout($layout)) {
             return self::FAILURE;
         }
@@ -45,9 +45,7 @@ class MakeDashboardCommand extends Command
         }
 
         $stubPath = base_path("stubs/layouts/{$layout}.stub");
-=======
         $stubPath = base_path(".laravel/layouts/{$layout}.stub");
->>>>>>> 0135ad8ab7292abc5570312413cb66b3edbd9741:packages/laravel/.laravel/generators/MakeDashboardCommand.php
         if (! File::exists($stubPath)) {
             $this->error("Layout stub not found: .laravel/layouts/{$layout}.stub");
 
@@ -61,7 +59,6 @@ class MakeDashboardCommand extends Command
 
         return true;
     }
-<<<<<<< HEAD:playground/app/Console/Commands/MakeDashboardCommand.php
 
     private function generateDashboardPage(): bool
     {
@@ -237,6 +234,4 @@ PHP;
 
         return $content;
     }
-=======
->>>>>>> 0135ad8ab7292abc5570312413cb66b3edbd9741:packages/laravel/.laravel/generators/MakeDashboardCommand.php
 }
