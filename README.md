@@ -59,6 +59,32 @@ Requirements: PHP `^8.3`, Composer 2, Node.js and npm. From the repository root:
 
 ```bash
 cd playground
+<<<<<<< HEAD
+composer install
+npm ci --ignore-scripts
+npm run build
+artisan key:generate
+artisan migrate
+composer run dev
+```
+
+`composer run dev` starts the Laravel development environment. Use `artisan <command>` for any Artisan command (no need for `php artisan`), such as:
+
+```bash
+artisan about
+artisan route:list
+artisan test
+artisan make:dashboard
+```
+
+The application source is under `playground/`. The Nuxt-inspired page conventions live in `playground/src/pages` and layouts in `playground/src/layouts`.
+
+## Frontend
+
+The project includes a server-rendered page frontend. Pages are in `src/pages` and shared layouts are in `src/layouts`, relative to `playground/`. Generated frontend manifest and payload files are stored in `playground/.davingm/cache` and ignored by Git.
+
+Build frontend assets from `playground/`:
+=======
 composer run setup
 composer run dev
 ```
@@ -68,6 +94,7 @@ Run `composer run setup` once for a fresh checkout; it installs dependencies, pr
 ### Tests and frontend build
 
 Run these from `playground/`:
+>>>>>>> 0135ad8ab7292abc5570312413cb66b3edbd9741
 
 ```bash
 node .laravel/cli.js test --compact
@@ -78,6 +105,32 @@ The GitHub Actions workflow also runs the test suite and frontend build, then ch
 
 ## Documentation and community
 
+<<<<<<< HEAD
+## CLI setup
+
+The playground ships an `artisan` wrapper (`.auto/cli.js` + `artisan.cmd` on Windows) so you can run commands without typing `php`:
+
+```bash
+artisan make:model Product -m
+artisan make:dashboard
+artisan route:list
+```
+
+Composer installs a global launcher via `node .auto/setup.js` after `composer install`. If `artisan` is not found outside the project directory, run:
+
+```bash
+cd playground
+node .auto/setup.js
+```
+
+Inside `playground/`, `artisan.cmd` works immediately in PowerShell and Command Prompt.
+
+## Requirements
+
+- PHP >= 8.3
+- Composer
+- Node.js >= 18
+=======
 - [Documentation index](docs/README.md)
 - [Framework guides](docs/guidness/01-pengenalan.md)
 - [Developing the framework](docs/dev/develop-framework-in-playground.md)
@@ -87,6 +140,7 @@ The GitHub Actions workflow also runs the test suite and frontend build, then ch
 - [Runtime package release guide](docs/dev/publish-runtime-package.md)
 
 The `docs/discussion/` folder contains historical or exploratory material, not authoritative implementation instructions. Verify proposals against the current source.
+>>>>>>> 0135ad8ab7292abc5570312413cb66b3edbd9741
 
 ## License
 
