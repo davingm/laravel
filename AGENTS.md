@@ -2,7 +2,7 @@
 
 Panduan ini berisi aturan kerja yang berlaku selama mengembangkan repository. Ini bukan changelog, daftar TODO, atau sumber status rilis; hapus atau perbarui aturan ketika tidak lagi sesuai.
 
-## Pahami repository sebelum mengubahnya
+## Pahami repository sebelum mengubahnya 
 
 - Baca `docs/README.md`, lalu baca panduan developer/pengguna yang relevan dengan tugas. Dokumentasi di `docs/discussion/` dapat berupa catatan historis; verifikasi setiap klaim terhadap source sebelum menggunakannya.
 - Source runtime Composer berada di `packages/laravel/`. Source framework yang disalin ke runtime berada di `packages/laravel/.laravel/`.
