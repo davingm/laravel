@@ -985,8 +985,8 @@ if (args.length === 0) {
     printLogo();
     out(PRE_WHITE, `${B}${WHITE}Laravel${R} ${D}CLI${R}`);
     process.stdout.write('\n');
-    out(PRE_WHITE, `  ${CYAN}composer dev${R}             start server + queue + Vite`);
-    out(PRE_WHITE, `  ${CYAN}composer dev -- --no-tui${R} plain output without the terminal panel`);
+    out(PRE_WHITE, `  ${CYAN}php artisan dev${R}          start server + queue + Vite`);
+    out(PRE_WHITE, `  ${CYAN}php artisan dev --no-tui${R} plain output without the terminal panel`);
     out(PRE_WHITE, `  ${CYAN}php artisan <command>${R}    run a Laravel command`);
     process.stdout.write('\n');
     out(PRE_WHITE, `  ${D}php artisan migrate${R}`);

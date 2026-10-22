@@ -12,7 +12,7 @@ use Throwable;
 
 final class AutoCrudCommand extends Command
 {
-    protected $signature = 'crud:generate {model : Model name matching a migrated table}';
+    protected $signature = 'crud:generate {model : Model name matching a migrated table} {--role= : Protect the resource routes with a role alias}';
     protected $aliases = ['devtools:crud'];
     protected $description = 'Generate a conventional Laravel CRUD from the active database schema';
 
@@ -71,7 +71,10 @@ final class AutoCrudCommand extends Command
         $routes = File::get($routeFile);
         $uri = $this->slug($table);
         if (!str_contains($routes, "Route::resource('{$uri}'")) {
-            File::append($routeFile, "\n\\Illuminate\\Support\\Facades\\Route::resource('{$uri}', \\App\\Http\\Controllers\\{$model}Controller::class);\n");
+            $route = "\\Illuminate\\Support\\Facades\\Route::resource('{$uri}', \\App\\Http\\Controllers\\{$model}Controller::class)";
+            $role = trim((string) $this->option('role'));
+            if ($role !== '') $route .= "->middleware('role.".Str::snake($role)."')";
+            File::append($routeFile, "\n{$route};\n");
             $this->info("Added resource route: {$uri}");
         }
         $this->info("CRUD generated for {$model} from {$table}.");
@@ -125,40 +128,41 @@ class __MODEL__Controller extends Controller
     public function index() { return view('__VIEW__.index', ['__PLURAL__' => __MODEL__::query()->latest()->paginate(15)]); }
     public function create() { return view('__VIEW__.form'); }
     public function store(Request $request) { __MODEL__::create($request->validate(__RULES__)); return redirect()->route('__ROUTE__.index'); }
-    public function show(__MODEL__ $__VAR__) { return redirect()->route('__ROUTE__.edit', $__VAR__); }
-    public function edit(__MODEL__ $__VAR__) { return view('__VIEW__.form', compact('__VAR__')); }
-    public function update(Request $request, __MODEL__ $__VAR__) { $__VAR__->update($request->validate(__RULES__)); return redirect()->route('__ROUTE__.index'); }
-    public function destroy(__MODEL__ $__VAR__) { $__VAR__->delete(); return redirect()->route('__ROUTE__.index'); }
+    public function show(__MODEL__ __VAR__) { return redirect()->route('__ROUTE__.edit', __VAR__); }
+    public function edit(__MODEL__ __VAR__) { return view('__VIEW__.form', compact('__VAR_NAME__')); }
+    public function update(Request $request, __MODEL__ __VAR__) { __VAR__->update($request->validate(__RULES__)); return redirect()->route('__ROUTE__.index'); }
+    public function destroy(__MODEL__ __VAR__) { __VAR__->delete(); return redirect()->route('__ROUTE__.index'); }
 }
 PHP, [
             '__MODEL__' => $model,
             '__VIEW__' => $this->slug($table),
-            '__PLURAL__' => Str::plural(Str::camel($model)),
+            '__PLURAL__' => Str::plural(Str::singular(Str::camel($model))),
             '__ROUTE__' => $this->slug($table),
-            '__VAR__' => Str::camel($model),
+            '__VAR__' => '$'.Str::singular(Str::camel($model)),
+            '__VAR_NAME__' => Str::singular(Str::camel($model)),
             '__RULES__' => var_export($rules, true),
         ]);
     }
 
     private function indexView(string $model, string $table, array $fields): string
     {
-        $var = Str::camel($model);
+        $var = Str::singular(Str::camel($model));
         $headers = implode("\n", array_map(static fn (string $field): string => '            <th>'.e(Str::headline($field)).'</th>', $fields));
         $cells = implode("\n", array_map(static fn (string $field): string => '                <td>{{ $'.$var.'->'.$field.' }}</td>', $fields));
         return strtr(<<<'BLADE'
 <h1>__TITLE__</h1>
 <a href="{{ route('__ROUTE__.create') }}">Create</a>
 <table><thead><tr>__HEADERS__<th></th></tr></thead><tbody>
-@foreach($__PLURAL__ as $__VAR__)
-<tr>__CELLS__<td><a href="{{ route('__ROUTE__.edit', $__VAR__) }}">Edit</a></td></tr>
+@foreach(__PLURAL__ as __VAR__)
+<tr>__CELLS__<td><a href="{{ route('__ROUTE__.edit', __VAR__) }}">Edit</a></td></tr>
 @endforeach
 </tbody></table>
-{{ $__PLURAL__->links() }}
+{{ __PLURAL__->links() }}
 BLADE, [
             '__TITLE__' => e(Str::headline(Str::plural($model))),
             '__ROUTE__' => $this->slug($table),
             '__HEADERS__' => $headers,
-            '__PLURAL__' => '$'.Str::plural(Str::camel($model)),
+            '__PLURAL__' => '$'.Str::plural($var),
             '__VAR__' => '$'.$var,
             '__CELLS__' => $cells,
         ]);
@@ -166,19 +170,19 @@ BLADE, [
 
     private function formView(string $model, string $table, array $fields): string
     {
-        $var = Str::camel($model);
+        $var = Str::singular(Str::camel($model));
         $inputs = implode("\n", array_map(static fn (string $field): string => '    <label>'.e(Str::headline($field)).' <input name="'.$field.'" value="{{ old(\''.$field.'\', $'.$var.'->'.$field.' ?? \'\') }}"></label>', $fields));
         return strtr(<<<'BLADE'
-<h1>{{ isset($__VAR__) ? 'Edit' : 'Create' }} __MODEL__</h1>
-<form method="post" action="{{ isset($__VAR__) ? route('__ROUTE__.update', $__VAR__) : route('__ROUTE__.store') }}">
+<h1>{{ isset(__VAR__) ? 'Edit' : 'Create' }} __MODEL__</h1>
+<form method="post" action="{{ isset(__VAR__) ? route('__ROUTE__.update', __VAR__) : route('__ROUTE__.store') }}">
 @csrf
-@isset($__VAR__) @method('PUT') @endisset
+@isset(__VAR__) @method('PUT') @endisset
 __INPUTS__
 <button type="submit">Save</button></form>
 BLADE, [
             '__VAR__' => '$'.$var,
             '__MODEL__' => e($model),
-            '__ROUTE__' => Str::kebab($table),
+            '__ROUTE__' => $this->slug($table),
             '__INPUTS__' => $inputs,
         ]);
     }

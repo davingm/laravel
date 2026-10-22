@@ -13,18 +13,25 @@ Composer asks to allow the `davingm/laravel-devtools` plugin. Once enabled, its 
 Available commands:
 
 ```bash
+php artisan dev
 php artisan devtools
+php artisan make:all Product
+php artisan make:controller Product --resource --model=Product
+php artisan make:migration product
+php artisan make:page about
+php artisan make:dashboard --layout=sidebar
+php artisan make:roles admin editor
 php artisan crud:generate Product
 ```
 
 The CRUD generator reads the active database schema, so run the table migrations first. It creates a model, controller, Blade views under `resources/views`, and a resource route in `routes/web.php`. It derives basic validation rules from column types and nullability. Existing files are preserved.
 
-To use the interactive development panel as `composer dev`, add this script to the root application's `composer.json`:
+The interactive development panel also runs with `php artisan dev`. To expose the same entry point as `composer dev`, add this script to the root application's `composer.json`:
 
 ```json
 "dev": [
   "Composer\\Config::disableProcessTimeout",
-  "node .laravel/cli.js dev"
+  "@php artisan dev"
 ]
 ```
 
