@@ -40,6 +40,21 @@ final class AutoCrudCommand extends Command
             static fn (array $column): string => (string) ($column['name'] ?? ''),
             $columns,
         ), static fn (string $name): bool => $name !== '' && !in_array($name, ['id', 'created_at', 'updated_at', 'deleted_at'], true)));
+        $rules = [];
+        foreach ($columns as $column) {
+            $name = (string) ($column['name'] ?? '');
+            if ($name === '' || !in_array($name, $fillable, true)) continue;
+            $type = strtolower((string) ($column['type_name'] ?? $column['type'] ?? ''));
+            $typeRule = match (true) {
+                str_contains($type, 'int') => 'integer',
+                str_contains($type, 'decimal'), str_contains($type, 'numeric'), str_contains($type, 'float'), str_contains($type, 'double') => 'numeric',
+                str_contains($type, 'bool') => 'boolean',
+                str_contains($type, 'date'), str_contains($type, 'time') => 'date',
+                default => 'string',
+            };
+            $presenceRule = ($column['nullable'] ?? false) ? 'nullable' : (array_key_exists('default', $column) && $column['default'] !== null ? 'sometimes' : 'required');
+            $rules[$name] = $presenceRule.'|'.$typeRule;
+        }
         $routeFile = base_path('routes/web.php');
         if (!File::exists($routeFile)) {
             $this->error('routes/web.php was not found.');
@@ -47,7 +62,7 @@ final class AutoCrudCommand extends Command
         }
 
         $this->create(app_path("Models/{$model}.php"), $this->modelSource($model, $fillable));
-        $this->create(app_path("Http/Controllers/{$model}Controller.php"), $this->controllerSource($model, $table));
+        $this->create(app_path("Http/Controllers/{$model}Controller.php"), $this->controllerSource($model, $table, $rules));
         $viewDirectory = resource_path('views/'.$this->slug($table));
         File::ensureDirectoryExists($viewDirectory);
         $this->create($viewDirectory.'/index.blade.php', $this->indexView($model, $table, $fillable));
@@ -95,7 +110,7 @@ class __MODEL__ extends Model
 PHP, ['__MODEL__' => $model, '__FILLABLE__' => var_export($fillable, true)]);
     }
 
-    private function controllerSource(string $model, string $table): string
+    private function controllerSource(string $model, string $table, array $rules): string
     {
         return strtr(<<<'PHP'
 <?php
@@ -109,9 +124,10 @@ class __MODEL__Controller extends Controller
 {
     public function index() { return view('__VIEW__.index', ['__PLURAL__' => __MODEL__::query()->latest()->paginate(15)]); }
     public function create() { return view('__VIEW__.form'); }
-    public function store(Request $request) { __MODEL__::create($request->all()); return redirect()->route('__ROUTE__.index'); }
+    public function store(Request $request) { __MODEL__::create($request->validate(__RULES__)); return redirect()->route('__ROUTE__.index'); }
+    public function show(__MODEL__ $__VAR__) { return redirect()->route('__ROUTE__.edit', $__VAR__); }
     public function edit(__MODEL__ $__VAR__) { return view('__VIEW__.form', compact('__VAR__')); }
-    public function update(Request $request, __MODEL__ $__VAR__) { $__VAR__->update($request->all()); return redirect()->route('__ROUTE__.index'); }
+    public function update(Request $request, __MODEL__ $__VAR__) { $__VAR__->update($request->validate(__RULES__)); return redirect()->route('__ROUTE__.index'); }
     public function destroy(__MODEL__ $__VAR__) { $__VAR__->delete(); return redirect()->route('__ROUTE__.index'); }
 }
 PHP, [
@@ -120,6 +136,7 @@ PHP, [
             '__PLURAL__' => Str::plural(Str::camel($model)),
             '__ROUTE__' => $this->slug($table),
             '__VAR__' => Str::camel($model),
+            '__RULES__' => var_export($rules, true),
         ]);
     }
 

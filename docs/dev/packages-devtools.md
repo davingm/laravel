@@ -13,7 +13,7 @@ Source PHP package berada di `src/`, runtime CLI/stub berada di `.laravel/`, dan
 ## Command
 
 - `php artisan devtools` membuka menu interaktif untuk generator CRUD, daftar route, dan pembersihan cache.
-- `php artisan crud:generate Product` membaca tabel `products` dari koneksi database aktif dan menghasilkan model, controller, Blade view di `resources/views/products/`, serta route resource di `routes/web.php`.
+- `php artisan crud:generate Product` membaca tabel `products` dari koneksi database aktif dan menghasilkan model, controller, Blade view di `resources/views/products/`, validasi dasar dari tipe/nullability kolom, serta route resource di `routes/web.php`.
 - Generator tidak membuat atau menjalankan migration. Jalankan migration lebih dulu. File yang telah ada dilewati.
 - Untuk menjalankan panel CLI sebagai `composer dev`, aplikasi perlu menambahkan `node .laravel/cli.js dev` ke script `dev` di `composer.json` root.
 

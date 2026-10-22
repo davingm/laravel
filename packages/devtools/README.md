@@ -17,7 +17,7 @@ php artisan devtools
 php artisan crud:generate Product
 ```
 
-The CRUD generator reads the active database schema, so run the table migrations first. It creates a model, controller, Blade views under `resources/views`, and a resource route in `routes/web.php`. Existing files are preserved.
+The CRUD generator reads the active database schema, so run the table migrations first. It creates a model, controller, Blade views under `resources/views`, and a resource route in `routes/web.php`. It derives basic validation rules from column types and nullability. Existing files are preserved.
 
 To use the interactive development panel as `composer dev`, add this script to the root application's `composer.json`:
 

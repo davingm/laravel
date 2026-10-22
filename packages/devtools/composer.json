@@ -23,10 +23,5 @@
                 "Davingm\\LaravelDevtools\\DevtoolsServiceProvider"
             ]
         }
-    },
-    "config": {
-        "allow-plugins": {
-            "composer/package-versions-deprecated": true
-        }
     }
 }
