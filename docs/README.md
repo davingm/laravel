@@ -28,6 +28,8 @@ Baca bab dasar secara berurutan. Setiap bab adalah halaman mandiri untuk navigas
 
 ## CI
 
+Package terpisah: [panduan `packages/devtools`](./dev/packages-devtools.md).
+
 Workflow `.github/workflows/test-apache.yml` berjalan pada setiap push dan pull request. Workflow memasang dependency Composer di `playground/`, menjalankan test Laravel, membangun asset frontend, lalu memastikan halaman utama merespons melalui Apache dengan document root `playground/public`.
 
 ## `dev/` — panduan pengembangan

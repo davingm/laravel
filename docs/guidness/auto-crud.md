@@ -9,7 +9,7 @@ Fitur Auto CRUD membuat sebagian besar file CRUD dari schema database. Developer
 1. Tulis migration untuk tabel yang diperlukan dan definisikan foreign key constraint.
 2. Jalankan migration ke database yang dipilih di `.env`.
 3. Jalankan `artisan crud:generate NamaModel`.
-4. Tinjau file yang dihasilkan, isi konfigurasi bisnis/authorization, lalu uji halaman.
+4. Tinjau file yang dihasilkavn, isi konfigurasi bisnis/authorization, lalu uji halaman.
 
 Generator membaca schema database aktif. Ia tidak membuat atau menjalankan migration.
 

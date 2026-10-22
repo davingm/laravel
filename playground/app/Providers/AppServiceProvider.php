@@ -18,14 +18,13 @@ class AppServiceProvider extends ServiceProvider
         // Register src/components for x-component syntax (anonymous components)
         Blade::anonymousComponentPath(base_path('src/components'));
 
-        // Register davingm-welcome package component.
-        // Namespace 'welcomepage' allows <x-welcomepage /> syntax.
+        // Register the package's anonymous component as <x-welcomepage />.
         foreach ([
             base_path('node_modules/@davingm/welcome/blade'),
             base_path('node_modules/davingm-welcome/blade'),
         ] as $welcomeBladePath) {
             if (is_dir($welcomeBladePath)) {
-                Blade::anonymousComponentPath($welcomeBladePath, 'welcomepage');
+                Blade::anonymousComponentPath($welcomeBladePath);
                 break;
             }
         }

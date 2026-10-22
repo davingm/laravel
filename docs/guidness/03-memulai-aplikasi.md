@@ -30,10 +30,22 @@ Mulai development menggunakan launcher:
 artisan dev
 ```
 
-Jika launcher global tidak tersedia:
+Jika launcher global tidak tersedia anda bisa langung memangil cli dari node seperti ini:
 
 ```bash
 node .laravel/cli.js dev
+```
+
+tapi itu bukan hal yang bagus. kita masih bisa menggunakan cara lain dalam kasus ini lewat package local
+
+```bash
+cd .laravel
+```
+
+kemduian :
+
+```bash
+npm link
 ```
 
 Mode ini menjalankan Laravel server, queue worker, dan Vite dev server. Biarkan terminal tetap terbuka selama development.

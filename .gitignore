@@ -52,6 +52,9 @@ references
 /playground/app/database/*.sqlite
 /playground/app/database/*.db
 
+/examples/laravel11
+/examples/laravel12
+
 # Monorepo-local artifacts
 .taks
 /playground/test-laravel

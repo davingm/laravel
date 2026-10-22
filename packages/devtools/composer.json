@@ -1,0 +1,32 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "davingm/laravel-devtools",
+    "type": "composer-plugin",
+    "description": "Laravel 11, 12, and 13 development tools and generators.",
+    "license": "AGPL-3.0-only",
+    "homepage": "https://github.com/davingm/laravel-devtools",
+    "require": {
+        "php": "^8.2",
+        "composer-plugin-api": "^2.2",
+        "illuminate/console": "^11.0 || ^12.0 || ^13.0",
+        "illuminate/support": "^11.0 || ^12.0 || ^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Davingm\\LaravelDevtools\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "Davingm\\LaravelDevtools\\RuntimePlugin",
+        "laravel": {
+            "providers": [
+                "Davingm\\LaravelDevtools\\DevtoolsServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    }
+}

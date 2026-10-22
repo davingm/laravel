@@ -1,0 +1,70 @@
+@extends('layouts.app')
+
+@section('content')
+<section class="crud-shell">
+    <header class="crud-heading">
+        <div class="crud-heading-copy">
+            <p class="eyebrow">Data</p>
+            <h1 class="crud-title">{{MODEL_PLURAL}}</h1>
+            <p class="crud-description">Kelola data {{MODEL_PLURAL}}.</p>
+        </div>
+        <a href="{{ route('{{ROUTE_PREFIX}}.create') }}" class="button button-primary">Tambah {{MODEL}}</a>
+    </header>
+
+    @if (session('success'))
+        <p class="flash-success" role="status">{{ session('success') }}</p>
+    @endif
+
+    <div class="crud-summary">
+        <span><strong class="crud-summary-count">{{ ${{MODEL_PLURAL}}->total() }}</strong> data</span>
+        <label class="crud-search-wrap">
+            <span class="sr-only">Cari data pada halaman ini</span>
+            <input type="search" data-table-search placeholder="Cari…" class="crud-search">
+        </label>
+    </div>
+
+    <div class="table-wrap">
+        <table class="barang-table">
+            <caption class="sr-only">Daftar {{MODEL_PLURAL}}</caption>
+            <thead>
+                <tr>
+{{INDEX_HEADERS}}
+                    <th class="actions-heading">Aksi</th>
+                </tr>
+            </thead>
+            <tbody data-table-body>
+                @forelse (${{MODEL_PLURAL}} as ${{MODEL_VARIABLE}})
+                    <tr data-table-row>
+{{INDEX_CELLS}}
+                        <td>
+                            <div class="table-actions">
+                                <a href="{{ route('{{ROUTE_PREFIX}}.edit', ${{MODEL_VARIABLE}}) }}" class="button button-secondary button-small">Edit</a>
+                                <form method="POST" action="{{ route('{{ROUTE_PREFIX}}.destroy', ${{MODEL_VARIABLE}}) }}" data-confirm="Yakin ingin menghapus data ini?">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="button button-secondary button-small">Hapus</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td class="empty-state" colspan="{{INDEX_COLUMN_COUNT}}">
+                            <div class="crud-empty-state">
+                                <h2>Belum ada data</h2>
+                                <p>Tambahkan {{MODEL}} pertama.</p>
+                                <a href="{{ route('{{ROUTE_PREFIX}}.create') }}" class="button button-primary">Tambah {{MODEL}}</a>
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+                <tr data-table-no-results hidden>
+                    <td class="empty-state" colspan="{{INDEX_COLUMN_COUNT}}">Tidak ada data yang cocok.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="crud-pagination">{{ ${{MODEL_PLURAL}}->links() }}</div>
+</section>
+@endsection
