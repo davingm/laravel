@@ -56,7 +56,7 @@ final class AutoCrudCommand extends Command
         $routes = File::get($routeFile);
         $uri = $this->slug($table);
         if (!str_contains($routes, "Route::resource('{$uri}'")) {
-            File::append($routeFile, "\nRoute::resource('{$uri}', \\App\\Http\\Controllers\\{$model}Controller::class);\n");
+            File::append($routeFile, "\n\\Illuminate\\Support\\Facades\\Route::resource('{$uri}', \\App\\Http\\Controllers\\{$model}Controller::class);\n");
             $this->info("Added resource route: {$uri}");
         }
         $this->info("CRUD generated for {$model} from {$table}.");

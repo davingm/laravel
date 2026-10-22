@@ -987,11 +987,11 @@ if (args.length === 0) {
     process.stdout.write('\n');
     out(PRE_WHITE, `  ${CYAN}composer dev${R}             start server + queue + Vite`);
     out(PRE_WHITE, `  ${CYAN}composer dev -- --no-tui${R} plain output without the terminal panel`);
-    out(PRE_WHITE, `  ${CYAN}artisan <command>${R}        run a Laravel command`);
+    out(PRE_WHITE, `  ${CYAN}php artisan <command>${R}    run a Laravel command`);
     process.stdout.write('\n');
-    out(PRE_WHITE, `  ${D}artisan migrate${R}`);
-    out(PRE_WHITE, `  ${D}artisan make:model User${R}`);
-    out(PRE_WHITE, `  ${D}artisan route:list${R}`);
+    out(PRE_WHITE, `  ${D}php artisan migrate${R}`);
+    out(PRE_WHITE, `  ${D}php artisan make:model User${R}`);
+    out(PRE_WHITE, `  ${D}php artisan route:list${R}`);
     process.stdout.write('\n');
     process.exit(0);
 }
