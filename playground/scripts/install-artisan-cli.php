@@ -8,22 +8,22 @@ $npm = PHP_OS_FAMILY === 'Windows' ? 'npm.cmd' : 'npm';
 function runNpm(string $npm, array $arguments, bool $inheritOutput = false): int
 {
     $command = escapeshellarg($npm).' '.implode(' ', array_map('escapeshellarg', $arguments));
-    $descriptors = $inheritOutput
-        ? [0 => STDIN, 1 => STDOUT, 2 => STDERR]
-        : [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
-
-    $process = proc_open($command, $descriptors, $pipes);
+    $process = proc_open($command, [
+        0 => ['pipe', 'r'],
+        1 => ['pipe', 'w'],
+        2 => ['redirect', 1],
+    ], $pipes);
 
     if (! is_resource($process)) {
         return 127;
     }
 
-    if (! $inheritOutput) {
-        fclose($pipes[0]);
-        stream_get_contents($pipes[1]);
-        stream_get_contents($pipes[2]);
-        fclose($pipes[1]);
-        fclose($pipes[2]);
+    fclose($pipes[0]);
+    $output = stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+
+    if ($inheritOutput && is_string($output) && $output !== '') {
+        fwrite(STDOUT, $output);
     }
 
     return proc_close($process);
