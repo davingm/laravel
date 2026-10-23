@@ -29,7 +29,7 @@ npm ci
 npm run build
 ```
 
-Untuk menjalankan server pengembangan, gunakan `composer run dev` atau `node .laravel/cli.js dev`. Jika launcher global framework telah tersedia, bentuk singkatnya adalah `artisan dev` atau `artisan route:list`.
+Untuk menjalankan server pengembangan, gunakan `composer run dev` atau `artisan dev`. Pasang launcher global satu kali dengan `npm install --global @davingm/laravel-cli`; launcher meneruskan command ke runtime project dan tidak membutuhkan file `artisan` di root. Untuk diagnosis, jalankan `node .laravel/cli.js dev` dari root project.
 
 ## Menguji source lokal `packages/laravel`
 
@@ -46,7 +46,7 @@ node .laravel/cli.js test --compact
 
 Jalankan perubahan aplikasi dari `playground/`. Jalankan `npm ci` jika dependency frontend belum ada dan `npm run build` jika perubahan menyentuh asset.
 
-Path repository lokal hanya untuk monorepo. `.materialize-playground.php` menghapus konfigurasi repository lokal dan mengganti constraint `dev-main` menjadi `^1.0.2` saat membuat starter, sehingga pengguna menginstal runtime release yang menyediakan bootstrap internal ini dari Packagist. Karena runtime release baru harus diterbitkan lebih dulu, `create-project` belum dapat memakai CLI tanpa file root sampai versi tersebut tersedia. Path repository serta opsi versi package mengikuti [dokumentasi Composer](https://getcomposer.org/doc/05-repositories.md#path).
+Path repository lokal hanya untuk monorepo. `.materialize-playground.php` menghapus konfigurasi repository lokal dan mengganti constraint `dev-main` menjadi `^1.0.2` saat membuat starter, sehingga pengguna menginstal runtime release dari Packagist. Untuk memperoleh executable global `artisan`, pengguna memasang launcher npm `@davingm/laravel-cli`; Composer tidak membuat file `artisan` di root atau mengubah `PATH`. Path repository serta opsi versi package mengikuti [dokumentasi Composer](https://getcomposer.org/doc/05-repositories.md#path).
 
 ## Alur command tanpa file `artisan` di root
 
@@ -60,7 +60,7 @@ node .laravel/cli.js test --compact
 composer run dev
 ```
 
-Launcher global `artisan` juga meneruskan command ke CLI framework jika telah dipasang. Jangan memakai `php artisan` langsung: file itu memang tidak disediakan di root aplikasi. Saat mengubah runtime CLI, periksa juga Composer scripts, command build/preview, dokumentasi, dan workflow CI agar tidak kembali bergantung pada file root tersebut.
+Launcher npm global `artisan` meneruskan command ke CLI runtime project. Saat mengubah runtime CLI, periksa juga Composer scripts, command build/preview, dokumentasi, dan workflow CI agar tidak bergantung pada file root.
 
 ## Rilis runtime package ke repository terpisah
 

@@ -1,0 +1,32 @@
+{
+    "name": "@davingm/laravel-cli",
+    "version": "1.0.0",
+    "description": "Global artisan command launcher for davingm/laravel projects.",
+    "type": "module",
+    "bin": {
+        "artisan": "./bin/artisan.js"
+    },
+    "files": [
+        "bin/artisan.js",
+        "README.md",
+        "LICENSE"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "keywords": [
+        "laravel",
+        "framework",
+        "cli",
+        "artisan"
+    ],
+    "license": "AGPL-3.0-only",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/davingm/laravel.git",
+        "directory": "packages/laravel/src/cli"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

@@ -24,31 +24,14 @@ Script setup menjalankan migration dengan `--force`. Karena itu, pastikan konfig
 
 ## 3. Jalankan mode development
 
-Mulai development menggunakan launcher:
+Pasang launcher global satu kali per mesin dan mulai development:
 
 ```bash
+npm install --global @davingm/laravel-cli
 artisan dev
 ```
 
-Jika launcher global tidak tersedia anda bisa langung memangil cli dari node seperti ini:
-
-```bash
-node .laravel/cli.js dev
-```
-
-tapi itu bukan hal yang bagus. kita masih bisa menggunakan cara lain dalam kasus ini lewat package local
-
-```bash
-cd .laravel
-```
-
-kemduian :
-
-```bash
-npm link
-```
-
-Mode ini menjalankan Laravel server, queue worker, dan Vite dev server. Biarkan terminal tetap terbuka selama development.
+Launcher mencari project dari direktori aktif, jadi command juga dapat dijalankan dari subfolder project. Mode `dev` menjalankan Laravel server, queue worker, dan Vite dev server. Biarkan terminal tetap terbuka selama development.
 
 ## 4. Jalankan perintah Artisan
 
@@ -60,7 +43,7 @@ artisan route:list
 artisan test
 ```
 
-Gunakan bentuk `artisan <command>` untuk command Laravel. Launcher ini meneruskan command seperti `about`, `route:list`, `test`, `migrate`, dan generator ke aplikasi. Jika launcher global tidak tersedia, gunakan `node .laravel/cli.js <command>` dari root aplikasi. Bootstrap PHP internal berada di `.laravel/`; tidak ada file `artisan` di root aplikasi.
+Launcher global meneruskan command seperti `about`, `route:list`, `test`, `migrate`, dan generator ke runtime `.laravel/` milik aplikasi. Tidak ada file `artisan` di root project. Jika command belum ditemukan setelah instalasi, pastikan npm global bin ada di `PATH`, lalu buka terminal baru.
 
 ## 5. Buka aplikasi
 
@@ -68,7 +51,7 @@ Launcher menampilkan alamat server saat mulai. Buka alamat lokal tersebut di bro
 
 ## Masalah umum
 
-- **`artisan` tidak dikenali:** gunakan `node .laravel/cli.js <command>` dari root aplikasi, misalnya `node .laravel/cli.js dev`.
+- **`artisan` tidak dikenali:** periksa `npm prefix --global`, pastikan direktori bin npm global masuk ke `PATH`, lalu buka terminal baru.
 - **Asset belum muncul:** pastikan Vite aktif saat development, atau jalankan `npm run build`.
 - **Database error saat setup:** periksa `.env`, ketersediaan file SQLite, izin tulis, dan ekstensi PHP untuk driver database yang digunakan.
 - **Route halaman belum terlihat:** periksa bahwa file berada di `src/pages/` dan jalankan `artisan route:list` atau `node .laravel/cli.js route:list`.

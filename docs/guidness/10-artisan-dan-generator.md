@@ -1,5 +1,11 @@
 # 10. Artisan dan generator
 
+Pasang launcher global satu kali per mesin:
+
+```bash
+npm install --global @davingm/laravel-cli
+```
+
 Daftar command yang benar-benar tersedia pada instalasi dapat diperiksa menggunakan:
 
 ```bash
@@ -16,7 +22,9 @@ Perintah `artisan` adalah launcher framework. File launcher berada di luar root 
 artisan route:list
 ```
 
-Jika launcher global `artisan` belum tersedia pada PATH, gunakan CLI dari root aplikasi:
+Launcher mencari root project dari direktori aktif lalu meneruskan command ke runtime project. Jika `artisan` belum dikenali, pastikan npm global bin ada di `PATH` dan mulai terminal baru.
+
+Untuk diagnosis, CLI runtime juga dapat dijalankan dari root project:
 
 ```bash
 node .laravel/cli.js route:list

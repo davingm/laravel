@@ -15,6 +15,7 @@ Path pada tabel relatif terhadap `packages/laravel/`. Tujuan folder yang masih k
 | `src/core/` | Subfolder kosong: `plugin/`, `utils/`. | Kandidat area komponen inti; belum memiliki implementasi. |
 | `src/imports/` | Kosong. | Belum ada tanggung jawab atau API yang ditetapkan. |
 | `src/runtime/` | Kosong. | Belum ada tanggung jawab atau API yang ditetapkan. |
+| `src/cli/` | Manifest package npm `@davingm/laravel-cli` dan executable launcher global `artisan`. | Entry point global yang mencari project aktif lalu meneruskan command ke `.laravel/cli.js` project tersebut. Source package berada di dalam `src/`, lalu dipublikasikan terpisah dari runtime Composer. |
 | `.laravel/` | Berkas runtime, CLI, generator, template, JavaScript framework, dan manifest npm; rincian di bawah. | Source runtime yang memang disalin oleh Composer plugin ke folder `.laravel/` di root aplikasi. |
 | `LICENSE` | Lisensi package. | Metadata distribusi. |
 | `README.md` | Ringkasan singkat package dan mekanisme instalasi runtime. | Dokumentasi package. |
@@ -27,15 +28,16 @@ Berikut source runtime package yang saat ini disalin ke aplikasi:
 
 | Path | Isi dan tanggung jawab saat ini |
 | --- | --- |
-| `artisan.php`, `cli.js`, `setup.js` | Bootstrap command internal, entry CLI, dan setup runtime. |
+| `artisan.php`, `cli.js` | Bootstrap command internal dan entry CLI runtime. |
 | `cli/` | Pendukung CLI, termasuk telemetry request dan terminal panel. |
 | `crud/` | Stub controller, model, form, dan halaman CRUD. |
 | `frontend/framework.js` | JavaScript framework yang digunakan aplikasi. |
 | `generators/` | Implementasi command generator halaman, controller, migration, CRUD, dashboard, roles, dan command terkait. |
 | `layouts/` | Stub layout navbar dan sidebar untuk generator. |
 | `role/` | Stub middleware role. |
-| `package.json`, `package-lock.json` | Manifest dan lockfile dependency frontend runtime. |
 | `LICENSE` | Lisensi yang ikut bersama runtime. |
+
+Launcher global berada di `packages/laravel/src/cli/`. Composer tidak menginstal executable global atau mengubah `PATH`; pengguna memasang launcher satu kali melalui npm.
 
 Runtime package berada di `packages/laravel/.laravel/`. Saat diinstal, Composer plugin menyalin isinya ke `.laravel/` pada root aplikasi. Folder tujuan di aplikasi merupakan output lokal yang diabaikan Git; jangan mengedit salinan tersebut sebagai source.
 
