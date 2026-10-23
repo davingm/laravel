@@ -29,7 +29,7 @@ npm ci
 npm run build
 ```
 
-Untuk menjalankan server pengembangan, gunakan `composer run dev` atau `artisan dev`. Pasang launcher global satu kali dengan `npm install --global @davingm/laravel-cli`; launcher meneruskan command ke runtime project dan tidak membutuhkan file `artisan` di root. Untuk diagnosis, jalankan `node .laravel/cli.js dev` dari root project.
+Untuk menjalankan server pengembangan, gunakan `composer run dev` atau `artisan dev`. `composer create-project` memasang launcher npm global bila belum terpasang; kegagalan instalasi ditampilkan sebagai peringatan beserta perintah manual. Launcher meneruskan command ke runtime project dan tidak membutuhkan file `artisan` di root. Untuk diagnosis, jalankan `node .laravel/cli.js dev` dari root project.
 
 ## Menguji source lokal `packages/laravel`
 

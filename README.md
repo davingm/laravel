@@ -96,7 +96,7 @@ The GitHub Actions workflow also runs the test suite and frontend build, then ch
 
 ## CLI setup
 
-Install the global launcher once on your development machine:
+`composer create-project` installs the global launcher automatically when it is not already installed. You can also install or update it manually:
 
 ```bash
 npm install --global @davingm/laravel-cli

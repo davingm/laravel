@@ -10,7 +10,7 @@ Project baru memakai `.env` dan koneksi SQLite sebagai konfigurasi awal. Periksa
 
 ## 2. Periksa hasil instalasi
 
-Proses `composer create-project` menjalankan script awal starter untuk memasang dependency, membuat konfigurasi `.env`, menyiapkan application key, menjalankan migration awal, dan membangun asset frontend.
+Proses `composer create-project` menjalankan script awal starter untuk memasang dependency, membuat konfigurasi `.env`, menyiapkan application key, menjalankan migration awal, membangun asset frontend, dan memasang launcher global `artisan` bila belum tersedia.
 
 Periksa bahwa command instalasi selesai tanpa error. Migration mengubah schema database aktif; jangan jalankan ulang setup terhadap database production atau database dengan data penting.
 
@@ -24,10 +24,9 @@ Script setup menjalankan migration dengan `--force`. Karena itu, pastikan konfig
 
 ## 3. Jalankan mode development
 
-Pasang launcher global satu kali per mesin dan mulai development:
+Mulai development:
 
 ```bash
-npm install --global @davingm/laravel-cli
 artisan dev
 ```
 

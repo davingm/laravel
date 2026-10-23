@@ -30,7 +30,7 @@ Start the development environment from `playground/`:
 composer run dev
 ```
 
-This starts the Laravel server, queue worker, and Vite development server. Install the global launcher once with `npm install --global @davingm/laravel-cli`, then use `artisan <command>` for framework commands, for example `artisan route:list`, `artisan test`, or `artisan make:dashboard`. If the launcher is unavailable, run `node .laravel/cli.js <command>` from the project root.
+This starts the Laravel server, queue worker, and Vite development server. `composer create-project` installs the global launcher automatically when needed. Use `artisan <command>` for framework commands, for example `artisan route:list`, `artisan test`, or `artisan make:dashboard`. If automatic installation is unavailable, install it with `npm install --global @davingm/laravel-cli` or run `node .laravel/cli.js <command>` from the project root.
 
 ## Frontend
 

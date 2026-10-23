@@ -1,6 +1,6 @@
 # 10. Artisan dan generator
 
-Pasang launcher global satu kali per mesin:
+Launcher global dipasang otomatis saat `composer create-project` jika belum tersedia. Jika instalasi otomatis gagal, pasang manual:
 
 ```bash
 npm install --global @davingm/laravel-cli
