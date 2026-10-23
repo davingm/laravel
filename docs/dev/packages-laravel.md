@@ -37,7 +37,7 @@ Berikut source runtime package yang saat ini disalin ke aplikasi:
 | `role/` | Stub middleware role. |
 | `LICENSE` | Lisensi yang ikut bersama runtime. |
 
-Launcher global berada di `packages/laravel/src/cli/`. Composer tidak menginstal executable global atau mengubah `PATH`; pengguna memasang launcher satu kali melalui npm.
+Source launcher global berada di `packages/laravel/src/cli/`. Composer plugin tidak memasang executable global atau mengubah `PATH`; hook `post-create-project-cmd` menjalankan installer npm yang memeriksa versi global dan melewati instalasi bila launcher sudah tersedia.
 
 Runtime package berada di `packages/laravel/.laravel/`. Saat diinstal, Composer plugin menyalin isinya ke `.laravel/` pada root aplikasi. Folder tujuan di aplikasi merupakan output lokal yang diabaikan Git; jangan mengedit salinan tersebut sebagai source.
 
