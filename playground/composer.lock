@@ -146,7 +146,7 @@
             "dist": {
                 "type": "path",
                 "url": "../packages/laravel",
-                "reference": "1c4febafa64e9781cf653830ee3a72aec6db08a0"
+                "reference": "af8af865ad34ae73a94fb4db784135c94462b668"
             },
             "require": {
                 "composer-plugin-api": "^2.2",
@@ -154,12 +154,20 @@
             },
             "type": "composer-plugin",
             "extra": {
-                "class": "Davingm\\LaravelRuntime\\RuntimePlugin"
+                "class": "Davingm\\LaravelRuntime\\RuntimePlugin",
+                "laravel": {
+                    "providers": [
+                        "Davingm\\LaravelRuntime\\App\\Providers\\FrameworkServiceProvider"
+                    ]
+                }
             },
             "autoload": {
                 "psr-4": {
                     "Davingm\\LaravelRuntime\\": "src/"
-                }
+                },
+                "files": [
+                    "src/app/helpers/helpers.php"
+                ]
             },
             "license": [
                 "AGPL-3.0-only"
