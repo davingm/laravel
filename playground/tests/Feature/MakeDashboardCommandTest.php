@@ -193,7 +193,7 @@ PHP,
         File::put($temporaryBasePath.'/app/routes/web.php', <<<'PHP'
 <?php
 
-use App\Support\PageRouter;
+use Davingm\LaravelRuntime\App\Support\PageRouter;
 
 PageRouter::register([
     'exclude' => ['mahasiswas', 'mahasiswas/*'],

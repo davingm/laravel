@@ -63,7 +63,7 @@ class MakeControllerCommand extends Command
 
         namespace App\Http\Controllers;
 
-        use App\Support\Frontend;
+        use Davingm\LaravelRuntime\App\Support\Frontend;
         use Illuminate\Http\Request;
 
         class {$className} extends Controller
@@ -92,7 +92,7 @@ class MakeControllerCommand extends Command
         use App\Http\Requests\\{$storeRequest};
         use App\Http\Requests\\{$updateRequest};
         use App\Models\\{$modelName};
-        use App\Support\Frontend;
+        use Davingm\LaravelRuntime\App\Support\Frontend;
         use Illuminate\Http\RedirectResponse;
         use Illuminate\View\View;
 
