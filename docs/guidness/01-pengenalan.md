@@ -9,7 +9,7 @@ Selamat datang di `davingm/laravel`, framework berbasis Laravel untuk membangun 
 - **Backend Laravel:** routing, middleware, controller, model Eloquent, database, validasi, dan Artisan.
 - **Halaman Blade:** halaman berada di `src/pages/` dan dapat memperoleh route GET dari struktur file.
 - **Layout dan komponen:** elemen tampilan bersama berada di `src/layouts/` dan `src/components/`.
-- **Asset frontend:** CSS dan JavaScript dikembangkan melalui Vite; Tailwind CSS tersedia untuk styling.
+- **Asset frontend:** interaksi aplikasi ditulis dalam TypeScript dan dibangun bersama CSS melalui Vite; Tailwind CSS tersedia untuk styling.
 - **Generator:** command Artisan membantu membuat halaman, layout dashboard, middleware role, dan file CRUD.
 
 ## Cara kerja frontend

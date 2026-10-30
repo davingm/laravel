@@ -20,7 +20,15 @@ artisan test --filter=PageRouterTest
 
 Jika test gagal karena izin tulis, cek izin direktori cache/runtime yang digunakan aplikasi. Jangan memperbaiki masalah dengan menghapus folder luas atau mengubah database penting.
 
-## Build frontend saja
+## Pemeriksaan tipe dan build frontend
+
+Periksa tipe source TypeScript aplikasi:
+
+```bash
+npm run typecheck
+```
+
+Bangun CSS dan asset frontend:
 
 Untuk membangun CSS dan JavaScript:
 
@@ -68,7 +76,7 @@ Preview ditujukan untuk pemeriksaan lokal, bukan pengganti konfigurasi deploymen
 ## Checklist sebelum menyerahkan perubahan
 
 - Test terkait perubahan berhasil.
-- Build asset berhasil bila source CSS/JavaScript atau template Tailwind berubah.
+- Pemeriksaan tipe dan build asset berhasil bila source TypeScript/CSS atau template Tailwind berubah.
 - Route dan hasil generator sudah diperiksa.
 - Tidak ada secret, cache runtime, atau `node_modules` yang ditambahkan sebagai source.
 - Perubahan database disertai migration yang ditinjau.

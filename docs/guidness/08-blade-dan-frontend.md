@@ -1,6 +1,6 @@
 # 8. Blade dan frontend
 
-Frontend bawaan terdiri atas HTML yang dirender Laravel melalui Blade serta asset CSS/JavaScript yang dikelola Vite.
+Frontend bawaan terdiri atas HTML yang dirender Laravel melalui Blade serta asset CSS dan TypeScript yang dikelola Vite. Kode interaksi aplikasi ditulis dalam TypeScript; JavaScript internal framework tetap disediakan terpisah oleh runtime.
 
 ## Blade pages, layouts, dan components
 
@@ -33,11 +33,11 @@ Data `title` dan `description` yang diberikan melalui `page()` atau `Frontend::r
 
 Payload dan manifest adalah file runtime di `.laravel/cache/`. Jangan mengedit hasil tersebut sebagai source; ubah halaman atau kode `Frontend`, lalu generate ulang bila diperlukan.
 
-## JavaScript aplikasi dan runtime framework
+## TypeScript aplikasi dan runtime framework
 
 Kode JavaScript framework berada di `packages/laravel/.laravel/frontend/framework.js`, didistribusikan melalui Composer, dan disalin ke `.laravel/frontend/framework.js`. Layout dan Vite memuat hasil generate itu sebagai entry terpisah. Jangan menyalin atau mengedit kode framework ke dalam `src/`; Composer dapat membuat ulang runtime internal.
 
-`src/assets/js/app.js` disediakan untuk JavaScript khusus aplikasi. Developer bebas mengubahnya. Perilaku framework berikut tetap berada di entry internal:
+`src/assets/ts/app.ts` adalah entry wajib untuk interaksi khusus aplikasi. Tulis kode browser aplikasi dalam TypeScript dan jalankan `npm run typecheck` untuk memeriksa tipenya. Vite mentranspilasi TypeScript saat build. Perilaku framework berikut tetap berada di entry internal:
 
 - Membaca JSON payload dan mengekspos API di `window.__AUTO_LARAVEL__`.
 - Menangani link `data-navigate` dengan mengambil HTML dan mengganti `#page-view`.
@@ -56,7 +56,7 @@ Tambahkan style pada source, bukan di `public/build/`. Jika menambahkan lokasi t
 
 ## Menambahkan package frontend
 
-Package JavaScript/CSS dipasang melalui npm dari root aplikasi. Bedakan package library biasa dengan plugin Vite: library dipakai di source browser, sedangkan plugin Vite memperluas proses development/build dan dikonfigurasi di `vite.config.js`.
+Package frontend dipasang melalui npm dari root aplikasi. Bedakan package library dengan plugin Vite: library dapat diimpor dari source TypeScript aplikasi, sedangkan plugin Vite memperluas proses development/build dan dikonfigurasi di `vite.config.ts`.
 
 ### Library JavaScript
 
@@ -66,7 +66,7 @@ Pasang package yang akan dipakai aplikasi:
 npm install nama-package
 ```
 
-Impor package dari `src/assets/js/app.js`, sesuai nama export pada dokumentasi package:
+Impor package dari `src/assets/ts/app.ts`, sesuai nama export pada dokumentasi package:
 
 ```js
 import { fungsiYangDipakai } from 'nama-package';
@@ -101,7 +101,7 @@ Plugin Vite bukan sekadar package yang di-import ke JavaScript browser. Pasang s
 npm install --save-dev nama-plugin-vite
 ```
 
-Import plugin dan tambahkan pemanggilannya ke array `plugins` yang sudah ada di `vite.config.js`. Contoh struktur:
+Import plugin dan tambahkan pemanggilannya ke array `plugins` yang sudah ada di `vite.config.ts`. Contoh struktur:
 
 ```js
 import { defineConfig } from 'vite';
@@ -116,7 +116,7 @@ export default defineConfig({
             input: [
                 'src/assets/css/app.css',
                 '.laravel/frontend/framework.js',
-                'src/assets/js/app.js',
+                'src/assets/ts/app.ts',
             ],
             refresh: ['src/**/*.blade.php'],
             fonts: [
@@ -136,9 +136,9 @@ export default defineConfig({
 });
 ```
 
-Ganti `nama-plugin-vite` dan `pluginTambahan` dengan nama package dan export plugin yang sebenarnya. Bentuk pemanggilan plugin dapat berbeda; ikuti dokumentasi package. Pertahankan entry CSS aplikasi, entry JavaScript internal `.laravel/frontend/framework.js`, entry JavaScript aplikasi, font, Tailwind, dan pengaturan watcher yang sudah ada kecuali dokumentasi plugin menyatakan perlu penyesuaian. Jangan mendaftarkan library browser biasa sebagai plugin Vite.
+Ganti `nama-plugin-vite` dan `pluginTambahan` dengan nama package dan export plugin yang sebenarnya. Bentuk pemanggilan plugin dapat berbeda; ikuti dokumentasi package. Pertahankan entry CSS aplikasi, entry JavaScript internal `.laravel/frontend/framework.js`, entry TypeScript aplikasi, font, Tailwind, dan pengaturan watcher yang sudah ada kecuali dokumentasi plugin menyatakan perlu penyesuaian. Jangan mendaftarkan library browser biasa sebagai plugin Vite.
 
-Jika menambah file JavaScript atau CSS sebagai **entry terpisah**, tambahkan path-nya ke `input` Laravel Vite plugin dan muat entry tersebut dari layout menggunakan `@vite`. Jika package hanya di-import oleh `app.js` atau `app.css`, biasanya tidak perlu menambah entry baru.
+Jika menambah file TypeScript atau CSS sebagai **entry terpisah**, tambahkan path-nya ke `input` Laravel Vite plugin dan muat entry tersebut dari layout menggunakan `@vite`. Jika package hanya di-import oleh `app.ts` atau `app.css`, biasanya tidak perlu menambah entry baru.
 
 Sesudah memasang package, npm memperbarui `package.json` dan `package-lock.json`. Simpan perubahan keduanya agar instalasi berikutnya menggunakan dependency yang sama. Jalankan build untuk memeriksa integrasi:
 
@@ -150,11 +150,13 @@ Lihat panduan resmi [Laravel Vite](https://laravel.com/docs/13.x/vite), [Vite Pl
 
 ## Vite
 
-`vite.config.js` mendaftarkan asset aplikasi dan entry runtime framework:
+`vite.config.ts` mendaftarkan asset aplikasi dan entry runtime framework:
 
 - `src/assets/css/app.css`
 - `.laravel/frontend/framework.js` (source package berada di `packages/laravel/.laravel/frontend/framework.js`)
-- `src/assets/js/app.js`
+- `src/assets/ts/app.ts`
+
+Konfigurasi `tsconfig.json` memeriksa source aplikasi di `src/assets/ts/`. Jalankan `npm run typecheck` untuk pemeriksaan tipe dan `npm run build` untuk membangun asset.
 
 Saat development, `artisan dev` menjalankan Vite dev server. Build production dilakukan dengan:
 

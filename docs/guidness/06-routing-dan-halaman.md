@@ -26,7 +26,7 @@ Route aplikasi didaftarkan lebih dahulu dan menangani URL yang sama. Halaman fil
 
 ## Menambahkan halaman
 
-Halaman starter yang tampil di `/` adalah `src/pages/index.blade.php`. Ubah atau ganti file itu untuk menyesuaikan halaman awal aplikasi; halaman tersebut bukan `welcome.blade.php`. Efek partikel WebGL2 berada di `src/assets/js/app.js`, renderer dan shader gunungnya berada di `src/assets/js/shader/`, dan stylenya berada di `src/assets/css/app.css`. Kode ini termasuk source aplikasi starter dan dapat disesuaikan.
+Halaman starter yang tampil di `/` adalah `src/pages/index.blade.php`. Ubah atau ganti file itu untuk menyesuaikan halaman awal aplikasi; halaman tersebut bukan `welcome.blade.php`. Interaksi khusus aplikasi ditulis dalam TypeScript di `src/assets/ts/app.ts`; stylenya berada di `src/assets/css/app.css`. Kode ini termasuk source aplikasi starter dan dapat disesuaikan.
 
 Cara langsung adalah membuat file, misalnya `src/pages/contact.blade.php`, lalu cek route:
 

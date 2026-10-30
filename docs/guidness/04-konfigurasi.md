@@ -49,7 +49,7 @@ Jangan mengubah path ini tanpa memperbarui bootstrap, konfigurasi terkait, gener
 
 `VITE_APP_NAME` tersedia pada `.env.example` untuk nilai yang dapat diekspos ke Vite. Hanya nilai yang aman untuk diketahui browser yang boleh memakai prefix `VITE_`; jangan menaruh secret di dalamnya.
 
-Entry CSS dan JavaScript Vite terdaftar di `vite.config.js`. Untuk mengubah entry, pastikan layout utama memuat entry yang sama melalui `@vite`.
+Entry CSS dan TypeScript Vite terdaftar di `vite.config.ts`. Interaksi browser khusus aplikasi ditulis di `src/assets/ts/` dan tipe-nya diperiksa melalui `npm run typecheck`. Untuk mengubah entry, pastikan layout utama memuat entry yang sama melalui `@vite`.
 
 ## Cache konfigurasi
 

@@ -23,7 +23,7 @@ Path pada bab ini relatif terhadap **root aplikasi**, yaitu folder project yang 
 | `src/pages/` | File halaman Blade; file non-partial didaftarkan sebagai route GET otomatis. |
 | `src/layouts/` | Layout Blade bersama, termasuk `app.blade.php`. |
 | `src/components/` | Komponen Blade anonymous yang dapat dipanggil dengan sintaks komponen Blade. |
-| `src/assets/js/` | JavaScript khusus aplikasi; bukan tempat untuk source JavaScript internal framework. |
+| `src/assets/ts/` | Interaksi khusus aplikasi yang wajib ditulis dalam TypeScript; bukan tempat untuk source internal framework. |
 | `src/assets/css/` | CSS sumber dan entry Tailwind CSS. |
 
 ## Framework dan tooling
@@ -33,7 +33,8 @@ Path pada bab ini relatif terhadap **root aplikasi**, yaitu folder project yang 
 | `.laravel/` | Tooling internal framework: CLI, bootstrap Artisan internal, JavaScript framework, generator, template, dan cache frontend. Folder ini dihasilkan Composer dan tidak perlu diedit developer aplikasi. |
 | `bootstrap/` | Inisialisasi Laravel dan pendaftaran konfigurasi aplikasi. |
 | `config/` | Pengaturan Laravel, seperti database, view, cache, dan layanan lain. |
-| `vite.config.js` | Konfigurasi build CSS dan JavaScript dengan Vite. |
+| `vite.config.ts` | Konfigurasi build CSS dan TypeScript dengan Vite. |
+| `tsconfig.json` | Opsi pemeriksaan tipe TypeScript untuk source aplikasi. |
 
 ## Runtime, dependency, dan test
 

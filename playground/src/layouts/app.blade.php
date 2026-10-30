@@ -19,7 +19,7 @@
             'src/assets/css/app.css',
             'node_modules/@davingm/welcome/dist/welcomepage.css',
             '.laravel/frontend/framework.js',
-            'src/assets/js/app.js',
+            'src/assets/ts/app.ts',
         ])
     @endif
 </head>
