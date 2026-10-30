@@ -146,10 +146,11 @@
             "dist": {
                 "type": "path",
                 "url": "../packages/laravel",
-                "reference": "af8af865ad34ae73a94fb4db784135c94462b668"
+                "reference": "66b896787e58f6547a1e119878598c4c39af6d92"
             },
             "require": {
                 "composer-plugin-api": "^2.2",
+                "laravel/framework": "^13.0",
                 "php": "^8.3"
             },
             "type": "composer-plugin",
