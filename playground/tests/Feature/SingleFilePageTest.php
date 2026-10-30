@@ -3,9 +3,12 @@
 namespace Tests\Feature;
 
 use Davingm\LaravelRuntime\Compiler\Runtime\SingleFilePageCompiler;
+use Davingm\LaravelRuntime\App\Middleware\MinifyHtmlMiddleware;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class SingleFilePageTest extends TestCase
@@ -20,7 +23,8 @@ BLADE;
 
         $compiled = SingleFilePageCompiler::prepareBlade($source);
 
-        $this->assertStringContainsString('<pages data-page-scope="'.substr(hash('sha256', $source), 0, 12).'">', $compiled);
+        $this->assertStringContainsString('<div data-page-scope="'.substr(hash('sha256', $source), 0, 12).'">', $compiled);
+        $this->assertStringNotContainsString('<pages', $compiled);
         $this->assertStringContainsString('{{ $name }}', $compiled);
         $this->assertStringNotContainsString('<script', $compiled);
         $this->assertStringNotContainsString('<style', $compiled);
@@ -56,18 +60,34 @@ BLADE);
 
     public function test_home_single_file_page_renders_inside_the_framework_layout_with_default_seo(): void
     {
-        $this->get('/home')
+        $response = $this->get('/home');
+
+        $response
             ->assertOk()
             ->assertSee('<title>Home | Laravel</title>', false)
             ->assertSee('<meta name="description" content="Halaman Home.">', false)
             ->assertSee('<meta property="og:title" content="Home">', false)
             ->assertSee('<meta property="og:image" content="'.asset('Laravel.svg').'">', false)
             ->assertSee('<html lang="en">', false)
-            ->assertSee('<pages data-page-scope="', false)
+            ->assertSee('<div data-page-scope="', false)
+            ->assertDontSee('<pages', false)
             ->assertSee('Klik saya')
             ->assertDontSee('<script setup lang="ts">', false)
             ->assertDontSee('<style scoped>', false)
             ->assertDontSee('@extends', false);
+
+    }
+
+    public function test_production_html_is_minified_to_one_line(): void
+    {
+        config(['app.env' => 'production']);
+        $middleware = new MinifyHtmlMiddleware;
+        $response = $middleware->handle(
+            Request::create('/'),
+            fn () => new Response("<!doctype html>\n<html>\n<body>\n<p>Hello</p>\n</body>\n</html>\n", 200, ['Content-Type' => 'text/html; charset=UTF-8']),
+        );
+
+        $this->assertSame('<!doctype html><html><body><p>Hello</p></body></html>', $response->getContent());
     }
 
     public function test_single_file_page_can_select_another_registered_layout(): void

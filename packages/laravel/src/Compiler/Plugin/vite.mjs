@@ -57,12 +57,12 @@ function prepareScript(source, filePath, scope, ts) {
         body.push(parsed.text.slice(statement.getFullStart(), statement.end));
     }
 
-    return `${imports.join('\n')}\nexport async function mount(): Promise<void> {\n    if (!document.querySelector('pages[data-page-scope="${scope}"]')) return;\n${body.join('\n')}\n}\n`;
+    return `${imports.join('\n')}\nexport async function mount(): Promise<void> {\n    if (!document.querySelector('[data-page-scope="${scope}"]')) return;\n${body.join('\n')}\n}\n`;
 }
 
 function scopeStyle(source, scope, filePath, postcss) {
     const root = postcss.parse(source, { from: filePath });
-    const prefix = `pages[data-page-scope="${scope}"]`;
+    const prefix = `:where([data-page-scope="${scope}"])`;
 
     root.walkRules((rule) => {
         let parent = rule.parent;
@@ -98,7 +98,7 @@ function generate(root) {
     const pagesDirectory = path.resolve(root, 'src/pages');
     const generatedDirectory = path.resolve(root, '.laravel/generated');
     const modules = [];
-    const styles = ['pages[data-page-scope] { display: contents; }'];
+    const styles = [':where([data-page-scope]) { display: contents; }'];
     const moduleNames = new Set();
 
     for (const filePath of filesIn(pagesDirectory)) {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    //type script here
 </script>
 
 <pages>

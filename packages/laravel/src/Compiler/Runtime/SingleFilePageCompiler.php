@@ -46,8 +46,8 @@ final class SingleFilePageCompiler
         $scope = substr(hash('sha256', $source), 0, 12);
         $compiled = preg_replace('~<script\s+setup\s+lang=(?:"ts"|\'ts\')\s*>.*?</script\s*>~is', '', $source);
         $compiled = preg_replace('~<style\s+scoped\s*>.*?</style\s*>~is', '', $compiled ?? $source);
-        $compiled = preg_replace('/<pages\s*>/i', '<pages data-page-scope="'.$scope.'">', $compiled ?? $source, 1);
-        $compiled = preg_replace('/<\/pages\s*>/i', '</pages>', $compiled ?? $source, 1);
+        $compiled = preg_replace('/<pages\s*>/i', '<div data-page-scope="'.$scope.'">', $compiled ?? $source, 1);
+        $compiled = preg_replace('/<\/pages\s*>/i', '</div>', $compiled ?? $source, 1);
 
         return $compiled ?? $source;
     }
