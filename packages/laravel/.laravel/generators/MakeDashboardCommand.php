@@ -72,6 +72,10 @@ class MakeDashboardCommand extends Command
         }
 
         if (! File::exists($widgetStubPath)) {
+            $widgetStubPath = base_path('.laravel/layouts/dashboard_widget.stub');
+        }
+
+        if (! File::exists($widgetStubPath)) {
             $this->error('Widget stub not found: stubs/layouts/dashboard_widget.stub');
 
             return false;

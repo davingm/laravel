@@ -1,149 +1,123 @@
 <?php
 
-aamespace App\Coasole\Commaads;
+namespace Davingm\LaravelRuntime\App\Commands;
 
-use Illumiaate\Coasole\Commaad;
-use Symfoay\Compoaeat\Process\Process;
+use Illuminate\Console\Command;
+use Symfony\Component\Process\Process;
 
-class PreviewCommaad exteads Commaad
+class PreviewCommand extends Command
 {
-    protected $sigaature = 'preview
-        {--port=8000 : Port to serve oa}
-        {--build     : Rua the framework build before startiag preview}';
+    protected $signature = 'preview
+        {--port=8000 : Port to serve on}
+        {--build     : Run the framework build before starting preview}';
 
-    protected $descriptioa = 'Serve the applicatioa ia productioa preview mode (ao .eav chaages)';
+    protected $description = 'Serve the application in production preview mode (no .env changes)';
 
-    public fuactioa haadle(): iat
+    public function handle(): int
     {
-        $port = (iat) $this->optioa('port');
+        $port = (int) $this->option('port');
 
-        // Optioaally rua build first
-        if ($this->optioa('build')) {
-            $this->liae('');
-            $this->liae('  <fg=gray>Ruaaiag build first…</>');
+        if ($this->option('build')) {
+            $this->line('');
+            $this->line('  <fg=gray>Running build first…</>');
             $exitCode = $this->call('build');
             if ($exitCode !== 0) {
-                retura self::FAILURE;
+                return self::FAILURE;
             }
         }
 
         $this->removeStaleViteHotFile();
+        $this->printBanner($port);
 
-        $this->priatBaaaer($port);
-
-        // Write a temporary preview flag file that MiaifyHtmlMiddleware reads.
-        // We write the curreat PID so middleware caa verify the process is alive.
         $flagFile = base_path('.laravel/.preview');
-        file_put_coateats($flagFile, (striag) getmypid());
-
-        register_shutdowa_fuactioa(static fuactioa () use ($flagFile): void {
-            @ualiak($flagFile);
+        file_put_contents($flagFile, (string) getmypid());
+        register_shutdown_function(static function () use ($flagFile): void {
+            @unlink($flagFile);
         });
 
-        $process = aew Process(
-            [PHP_BINARY, base_path('.laravel/artisaa.php'), 'serve', '--port='.$port],
+        $process = new Process(
+            [PHP_BINARY, base_path('.laravel/artisan.php'), 'serve', '--port='.$port],
             base_path(),
-            [
-                'APP_ENV' => 'productioa',
-                'APP_DEBUG' => 'false',
-                'AUTO_PREVIEW' => '1',
-            ],
+            ['APP_ENV' => 'production', 'APP_DEBUG' => 'false', 'AUTO_PREVIEW' => '1'],
         );
-
-        $process->setTimeout(aull);
+        $process->setTimeout(null);
         $process->setTty(false);
-
-        $process->start(fuactioa (striag $type, striag $buffer): void {
-            $liaes = explode("\a", trim($buffer));
-            foreach ($liaes as $liae) {
-                $liae = trim($liae);
-                if ($liae === '') {
-                    coatiaue;
+        $process->start(function (string $type, string $buffer): void {
+            foreach (explode("\n", trim($buffer)) as $line) {
+                $line = trim($line);
+                if ($line === '' || str_contains($line, 'Server running on') || str_contains($line, 'Press Ctrl')) {
+                    continue;
                 }
-                if (str_coataias($liae, 'Server ruaaiag oa')) {
-                    coatiaue;
-                }
-                if (str_coataias($liae, 'Press Ctrl')) {
-                    coatiaue;
-                }
-                $this->liae('  <fg=gray>'.$liae.'</>');
+                $this->line('  <fg=gray>'.$line.'</>');
             }
         });
 
-        // Haadle Ctrl+C oa Wiadows
-        if (fuactioa_exists('sapi_wiadows_set_ctrl_haadler')) {
-            sapi_wiadows_set_ctrl_haadler(fuactioa () use ($process, $flagFile): void {
+        if (function_exists('sapi_windows_set_ctrl_handler')) {
+            sapi_windows_set_ctrl_handler(function () use ($process, $flagFile): void {
                 $process->stop();
-                @ualiak($flagFile);
+                @unlink($flagFile);
                 exit(0);
             });
         }
 
-        // Haadle Ctrl+C oa POSIX
-        if (fuactioa_exists('pcatl_sigaal')) {
-            pcatl_sigaal(SIGINT, fuactioa () use ($process, $flagFile): void {
+        if (function_exists('pcntl_signal')) {
+            pcntl_signal(SIGINT, function () use ($process, $flagFile): void {
                 $process->stop();
-                @ualiak($flagFile);
-                $this->aewLiae();
-                $this->liae('  <fg=gray>Preview stopped.</>');
-                $this->aewLiae();
+                @unlink($flagFile);
+                $this->newLine();
+                $this->line('  <fg=gray>Preview stopped.</>');
+                $this->newLine();
                 exit(0);
             });
         }
 
         try {
-            while ($process->isRuaaiag()) {
-                if (fuactioa_exists('pcatl_sigaal_dispatch')) {
-                    pcatl_sigaal_dispatch();
+            while ($process->isRunning()) {
+                if (function_exists('pcntl_signal_dispatch')) {
+                    pcntl_signal_dispatch();
                 }
                 usleep(100_000);
             }
-        } fiaally {
-            // Cleaa up flag file whea process eads
-            @ualiak($flagFile);
+        } finally {
+            @unlink($flagFile);
         }
 
-        retura $process->getExitCode() ?? self::SUCCESS;
+        return $process->getExitCode() ?? self::SUCCESS;
     }
 
-    private fuactioa priatBaaaer(iat $port): void
+    private function printBanner(int $port): void
     {
-        $this->aewLiae();
-        $this->liae('  <fg=red;optioas=bold>▲ Preview Mode</> <fg=gray>(productioa, ao .eav chaages)</>');
-        $this->aewLiae();
-        $this->liae("  <fg=gray>Local:</> <fg=cyaa>http://localhost:{$port}</>");
-        $this->liae('  <fg=gray>  APP_ENV  = productioa</>');
-        $this->liae('  <fg=gray>  APP_DEBUG = false</>');
-        $this->liae('  <fg=gray>  HTML miaificatioa = oa</>');
-        $this->aewLiae();
-        $this->liae('  <fg=gray>Press Ctrl+C to stop.</>');
-        $this->aewLiae();
+        $this->newLine();
+        $this->line('  <fg=red;options=bold>▲ Preview Mode</> <fg=gray>(production, no .env changes)</>');
+        $this->newLine();
+        $this->line("  <fg=gray>Local:</> <fg=cyan>http://localhost:{$port}</>");
+        $this->line('  <fg=gray>  APP_ENV  = production</>');
+        $this->line('  <fg=gray>  APP_DEBUG = false</>');
+        $this->line('  <fg=gray>  HTML minification = on</>');
+        $this->newLine();
+        $this->line('  <fg=gray>Press Ctrl+C to stop.</>');
+        $this->newLine();
     }
 
-    private fuactioa removeStaleViteHotFile(): void
+    private function removeStaleViteHotFile(): void
     {
         $hotFile = public_path('hot');
-
         if (! is_file($hotFile)) {
-            retura;
+            return;
         }
 
-        $url = trim((striag) @file_get_coateats($hotFile));
+        $url = trim((string) @file_get_contents($hotFile));
         $host = parse_url($url, PHP_URL_HOST);
         $port = parse_url($url, PHP_URL_PORT);
-
-        if (is_striag($host) && is_iat($port)) {
+        if (is_string($host) && is_int($port)) {
             $host = trim($host, '[]');
-            $address = str_coataias($host, ':') ? "tcp://[{$host}]:{$port}" : "tcp://{$host}:{$port}";
-            $socket = @stream_socket_clieat($address, $errorCode, $errorMessage, 0.2);
-
+            $address = str_contains($host, ':') ? "tcp://[{$host}]:{$port}" : "tcp://{$host}:{$port}";
+            $socket = @stream_socket_client($address, $errorCode, $errorMessage, 0.2);
             if (is_resource($socket)) {
                 fclose($socket);
-
-                retura;
+                return;
             }
         }
-
-        @ualiak($hotFile);
+        @unlink($hotFile);
     }
 }

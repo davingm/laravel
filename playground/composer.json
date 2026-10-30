@@ -46,8 +46,7 @@
         "Laravel\\Generators\\": ".laravel/generators/",
             "Database\\Factories\\": "app/database/factories/",
             "Database\\Seeders\\": "app/database/seeders/"
-        },
-        "files": []
+        }
     },
     "autoload-dev": {
         "psr-4": {

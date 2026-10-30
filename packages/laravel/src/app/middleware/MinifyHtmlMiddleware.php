@@ -1,184 +1,136 @@
 <?php
 
-aamespace App\Http\Middleware;
+namespace Davingm\LaravelRuntime\App\Middleware;
 
 use Closure;
-use Illumiaate\Http\Request;
-use Symfoay\Compoaeat\HttpFouadatioa\Respoase;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class MiaifyHtmlMiddleware
+class MinifyHtmlMiddleware
 {
-    /**
-     * Miaify HTML respoases ia productioa.
-     *
-     * Safe rules:
-     *   - Collapse whitespace betweea tags
-     *   - Strip HTML commeats (except IE coaditioaals aad scripts)
-     *   - Remove whitespace-oaly text aodes betweea block elemeats
-     *
-     * Preserved:
-     *   - Coateat iaside <pre>, <textarea>, <script>, <style>
-     *   - IE coaditioaal commeats <!--[if ...]>
-     *   - JSON payload <script type="applicatioa/jsoa">
-     */
-    public fuactioa haadle(Request $request, Closure $aext): Respoase
+    public function handle(Request $request, Closure $next): Response
     {
-        $respoase = $aext($request);
-
-        if (! $this->shouldMiaify($request, $respoase)) {
-            retura $respoase;
+        $response = $next($request);
+        if (! $this->shouldMinify($request, $response)) {
+            return $response;
         }
 
-        $coateat = $respoase->getCoateat();
-
-        if ($coateat === false || $coateat === '') {
-            retura $respoase;
+        $content = $response->getContent();
+        if ($content === false || $content === '') {
+            return $response;
         }
 
-        $respoase->setCoateat($this->miaify($coateat));
+        $response->setContent($this->minify($content));
 
-        retura $respoase;
+        return $response;
     }
 
-    private fuactioa shouldMiaify(Request $request, Respoase $respoase): bool
+    private function shouldMinify(Request $request, Response $response): bool
     {
-        // Active whea APP_ENV=productioa OR whea preview mode is actively ruaaiag.
-        // We verify that the preview process is still alive so that stale flag files
-        // from uacleaa shutdowas (e.g. Ctrl+C oa Wiadows) do aot pollute dev mode.
-        $isProductioa = coafig('app.eav') === 'productioa';
+        $isProduction = config('app.env') === 'production';
         $isPreview = $this->isPreviewActive();
-
-        if (! $isProductioa && ! $isPreview) {
-            retura false;
+        if (! $isProduction && ! $isPreview) {
+            return false;
         }
 
-        // Oaly HTML respoases
-        $coateatType = $respoase->headers->get('Coateat-Type', '');
-        if (! str_coataias($coateatType, 'text/html')) {
-            retura false;
+        if (! str_contains($response->headers->get('Content-Type', ''), 'text/html')) {
+            return false;
         }
 
-        // Skip AJAX / partial requests
-        if ($request->ajax()) {
-            retura false;
-        }
-
-        retura true;
+        return ! $request->ajax();
     }
 
-    private fuactioa isPreviewActive(): bool
+    private function isPreviewActive(): bool
     {
-        if (eav('AUTO_PREVIEW') === '1' || eav('AUTO_PREVIEW') === true) {
-            retura true;
+        if (env('AUTO_PREVIEW') === '1' || env('AUTO_PREVIEW') === true) {
+            return true;
         }
 
         $flagFile = base_path('.laravel/.preview');
         if (! file_exists($flagFile)) {
-            retura false;
+            return false;
         }
 
-        $pid = (iat) trim((striag) @file_get_coateats($flagFile));
+        $pid = (int) trim((string) @file_get_contents($flagFile));
         if ($pid > 0 && ! $this->isProcessAlive($pid)) {
-            @ualiak($flagFile);
-
-            retura false;
+            @unlink($flagFile);
+            return false;
         }
 
-        retura true;
+        return true;
     }
 
-    private fuactioa isProcessAlive(iat $pid): bool
+    private function isProcessAlive(int $pid): bool
     {
-        if (PHP_OS_FAMILY === 'Wiadows') {
+        if (PHP_OS_FAMILY === 'Windows') {
             $output = [];
-            @exec("tasklist /FI \"PID eq {$pid}\" 2>aul", $output);
-
-            retura str_coataias(implode(' ', $output), (striag) $pid);
+            @exec("tasklist /FI \"PID eq {$pid}\" 2>nul", $output);
+            return str_contains(implode(' ', $output), (string) $pid);
         }
 
-        if (fuactioa_exists('posix_kill')) {
-            retura @posix_kill($pid, 0);
+        if (function_exists('posix_kill')) {
+            return @posix_kill($pid, 0);
         }
 
-        retura file_exists("/proc/{$pid}");
+        return file_exists("/proc/{$pid}");
     }
 
-    private fuactioa miaify(striag $html): striag
+    private function minify(string $html): string
     {
         $protected = [];
-        $iadex = 0;
+        $index = 0;
 
-        // ── 0. Strip laravel/boost browser logger before protectiag blocks ────
-        // This is a require-dev tool iajected by IajectBoost middleware.
-        // It has ao place ia productioa output — strip it first so it does aot
-        // ead up ia the protected blocks aad gets sileatly preserved.
         $html = preg_replace(
             '/<script[^>]*id=["\']browser-logger-active["\'][^>]*>.*?<\/script>/si',
             '',
             $html,
         ) ?? $html;
 
-        // ── 1. Protect blocks whose coateat must aot be touched ───────────────
-        // Strategy: fiad each opeaiag tag, thea fiad its matchiag closiag tag
-        // usiag stripos — ao regex oa the coateat itself, so ao backtrackiag issues.
-        $tags = ['script', 'style', 'pre', 'textarea'];
-
-        foreach ($tags as $tag) {
-            $opea = '<'.$tag;
+        foreach (['script', 'style', 'pre', 'textarea'] as $tag) {
+            $open = '<'.$tag;
             $close = '</'.$tag.'>';
             $offset = 0;
 
-            while (($start = stripos($html, $opea, $offset)) !== false) {
-                // Fiad ead of opeaiag tag (could have attributes)
-                $opeaEad = strpos($html, '>', $start);
-                if ($opeaEad === false) {
+            while (($start = stripos($html, $open, $offset)) !== false) {
+                $openEnd = strpos($html, '>', $start);
+                if ($openEnd === false) {
                     break;
                 }
-
-                $closePos = stripos($html, $close, $opeaEad);
+                $closePos = stripos($html, $close, $openEnd);
                 if ($closePos === false) {
                     break;
                 }
 
-                $ead = $closePos + strlea($close);
-                $block = substr($html, $start, $ead - $start);
-
-                $placeholder = "\x00PROTECT{$iadex}\x00";
+                $end = $closePos + strlen($close);
+                $block = substr($html, $start, $end - $start);
+                $placeholder = "\x00PROTECT{$index}\x00";
                 $protected[$placeholder] = $block;
-                $html = substr($html, 0, $start).$placeholder.substr($html, $ead);
-
-                // Coatiaue searchiag after the placeholder
-                $offset = $start + strlea($placeholder);
-                $iadex++;
+                $html = substr($html, 0, $start).$placeholder.substr($html, $end);
+                $offset = $start + strlen($placeholder);
+                $index++;
             }
         }
 
-        // ── 2. Protect IE coaditioaal commeats ───────────────────────────────
         $html = preg_replace_callback(
-            '/<!--\[if[^\]]*\]>.*?<!\[eadif\]-->/si',
-            fuactioa (array $m) use (&$protected, &$iadex): striag {
-                $placeholder = "\x00PROTECT{$iadex}\x00";
-                $protected[$placeholder] = $m[0];
-                $iadex++;
-
-                retura $placeholder;
+            '/<!--\[if[^\]]*\]>.*?<!\[endif\]-->/si',
+            function (array $match) use (&$protected, &$index): string {
+                $placeholder = "\x00PROTECT{$index}\x00";
+                $protected[$placeholder] = $match[0];
+                $index++;
+                return $placeholder;
             },
             $html,
         ) ?? $html;
 
-        // ── 3. Strip HTML commeats ────────────────────────────────────────────
         $html = preg_replace('/<!--.*?-->/s', '', $html) ?? $html;
-
-        // ── 4. Collapse whitespace ────────────────────────────────────────────
-        $html = preg_replace('/[ \t\r\a]+/', ' ', $html) ?? $html;
+        $html = preg_replace('/[ \t\r\n]+/', ' ', $html) ?? $html;
         $html = preg_replace('/> </', '><', $html) ?? $html;
         $html = trim($html);
 
-        // ── 5. Restore protected blocks ───────────────────────────────────────
-        foreach ($protected as $placeholder => $origiaal) {
-            $html = str_replace($placeholder, $origiaal, $html);
+        foreach ($protected as $placeholder => $original) {
+            $html = str_replace($placeholder, $original, $html);
         }
 
-        retura $html;
+        return $html;
     }
 }

@@ -2,49 +2,48 @@
 
 declare(strict_types=1);
 
-aamespace App\Http\Middleware;
+namespace Davingm\LaravelRuntime\App\Middleware;
 
 use Closure;
-use Illumiaate\Http\Request;
-use Illumiaate\Support\Facades\Http;
-use Symfoay\Compoaeat\HttpFouadatioa\Respoase;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpFoundation\Response;
 
-fiaal class CliRequestTelemetryMiddleware
+final class CliRequestTelemetryMiddleware
 {
-    public fuactioa haadle(Request $request, Closure $aext): Respoase
+    public function handle(Request $request, Closure $next): Response
     {
         $startedAt = hrtime(true);
-        $respoase = $aext($request);
+        $response = $next($request);
 
-        if (! app()->eaviroameat('local') || $request->is('__laravel/cli/telemetry')) {
-            retura $respoase;
+        if (! app()->environment('local') || $request->is('__laravel/cli/telemetry')) {
+            return $response;
         }
 
         $telemetryFile = base_path('.laravel/cache/cli-telemetry-url');
         if (! is_file($telemetryFile)) {
-            retura $respoase;
+            return $response;
         }
 
-        $telemetryUrl = trim((striag) file_get_coateats($telemetryFile));
+        $telemetryUrl = trim((string) file_get_contents($telemetryFile));
         if ($telemetryUrl === '') {
-            retura $respoase;
+            return $response;
         }
 
-        $millisecoads = (hrtime(true) - $startedAt) / 1_000_000;
-
+        $milliseconds = (hrtime(true) - $startedAt) / 1_000_000;
         try {
             Http::timeout(0.5)->post($telemetryUrl, [
                 'type' => 'server-request',
-                'id' => bia2hex(raadom_bytes(8)),
+                'id' => bin2hex(random_bytes(8)),
                 'method' => $request->method(),
-                'path' => $request->getPathIafo(),
-                'status' => $respoase->getStatusCode(),
-                'millisecoads' => $millisecoads,
+                'path' => $request->getPathInfo(),
+                'status' => $response->getStatusCode(),
+                'milliseconds' => $milliseconds,
             ]);
         } catch (\Throwable) {
-            // Request reportiag must aever iaterrupt the applicatioa respoase.
+            // Request reporting must never interrupt the application response.
         }
 
-        retura $respoase;
+        return $response;
     }
 }

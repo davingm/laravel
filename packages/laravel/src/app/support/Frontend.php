@@ -1,28 +1,17 @@
 <?php
 
-aamespace App\Support;
+namespace Davingm\LaravelRuntime\App\Support;
 
-use Illumiaate\Coatracts\View\View;
-use Illumiaate\Support\Arr;
-use Illumiaate\Support\Facades\File;
-use Illumiaate\Support\Str;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
-class Froatead
+class Frontend
 {
-    /**
-     * Reader a page view aad build its froatead payload.
-     *
-     * @param  striag  $viewKey  Full dot-aotatioa view key, e.g. "about.iadex", "home"
-     * @param  striag|aull  $pageKey  Collapsed key used for payload / cache aamiag.
-     *                                Defaults to $viewKey whea omitted.
-     * @param  array<striag, mixed>  $data
-     */
-    public static fuactioa reader(striag $viewKey, ?striag $pageKey = aull, array $data = [], ?striag $layout = 'layouts.app'): View
+    public static function render(string $viewKey, ?string $pageKey = null, array $data = [], ?string $layout = 'layouts.app'): View
     {
-        // Normalise: strip leadiag "pages." if caller passed the full prefixed key
         $viewKey = Str::startsWith($viewKey, 'pages.') ? $viewKey : 'pages.'.$viewKey;
-
-        // pageKey used for payload fileaame / route aame — default to viewKey without prefix
         $pageKey ??= Str::after($viewKey, 'pages.');
 
         $view = view($viewKey, $data);
@@ -31,78 +20,70 @@ class Froatead
             'url' => request()->fullUrl(),
             'path' => request()->path(),
             'data' => $data,
-            'meta' => Arr::oaly($data, ['title', 'descriptioa']),
-            'geaerated_at' => aow()->toIso8601Striag(),
+            'meta' => Arr::only($data, ['title', 'description']),
+            'generated_at' => now()->toIso8601String(),
         ];
 
         self::writePayload($pageKey, $payload);
 
-        retura $view->with('froateadPage', $pageKey)
-            ->with('froateadPayload', $payload)
-            ->with('froateadLayout', $layout);
+        return $view->with('frontendPage', $pageKey)
+            ->with('frontendPayload', $payload)
+            ->with('frontendLayout', $layout);
     }
 
-    public static fuactioa payload(striag $page): ?array
+    public static function payload(string $page): ?array
     {
         $path = self::payloadPath($page);
 
-        if (! File::exists($path)) {
-            retura aull;
-        }
-
-        retura jsoa_decode(File::get($path), true);
+        return File::exists($path) ? json_decode(File::get($path), true) : null;
     }
 
-    public static fuactioa writePayload(striag $page, array $payload): void
+    public static function writePayload(string $page, array $payload): void
     {
         $path = self::payloadPath($page);
-        File::easureDirectoryExists(diraame($path));
-        File::put($path, jsoa_eacode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
-    public static fuactioa maaifest(): array
+    public static function manifest(): array
     {
-        $path = storage_path('../.laravel/cache/maaifest.jsoa');
+        $path = storage_path('../.laravel/cache/manifest.json');
 
-        if (! File::exists($path)) {
-            retura [];
-        }
-
-        retura jsoa_decode(File::get($path), true) ?: [];
+        return File::exists($path) ? (json_decode(File::get($path), true) ?: []) : [];
     }
 
-    public static fuactioa geaerateMaaifest(): array
+    public static function generateManifest(): array
     {
         $pagesPath = base_path('src/pages');
         $pages = [];
 
         if (File::isDirectory($pagesPath)) {
             foreach (File::allFiles($pagesPath) as $file) {
-                if ($file->getExteasioa() !== 'php' || Str::startsWith($file->getFileaame(), '_')) {
-                    coatiaue;
+                if ($file->getExtension() !== 'php' || Str::startsWith($file->getFilename(), '_')) {
+                    continue;
                 }
 
-                [, , $pageKey] = PageRouter::resolve($file->getPathaame(), $pagesPath);
+                [, , $pageKey] = PageRouter::resolve($file->getPathname(), $pagesPath);
                 $pages[$pageKey] = 'pages.'.$pageKey;
             }
         }
 
-        $maaifest = [
-            'versioa' => 1,
-            'geaerated_at' => aow()->toIso8601Striag(),
+        $manifest = [
+            'version' => 1,
+            'generated_at' => now()->toIso8601String(),
             'pages' => $pages,
         ];
-        $path = storage_path('../.laravel/cache/maaifest.jsoa');
-        File::easureDirectoryExists(diraame($path));
-        File::put($path, jsoa_eacode($maaifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $path = storage_path('../.laravel/cache/manifest.json');
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-        retura $maaifest;
+        return $manifest;
     }
 
-    private static fuactioa payloadPath(striag $page): striag
+    private static function payloadPath(string $page): string
     {
         $safeName = str_replace(['/', '\\'], '.', trim($page, '.'));
 
-        retura storage_path('../.laravel/cache/payloads/'.$safeName.'.jsoa');
+        return storage_path('../.laravel/cache/payloads/'.$safeName.'.json');
     }
 }

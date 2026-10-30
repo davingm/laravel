@@ -71,8 +71,8 @@ class CrudGenerateCommandTest extends TestCase
             $this->assertStringContainsString("old('name', \$crudGeneratorProduct->name)", $editView);
             $this->assertStringContainsString("old('crud_generator_category_id', \$crudGeneratorProduct->crud_generator_category_id)", $editView);
             $this->assertStringContainsString("Route::resource('crud_generator_products'", $routes);
-            $this->assertStringContainsString("'crud_generator_products'", $routes);
-            $this->assertStringContainsString("'crud_generator_products/*'", $routes);
+            $this->assertStringNotContainsString('PageRouter::register', $routes);
+            $this->assertStringNotContainsString("'crud_generator_products/*'", $routes);
 
             $existingContents = [];
             foreach ([0, 1, 2, 3, 4] as $index) {

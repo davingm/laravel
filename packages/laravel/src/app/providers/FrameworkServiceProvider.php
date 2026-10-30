@@ -11,6 +11,13 @@ use Davingm\LaravelRuntime\App\Middleware\CliRequestTelemetryMiddleware;
 use Davingm\LaravelRuntime\App\Middleware\MinifyHtmlMiddleware;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Generators\CrudGenerateCommand;
+use Laravel\Generators\MakeAllCommand;
+use Laravel\Generators\MakeControllerCommand;
+use Laravel\Generators\MakeDashboardCommand;
+use Laravel\Generators\MakeMigrationCommand;
+use Laravel\Generators\MakePageCommand;
+use Laravel\Generators\MakeRolesCommand;
 
 final class FrameworkServiceProvider extends ServiceProvider
 {
@@ -38,7 +45,14 @@ final class FrameworkServiceProvider extends ServiceProvider
 
         $this->commands([
             BuildCommand::class,
+            CrudGenerateCommand::class,
             FrontendGenerateCommand::class,
+            MakeAllCommand::class,
+            MakeControllerCommand::class,
+            MakeDashboardCommand::class,
+            MakeMigrationCommand::class,
+            MakePageCommand::class,
+            MakeRolesCommand::class,
             PreviewCommand::class,
         ]);
 

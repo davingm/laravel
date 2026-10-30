@@ -22,7 +22,7 @@ File yang nama dasarnya dimulai dengan underscore tidak dibuatkan route. Contoh 
 
 ### Cegah konflik route
 
-Jika suatu resource sudah memiliki route Laravel sendiri, halaman auto-route dapat dikecualikan melalui `exclude` pada `PageRouter::register()` di `app/routes/web.php`. Pola exact mengecualikan halaman tersebut; pola wildcard seperti `products/*` mengecualikan halaman beserta subhalamannya.
+Route aplikasi didaftarkan lebih dahulu dan menangani URL yang sama. Halaman file-based yang bentrok dengan route aplikasi dilewati otomatis, termasuk route resource yang dibuat generator CRUD.
 
 ## Menambahkan halaman
 
