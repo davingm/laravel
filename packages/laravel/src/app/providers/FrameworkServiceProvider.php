@@ -9,6 +9,7 @@ use Davingm\LaravelRuntime\App\Commands\FrontendGenerateCommand;
 use Davingm\LaravelRuntime\App\Commands\PreviewCommand;
 use Davingm\LaravelRuntime\App\Middleware\CliRequestTelemetryMiddleware;
 use Davingm\LaravelRuntime\App\Middleware\MinifyHtmlMiddleware;
+use Davingm\LaravelRuntime\Compiler\Runtime\SingleFilePageCompiler;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Generators\CrudGenerateCommand;
@@ -23,6 +24,10 @@ final class FrameworkServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        Blade::getFacadeRoot()->prepareStringsForCompilationUsing(
+            static fn (string $source): string => SingleFilePageCompiler::prepareBlade($source),
+        );
+
         Blade::anonymousComponentPath(base_path('src/components'));
 
         foreach ([
@@ -39,6 +44,11 @@ final class FrameworkServiceProvider extends ServiceProvider
             return <<<'PHP'
                 <?php if (! empty($frontendPayload['meta']['title'] ?? null)): ?><title><?= e($frontendPayload['meta']['title']) ?></title><?php endif; ?>
                 <?php if (! empty($frontendPayload['meta']['description'] ?? null)): ?><meta name="description" content="<?= e($frontendPayload['meta']['description']) ?>"><?php endif; ?>
+                <?php if (! empty($frontendPayload['meta']['ogTitle'] ?? null)): ?><meta property="og:title" content="<?= e($frontendPayload['meta']['ogTitle']) ?>"><?php endif; ?>
+                <?php if (! empty($frontendPayload['meta']['ogDescription'] ?? null)): ?><meta property="og:description" content="<?= e($frontendPayload['meta']['ogDescription']) ?>"><?php endif; ?>
+                <?php if (! empty($frontendPayload['meta']['ogImage'] ?? null)): ?><meta property="og:image" content="<?= e($frontendPayload['meta']['ogImage']) ?>"><?php endif; ?>
+                <?php if (! empty($frontendPayload['meta']['ogUrl'] ?? null)): ?><meta property="og:url" content="<?= e($frontendPayload['meta']['ogUrl']) ?>"><meta property="og:type" content="website"><meta property="og:site_name" content="<?= e(config('app.name', 'Laravel')) ?>"><?php endif; ?>
+                <?php if (! empty($frontendPayload['meta']['title'] ?? null)): ?><meta name="twitter:title" content="<?= e($frontendPayload['meta']['ogTitle'] ?? $frontendPayload['meta']['title']) ?>"><meta name="twitter:description" content="<?= e($frontendPayload['meta']['ogDescription'] ?? $frontendPayload['meta']['description'] ?? '') ?>"><meta name="twitter:image" content="<?= e($frontendPayload['meta']['ogImage'] ?? '') ?>"><meta name="twitter:card" content="summary_large_image"><?php endif; ?>
                 PHP;
         });
 

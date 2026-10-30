@@ -9,7 +9,7 @@ if (! function_exists('page')) {
      *
      * @param  array<string, mixed>  $data
      */
-    function page(string $viewKey, array $data = [], ?string $layout = 'layouts.app'): View
+    function page(string $viewKey, array $data = [], ?string $layout = 'layouts.default'): View
     {
         return Frontend::render($viewKey, null, $data, $layout);
     }

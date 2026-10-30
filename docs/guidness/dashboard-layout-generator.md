@@ -2,7 +2,7 @@
 
 Panduan ini menjelaskan cara membuat layout Blade sidebar atau navbar menggunakan command `make:dashboard`.
 
-> Jalankan semua command dari root aplikasi, yaitu folder yang berisi `composer.json` dan `bootstrap/app.php`. Generator tidak menimpa `src/layouts/app.blade.php` yang sudah ada.
+> Jalankan semua command dari root aplikasi, yaitu folder yang berisi `composer.json` dan `bootstrap/app.php`. Layout default `src/layouts/default.blade.php` tidak diubah oleh generator.
 
 ## 1. Pilih tipe layout
 
@@ -38,20 +38,18 @@ artisan make:dashboard --layout=navbar
 Layout hasil generate disimpan di:
 
 ```text
-src/layouts/app.blade.php
+src/layouts/{sidebar|navbar}.blade.php
 ```
 
-File tersebut menjadi layout Blade utama karena `src/` adalah root view aplikasi. Kedua pilihan menyediakan struktur HTML, styling Tailwind dasar dengan navigasi abu-abu dan area konten putih, serta `@yield('content')`.
+File tersebut menjadi layout bernama `sidebar` yang dipilih oleh route dashboard. Layout default `src/layouts/default.blade.php` tetap menjadi layout halaman lain. Kedua pilihan menyediakan dokumen HTML, styling Tailwind dasar, metadata, asset, payload, dan `@yield('content')`.
 
 ## 4. Perilaku file yang sudah ada
 
-Jika `src/layouts/app.blade.php` sudah ada, command menampilkan warning dan melewati proses penulisan. File tidak diubah, termasuk saat opsi `--layout` yang berbeda diberikan.
-
-Jika layout sudah ada, command menampilkan warning dan melewati proses penulisan. Pilih sidebar atau navbar sebelum membuat layout; tinjau dan ubah layout yang ada secara manual bila ingin mengganti desainnya.
+Jika file layout bernama pilihan sudah ada, command menampilkan warning dan melewati proses penulisan. File tersebut tidak diubah.
 
 ## 5. Gunakan layout pada halaman CRUD
 
-Stub CRUD menggunakan `@extends('layouts.app')` agar halaman yang dihasilkan memakai layout tersebut:
+Halaman dashboard dan stub CRUD memakai format satu file Blade, sehingga dirender oleh entry aplikasi. Resource CRUD memakai layout default; route dashboard memilih layout yang dibuat generator:
 
 ```text
 .laravel/crud/view_index.stub  → src/pages/<resource>/index.blade.php
@@ -86,5 +84,5 @@ artisan test
 
 - Nama opsi yang valid adalah `sidebar` dan `navbar`.
 - Generator membuat folder `src/layouts/` bila belum tersedia.
-- Layout mempertahankan hook metadata, asset Vite, payload frontend, dan elemen `#page-view` yang digunakan navigasi aplikasi.
+- Layout mempertahankan metadata, asset Vite, payload frontend, dan elemen `#page-view` yang digunakan navigasi aplikasi.
 - Generator PHP ada di `.laravel/generators/` dan didaftarkan oleh bootstrap Laravel.

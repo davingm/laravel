@@ -11,7 +11,7 @@ Path pada tabel relatif terhadap `packages/laravel/`. Tujuan folder yang masih k
 | `composer.json` | Manifest `davingm/laravel-runtime`, autoload PSR-4 `Davingm\LaravelRuntime\` dari `src/`, dan deklarasi Composer plugin. | Konfigurasi package. Pertahankan atau ubah sesuai kebutuhan package Composer. |
 | `src/` | Plugin Composer dan source PHP framework yang di-autoload. | Kode framework aktif berada di package/vendor; bukan berkas aplikasi dan bukan isi `.laravel/`. |
 | `src/app/` | `commands/`, `helpers/`, `middleware/`, `providers/`, `routes/`, dan `support/`. | Integrasi aplikasi Laravel seperti service provider, routing halaman, frontend, middleware, helper, dan command framework. |
-| `src/compiler/` | Subfolder kosong: `plugin/`, `runtime/`. | Kandidat area kompilasi; belum memiliki implementasi. |
+| `src/Compiler/` | `Plugin/vite.mjs`, `Runtime/SingleFilePageCompiler.php`. | Plugin Vite mengumpulkan TypeScript dan CSS scoped halaman; compiler PHP menyiapkan markup sebelum Blade memprosesnya. |
 | `src/core/` | Subfolder kosong: `plugin/`, `utils/`. | Kandidat area komponen inti; belum memiliki implementasi. |
 | `src/imports/` | Kosong. | Belum ada tanggung jawab atau API yang ditetapkan. |
 | `src/runtime/` | Kosong. | Belum ada tanggung jawab atau API yang ditetapkan. |

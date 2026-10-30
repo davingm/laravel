@@ -22,21 +22,19 @@ Jika test gagal karena izin tulis, cek izin direktori cache/runtime yang digunak
 
 ## Pemeriksaan tipe dan build frontend
 
-Periksa tipe source TypeScript aplikasi:
+Pemeriksaan tipe TypeScript dijalankan otomatis oleh build. Untuk menjalankannya saja:
 
 ```bash
 npm run typecheck
 ```
 
-Bangun CSS dan asset frontend:
-
-Untuk membangun CSS dan JavaScript:
+Build memeriksa tipe TypeScript, mengumpulkan blok halaman satu file, lalu membangun CSS dan JavaScript browser:
 
 ```bash
 npm run build
 ```
 
-Asset hasil build tersimpan di `public/build/`. Jangan mengedit output build secara manual; perbaiki source di `src/assets/` lalu build ulang.
+Asset hasil build tersimpan di `public/build/`. Jangan mengedit output build secara manual; perbaiki source di `src/` atau halaman Blade lalu build ulang.
 
 ## Pipeline `build`
 

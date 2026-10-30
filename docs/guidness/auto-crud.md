@@ -95,6 +95,8 @@ Prefix resource tersebut beserta subhalamannya dikecualikan dari file-based Page
 
 Anda tidak perlu membuat model `Product`, controller CRUD, route resource, atau tiga view tersebut secara manual.
 
+Ketiga view yang dihasilkan memakai format halaman satu file (`<script setup lang="ts">` dan `<pages>`), dirender melalui entry aplikasi, dan memakai layout default `src/layouts/default.blade.php`. Blade seperti `@csrf`, `@if`, dan `{{ ... }}` di dalam markup tetap diproses di server.
+
 ## 5. Apa yang diinferensikan dari schema?
 
 Generator membaca tabel dan kolom pada database aktif untuk membentuk:

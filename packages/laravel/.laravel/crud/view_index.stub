@@ -1,6 +1,7 @@
-@extends('layouts.app')
+<script setup lang="ts">
+</script>
 
-@section('content')
+<pages>
 <section class="crud-shell">
     <header class="crud-heading">
         <div class="crud-heading-copy">
@@ -67,4 +68,4 @@
 
     <div class="crud-pagination">{{ ${{MODEL_PLURAL}}->links() }}</div>
 </section>
-@endsection
+</pages>

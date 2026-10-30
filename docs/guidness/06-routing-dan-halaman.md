@@ -2,6 +2,8 @@
 
 Framework menyediakan auto-routing untuk halaman Blade sederhana dan tetap mendukung route Laravel biasa untuk proses aplikasi.
 
+`src/index.blade.php` adalah entry frontend di luar folder route. File itu memilih layout melalui `<laravelLayoute>` dan menempatkan halaman aktif lewat `<PageRouter />`. PageRouter tetap memetakan file `src/pages/` ke URL; file entry tidak menambah route `/index`.
+
 ## File-based routing
 
 `PageRouter` memindai `src/pages/` saat route web didaftarkan. File `.blade.php` yang tidak diawali `_` dibuatkan route GET.
@@ -26,9 +28,9 @@ Route aplikasi didaftarkan lebih dahulu dan menangani URL yang sama. Halaman fil
 
 ## Menambahkan halaman
 
-Halaman starter yang tampil di `/` adalah `src/pages/index.blade.php`. Ubah atau ganti file itu untuk menyesuaikan halaman awal aplikasi; halaman tersebut bukan `welcome.blade.php`. Interaksi khusus aplikasi ditulis dalam TypeScript di `src/assets/ts/app.ts`; stylenya berada di `src/assets/css/app.css`. Kode ini termasuk source aplikasi starter dan dapat disesuaikan.
+Halaman starter yang tampil di `/` adalah `src/pages/index.blade.php`. Ubah atau ganti file itu untuk menyesuaikan halaman awal aplikasi. `src/index.blade.php` tetap menjadi entry aplikasi dan tidak perlu diubah untuk mengganti isi route `/`.
 
-Cara langsung adalah membuat file, misalnya `src/pages/contact.blade.php`, lalu cek route:
+Cara langsung adalah membuat file, misalnya `src/pages/contact.blade.php`, lalu cek route. Halaman dapat memakai Blade konvensional atau format satu file (`<script setup lang="ts">`, opsional `<style scoped>`, dan `<pages>`); keduanya mendapat layout dan route otomatis. Layout default adalah `src/layouts/default.blade.php`. Route manual dapat memilih layout bernama lain melalui argumen ketiga `page()` dan mengirim metadata khusus melalui data halaman:
 
 ```bash
 artisan route:list --path=contact

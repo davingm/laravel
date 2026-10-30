@@ -1,7 +1,6 @@
-@extends('layouts.app')
+<script setup lang="ts">
+</script>
 
-@section('title', config('app.name', 'Laravel'))
-
-@section('content')
-<x-welcomepage />
-@endsection
+<pages>
+    <x-welcomepage />
+</pages>

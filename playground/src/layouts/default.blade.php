@@ -18,8 +18,10 @@
         @vite([
             'src/assets/css/app.css',
             'node_modules/@davingm/welcome/dist/welcomepage.css',
+            '.laravel/generated/pages.css',
             '.laravel/frontend/framework.js',
             'src/assets/ts/app.ts',
+            '.laravel/generated/pages.ts',
         ])
     @endif
 </head>

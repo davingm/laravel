@@ -19,7 +19,7 @@ class MakeDashboardCommandTest extends TestCase
                 ->expectsOutputToContain('Dashboard layout generated')
                 ->assertExitCode(0);
 
-            $layout = File::get($temporaryBasePath.'/src/layouts/app.blade.php');
+            $layout = File::get($temporaryBasePath.'/src/layouts/sidebar.blade.php');
             $this->assertStringContainsString('<aside', $layout);
             $this->assertStringContainsString('id="page-view"', $layout);
             $this->assertStringContainsString("@yield('content')", $layout);
@@ -41,7 +41,7 @@ class MakeDashboardCommandTest extends TestCase
                 ->expectsOutputToContain('Dashboard layout generated')
                 ->assertExitCode(0);
 
-            $layout = File::get($temporaryBasePath.'/src/layouts/app.blade.php');
+            $layout = File::get($temporaryBasePath.'/src/layouts/navbar.blade.php');
             $this->assertStringContainsString('<header', $layout);
             $this->assertStringContainsString('id="page-view"', $layout);
             $this->assertStringContainsString("@yield('content')", $layout);
@@ -55,7 +55,7 @@ class MakeDashboardCommandTest extends TestCase
     {
         $originalBasePath = $this->app->basePath();
         $temporaryBasePath = $this->createTemporaryProject();
-        $layoutPath = $temporaryBasePath.'/src/layouts/app.blade.php';
+        $layoutPath = $temporaryBasePath.'/src/layouts/navbar.blade.php';
         $existingLayout = 'Existing user layout';
         File::ensureDirectoryExists(dirname($layoutPath));
         File::put($layoutPath, $existingLayout);
@@ -124,13 +124,15 @@ PHP,
             $this->assertTrue(File::exists($dashboardPath));
 
             $dashboard = File::get($dashboardPath);
-            $this->assertStringContainsString("@extends('layouts.app')", $dashboard);
+            $this->assertStringContainsString('<script setup lang="ts">', $dashboard);
+            $this->assertStringContainsString('<pages>', $dashboard);
             $this->assertStringContainsString('\\App\\Models\\Product::class', $dashboard);
             $this->assertStringContainsString('\\App\\Models\\Order::class', $dashboard);
             $this->assertStringContainsString('{{ $model::count() }}', $dashboard);
             $this->assertStringNotContainsString('\\App\\Models\\User::class', $dashboard);
 
             $routes = File::get($temporaryBasePath.'/app/routes/web.php');
+            $this->assertStringContainsString("page('dashboard', [], 'layouts.sidebar')", $routes);
             $this->assertStringContainsString("Route::get('/dashboard'", $routes);
             $this->assertStringContainsString("->name('dashboard')", $routes);
             $this->assertStringContainsString("'dashboard'", $routes);

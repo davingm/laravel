@@ -2,33 +2,77 @@
 
 namespace Davingm\LaravelRuntime\App\Support;
 
+use Davingm\LaravelRuntime\Compiler\Runtime\SingleFilePageCompiler;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class Frontend
 {
-    public static function render(string $viewKey, ?string $pageKey = null, array $data = [], ?string $layout = 'layouts.app'): View
+    public static function render(string $viewKey, ?string $pageKey = null, array $data = [], ?string $layout = 'layouts.default'): View
     {
         $viewKey = Str::startsWith($viewKey, 'pages.') ? $viewKey : 'pages.'.$viewKey;
         $pageKey ??= Str::after($viewKey, 'pages.');
+        $layout = self::resolveLayout($layout);
 
-        $view = view($viewKey, $data);
+        $appName = config('app.name', 'Laravel');
+        $pageTitle = $data['title'] ?? Str::headline(last(explode('.', $pageKey)) ?: $appName);
+        $documentTitle = Str::endsWith($pageTitle, ' | '.$appName) ? $pageTitle : $pageTitle.' | '.$appName;
+        $pageDescription = $data['description'] ?? 'Halaman '.$pageTitle.'.';
+        $ogImage = $data['ogImage'] ?? asset('Laravel.svg');
         $payload = [
             'page' => $pageKey,
             'url' => request()->fullUrl(),
             'path' => request()->path(),
             'data' => $data,
-            'meta' => Arr::only($data, ['title', 'description']),
+            'meta' => [
+                'title' => $documentTitle,
+                'description' => $pageDescription,
+                'ogTitle' => $data['ogTitle'] ?? $pageTitle,
+                'ogDescription' => $data['ogDescription'] ?? $pageDescription,
+                'ogImage' => $ogImage,
+                'ogUrl' => $data['ogUrl'] ?? request()->url(),
+            ],
             'generated_at' => now()->toIso8601String(),
         ];
+
+        $viewData = array_merge($data, [
+            'frontendPage' => $pageKey,
+            'frontendPayload' => $payload,
+            'frontendLayout' => $layout,
+        ]);
+        $pageView = view($viewKey, $viewData);
+        $pageSource = File::get($pageView->getPath());
+
+        if (SingleFilePageCompiler::isSingleFilePage($pageSource)) {
+            $pageContent = $pageView->render();
+            $view = view('index', array_merge($viewData, ['pageContent' => $pageContent]));
+        } else {
+            $view = $pageView;
+        }
 
         self::writePayload($pageKey, $payload);
 
         return $view->with('frontendPage', $pageKey)
             ->with('frontendPayload', $payload)
             ->with('frontendLayout', $layout);
+    }
+
+    private static function resolveLayout(?string $layout): string
+    {
+        $layout = trim($layout ?? 'default');
+        $view = Str::startsWith($layout, 'layouts.') ? $layout : 'layouts.'.$layout;
+
+        if ($view === 'layouts.app' && ! view()->exists($view) && view()->exists('layouts.default')) {
+            return 'layouts.default';
+        }
+
+        if (! view()->exists($view)) {
+            throw new InvalidArgumentException("Layout [{$view}] does not exist. Add it under src/layouts/ or select a registered layout.");
+        }
+
+        return $view;
     }
 
     public static function payload(string $page): ?array

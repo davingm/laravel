@@ -34,6 +34,7 @@ class PageRouter
      *   prefix?: string,
      *   middleware?: string|string[],
      *   data?: array<string, mixed>,
+     *   layout?: string,
      *   exclude?: string[],
      * }  $options
      */
@@ -48,6 +49,7 @@ class PageRouter
         $prefix = $options['prefix'] ?? '';
         $middleware = (array) ($options['middleware'] ?? ['web']);
         $extraData = $options['data'] ?? [];
+        $layout = $options['layout'] ?? 'layouts.default';
         $excludedPages = $options['exclude'] ?? [];
 
         foreach (File::allFiles($pagesPath) as $file) {
@@ -68,8 +70,8 @@ class PageRouter
                 continue;
             }
 
-            Route::middleware($middleware)->get($uri, function () use ($viewKey, $pageKey, $extraData) {
-                return Frontend::render($viewKey, $pageKey, $extraData);
+            Route::middleware($middleware)->get($uri, function () use ($viewKey, $pageKey, $extraData, $layout) {
+                return Frontend::render($viewKey, $pageKey, $extraData, $layout);
             })->name($routeName);
         }
     }

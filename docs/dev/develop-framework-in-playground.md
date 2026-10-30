@@ -10,7 +10,9 @@ Panduan ini menjelaskan cara mengubah source framework, mengujinya di aplikasi p
 | `packages/laravel/.laravel/` | Source CLI, bootstrap Artisan internal, JavaScript framework, generator, dan tooling runtime. |
 | `playground/` | Aplikasi Laravel untuk pengembangan dan pengujian framework. |
 | `playground/.laravel/` | Runtime yang disalin Composer; output lokal dan diabaikan Git. Jangan mengeditnya langsung. |
-| `playground/src/assets/ts/app.ts` | Entry TypeScript untuk interaksi aplikasi playground, bukan implementasi runtime framework. |
+| `playground/src/index.blade.php` | Entry frontend yang memilih layout dan menempatkan halaman melalui PageRouter. |
+| `playground/src/layouts/default.blade.php` | Layout default aplikasi playground. |
+| `playground/src/assets/ts/app.ts` | Entry TypeScript bersama untuk interaksi aplikasi playground, bukan implementasi runtime framework. |
 
 `playground/tests/` dan tooling pengembangan tetap berada di repository untuk memeriksa framework. Materialisasi dan bundler starter mengecualikan folder `tests/` serta `scripts/` agar kode pengembangan tidak masuk ke project pengguna.
 

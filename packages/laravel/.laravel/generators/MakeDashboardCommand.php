@@ -29,17 +29,17 @@ class MakeDashboardCommand extends Command
             return self::FAILURE;
         }
 
-        $this->registerDashboardRoute();
+        $this->registerDashboardRoute($layout);
 
         return self::SUCCESS;
     }
 
     private function generateLayout(string $layout): bool
     {
-        $layoutPath = base_path('src/layouts/app.blade.php');
+        $layoutPath = base_path("src/layouts/{$layout}.blade.php");
 
         if (File::exists($layoutPath)) {
-            $this->warn('src/layouts/app.blade.php already exists. Skipping to avoid overwriting it.');
+            $this->warn("src/layouts/{$layout}.blade.php already exists. Skipping to avoid overwriting it.");
 
             return true;
         }
@@ -55,7 +55,7 @@ class MakeDashboardCommand extends Command
         File::ensureDirectoryExists(dirname($layoutPath));
         File::put($layoutPath, File::get($stubPath));
 
-        $this->info('Dashboard layout generated at src/layouts/app.blade.php.');
+        $this->info("Dashboard layout generated at src/layouts/{$layout}.blade.php.");
 
         return true;
     }
@@ -86,20 +86,19 @@ class MakeDashboardCommand extends Command
         $widgets = $this->buildWidgetsSection($models, $widgetStub);
 
         $content = <<<BLADE
-@extends('layouts.app')
+<script setup lang="ts">
+</script>
 
-@section('title', 'Dashboard')
-
-@section('content')
-<section class="space-y-8">
-    <div>
-        <h1 class="text-2xl font-semibold text-neutral-900">Dashboard</h1>
-        <p class="mt-1 text-sm text-neutral-500">Ringkasan data otomatis dari model aplikasi.</p>
-    </div>
+<pages>
+    <section class="space-y-8">
+        <div>
+            <h1 class="text-2xl font-semibold text-neutral-900">Dashboard</h1>
+            <p class="mt-1 text-sm text-neutral-500">Ringkasan data otomatis dari model aplikasi.</p>
+        </div>
 
 {$widgets}
-</section>
-@endsection
+    </section>
+</pages>
 BLADE;
 
         File::ensureDirectoryExists(dirname($dashboardPath));
@@ -181,7 +180,7 @@ BLADE;
 BLADE;
     }
 
-    private function registerDashboardRoute(): void
+    private function registerDashboardRoute(string $layout): void
     {
         $routeFile = base_path('app/routes/web.php');
 
@@ -203,10 +202,10 @@ BLADE;
 
         $content = $this->injectDashboardExclude($content);
 
-        $routeBlock = <<<'PHP'
+        $routeBlock = <<<PHP
 
 // Auto Dashboard Stats
-Route::get('/dashboard', fn () => page('dashboard'))->name('dashboard');
+Route::get('/dashboard', fn () => page('dashboard', [], 'layouts.{$layout}'))->name('dashboard');
 PHP;
 
         File::put($routeFile, rtrim($content)."\n{$routeBlock}\n");

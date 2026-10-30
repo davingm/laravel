@@ -1,6 +1,7 @@
-@extends('layouts.app')
+<script setup lang="ts">
+</script>
 
-@section('content')
+<pages>
 <section class="crud-shell narrow-shell">
     <header class="crud-form-heading">
         <a href="{{ route('{{ROUTE_PREFIX}}.index') }}" class="back-link">&larr; Kembali ke daftar</a>
@@ -31,4 +32,4 @@
         </div>
     </form>
 </section>
-@endsection
+</pages>

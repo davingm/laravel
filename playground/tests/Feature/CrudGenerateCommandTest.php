@@ -45,6 +45,7 @@ class CrudGenerateCommandTest extends TestCase
 
             $model = File::get($generatedFiles[0]);
             $controller = File::get($generatedFiles[1]);
+            $indexView = File::get($generatedFiles[2]);
             $createView = File::get($generatedFiles[3]);
             $editView = File::get($generatedFiles[4]);
             $routes = File::get($routePath);
@@ -64,6 +65,11 @@ class CrudGenerateCommandTest extends TestCase
             $this->assertStringContainsString('function store(Request $request): RedirectResponse', $controller);
             $this->assertStringContainsString('function update(Request $request', $controller);
             $this->assertStringContainsString('function destroy(', $controller);
+            foreach ([$indexView, $createView, $editView] as $pageView) {
+                $this->assertStringContainsString('<script setup lang="ts">', $pageView);
+                $this->assertStringContainsString('<pages>', $pageView);
+                $this->assertStringNotContainsString("@extends('layouts.app')", $pageView);
+            }
             $this->assertStringContainsString('<textarea name="description"', $createView);
             $this->assertStringContainsString('<select name="crud_generator_category_id"', $createView);
             $this->assertStringNotContainsString('<select name="unconstrained_category_id"', $createView);

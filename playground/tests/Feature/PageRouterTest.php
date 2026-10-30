@@ -38,9 +38,9 @@ class PageRouterTest extends TestCase
                 ->assertExitCode(0);
 
             $generatedPage = File::get($pagePath);
-            $this->assertStringContainsString("'ogTitle' => 'Generated Cache Test'", $generatedPage);
-            $this->assertStringContainsString('<x-seo-meta :seo="$seo" />', $generatedPage);
-            $this->assertStringNotContainsString('<meta property=', $generatedPage);
+            $this->assertStringContainsString('<script setup lang="ts">', $generatedPage);
+            $this->assertStringContainsString('<pages>', $generatedPage);
+            $this->assertStringNotContainsString('@php', $generatedPage);
             $this->assertSame('stale route cache', File::get($routesCachePath));
         } finally {
             File::delete($pagePath);
