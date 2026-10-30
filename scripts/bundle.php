@@ -42,6 +42,8 @@ function ok(string $message): void
 const SKIP_DIRS = [
     'node_modules',
     'vendor',
+    'scripts',
+    'tests',
     '.laravel',
     'public/build',
     'public/hot',

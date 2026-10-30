@@ -26,7 +26,7 @@ if (! is_file($playgroundManifest)) {
 /**
  * Copy the contents of the playground into the Composer project root.
  */
-function copyDirectoryContents(string $source, string $destination): void
+function copyDirectoryContents(string $source, string $destination, string $playgroundPath): void
 {
     if (! is_dir($destination) && ! mkdir($destination, 0777, true) && ! is_dir($destination)) {
         throw new RuntimeException("Unable to create directory: {$destination}");
@@ -37,11 +37,17 @@ function copyDirectoryContents(string $source, string $destination): void
             continue;
         }
 
+        if (realpath($source) === realpath($playgroundPath)
+            && $entry->isDir()
+            && in_array($entry->getFilename(), ['scripts', 'tests'], true)) {
+            continue;
+        }
+
         $sourcePath = $entry->getPathname();
         $destinationPath = $destination.DIRECTORY_SEPARATOR.$entry->getFilename();
 
         if ($entry->isDir()) {
-            copyDirectoryContents($sourcePath, $destinationPath);
+            copyDirectoryContents($sourcePath, $destinationPath, $playgroundPath);
 
             continue;
         }
@@ -85,7 +91,7 @@ function removeDirectoryTree(string $directory): void
 }
 
 try {
-    copyDirectoryContents($playgroundPath, $projectRoot);
+    copyDirectoryContents($playgroundPath, $projectRoot, $playgroundPath);
 
     $applicationManifestPath = $projectRoot.DIRECTORY_SEPARATOR.'composer.json';
     $applicationManifest = json_decode(file_get_contents($applicationManifestPath), true, flags: JSON_THROW_ON_ERROR);

@@ -86,8 +86,7 @@
             "@php -r \"file_exists('app/database/database.sqlite') || touch('app/database/database.sqlite');\"",
             "@php -r \"(file_exists('.laravel/cli.js') && file_exists('bootstrap/app.php')) && passthru('node .laravel/cli.js migrate --graceful --ansi');\"",
             "npm ci --ignore-scripts",
-            "npm run build",
-            "@php scripts/install-artisan-cli.php"
+            "npm run build"
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"

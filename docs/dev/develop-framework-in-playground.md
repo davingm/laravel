@@ -12,6 +12,8 @@ Panduan ini menjelaskan cara mengubah source framework, mengujinya di aplikasi p
 | `playground/.laravel/` | Runtime yang disalin Composer; output lokal dan diabaikan Git. Jangan mengeditnya langsung. |
 | `playground/src/assets/js/app.js` | Entry JavaScript milik aplikasi playground, bukan implementasi runtime framework. |
 
+`playground/tests/` dan tooling pengembangan tetap berada di repository untuk memeriksa framework. Materialisasi dan bundler starter mengecualikan folder `tests/` serta `scripts/` agar kode pengembangan tidak masuk ke project pengguna.
+
 Plugin Composer menyalin isi `packages/laravel/.laravel/` ke `.laravel/` pada root aplikasi. Root aplikasi hasil `create-project` tidak memiliki file `artisan`; command Laravel dijalankan melalui CLI framework. Entry JavaScript framework juga disediakan package dan dimuat dari `.laravel/`. Source PHP package tetap berada di `packages/laravel/src/` dalam package/vendor dan tidak ikut disalin.
 
 Untuk peta isi package dan batas antara source Composer `packages/laravel/src/` dengan runtime yang disalin ke aplikasi, lihat [Struktur `packages/laravel`](./packages-laravel.md).

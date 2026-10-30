@@ -43,7 +43,7 @@ Runtime package berada di `packages/laravel/.laravel/`. Saat diinstal, Composer 
 
 ## Batas `src/` dan `.laravel/`
 
-`FrameworkServiceProvider` didaftarkan melalui Laravel package discovery. Ia mendaftarkan command, middleware, directive Blade, route halaman otomatis, dan endpoint telemetry; aplikasi tidak perlu menyalin kelas tersebut ke `app/` atau mengaturnya di `bootstrap/app.php`.
+`FrameworkServiceProvider` didaftarkan melalui Laravel package discovery. Ia mendaftarkan komponen Blade aplikasi, command, middleware, directive Blade, route halaman otomatis, dan endpoint telemetry; aplikasi tidak memerlukan `app/Providers/AppServiceProvider.php` atau menyalin kelas framework ke `app/`.
 
 Kedua lokasi ini mempunyai tujuan dan lokasi instalasi berbeda:
 

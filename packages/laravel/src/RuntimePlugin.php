@@ -38,12 +38,97 @@ final class RuntimePlugin implements PluginInterface, EventSubscriberInterface
     {
         return [
             'post-autoload-dump' => ['installRuntime', 1000],
+            'post-create-project-cmd' => 'installGlobalCli',
         ];
+    }
+
+    public function installGlobalCli(Event $event): void
+    {
+        $npm = PHP_OS_FAMILY === 'Windows' ? 'npm.cmd' : 'npm';
+        $package = '@davingm/laravel-cli';
+        $minimumVersion = '1.0.0';
+        $installedVersion = $this->globalPackageVersion($npm, $package);
+
+        if ($installedVersion !== null && version_compare($installedVersion, $minimumVersion, '>=')) {
+            fwrite(STDOUT, "Global {$package} {$installedVersion} is already installed; skipping installation.\n");
+
+            return;
+        }
+
+        fwrite(STDOUT, "Installing the global artisan command ({$package})...\n");
+
+        if ($this->runNpm($npm, ['install', '--global', $package], true) !== 0) {
+            fwrite(STDERR, "Unable to install {$package} globally. Install Node.js/npm and run `npm install --global {$package}` manually.\n");
+
+            return;
+        }
+
+        $installedVersion = $this->globalPackageVersion($npm, $package);
+        if ($installedVersion === null) {
+            fwrite(STDERR, "npm reported success, but {$package} was not found in the global package list. Check npm's global installation and PATH.\n");
+
+            return;
+        }
+
+        if (version_compare($installedVersion, $minimumVersion, '<')) {
+            fwrite(STDERR, "npm currently provides {$package} {$installedVersion}, which is a placeholder and has no usable artisan launcher. Approve its staged release on npmjs.com, then run `npm install --global {$package}`.\n");
+
+            return;
+        }
+
+        fwrite(STDOUT, "Global artisan command installed. Open a new terminal if `artisan` is not found in this one.\n");
     }
 
     public function installRuntime(Event $event): void
     {
         $this->installRuntimeDirectory();
+    }
+
+    private function globalPackageVersion(string $npm, string $package): ?string
+    {
+        $arguments = ['list', '--global', '--depth=0', '--json', $package];
+        $command = escapeshellarg($npm).' '.implode(' ', array_map('escapeshellarg', $arguments));
+        $process = proc_open($command, [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+
+        if (! is_resource($process)) {
+            return null;
+        }
+
+        fclose($pipes[0]);
+        $output = stream_get_contents($pipes[1]);
+        stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+
+        $manifest = json_decode((string) $output, true);
+        $version = $manifest['dependencies'][$package]['version'] ?? null;
+
+        return is_string($version) ? $version : null;
+    }
+
+    private function runNpm(string $npm, array $arguments, bool $inheritOutput = false): int
+    {
+        $command = escapeshellarg($npm).' '.implode(' ', array_map('escapeshellarg', $arguments));
+        $process = proc_open($command, [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['redirect', 1],
+        ], $pipes);
+
+        if (! is_resource($process)) {
+            return 127;
+        }
+
+        fclose($pipes[0]);
+        $output = stream_get_contents($pipes[1]);
+        fclose($pipes[1]);
+
+        if ($inheritOutput && is_string($output) && $output !== '') {
+            fwrite(STDOUT, $output);
+        }
+
+        return proc_close($process);
     }
 
     private function installRuntimeDirectory(): void

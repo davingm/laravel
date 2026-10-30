@@ -41,6 +41,10 @@ SECURITY.md export-ignore
 .taks export-ignore
 resault.html export-ignore
 /playground/.env.preview export-ignore
+/playground/scripts export-ignore
+/playground/scripts/** export-ignore
+/playground/tests export-ignore
+/playground/tests/** export-ignore
 /playground/.env export-ignore
 /playground/composer.lock export-ignore
 /playground/.phpunit.result.cache export-ignore

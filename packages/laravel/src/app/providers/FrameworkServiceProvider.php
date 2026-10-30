@@ -23,6 +23,18 @@ final class FrameworkServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        Blade::anonymousComponentPath(base_path('src/components'));
+
+        foreach ([
+            base_path('node_modules/@davingm/welcome/blade'),
+            base_path('node_modules/davingm-welcome/blade'),
+        ] as $welcomeBladePath) {
+            if (is_dir($welcomeBladePath)) {
+                Blade::anonymousComponentPath($welcomeBladePath);
+                break;
+            }
+        }
+
         Blade::directive('pageMeta', function (): string {
             return <<<'PHP'
                 <?php if (! empty($frontendPayload['meta']['title'] ?? null)): ?><title><?= e($frontendPayload['meta']['title']) ?></title><?php endif; ?>

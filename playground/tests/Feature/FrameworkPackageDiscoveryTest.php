@@ -18,5 +18,6 @@ class FrameworkPackageDiscoveryTest extends TestCase
 
         $this->assertTrue(Route::has('pages'));
         $this->assertTrue(Route::has('laravel.cli.telemetry'));
+        $this->assertFalse(class_exists(\App\Providers\AppServiceProvider::class));
     }
 }

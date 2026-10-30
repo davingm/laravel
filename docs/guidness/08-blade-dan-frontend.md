@@ -25,7 +25,7 @@ Contoh halaman:
 @endsection
 ```
 
-Blade dijalankan di server. Gunakan escaping Blade standar untuk data pengguna agar output HTML aman. Komponen anonymous dapat disimpan di `src/components/` dan didaftarkan oleh `AppServiceProvider`.
+Blade dijalankan di server. Gunakan escaping Blade standar untuk data pengguna agar output HTML aman. Komponen anonymous dapat disimpan di `src/components/` dan didaftarkan otomatis oleh framework.
 
 ## Metadata halaman dan payload
 

@@ -10,7 +10,7 @@ Path pada bab ini relatif terhadap **root aplikasi**, yaitu folder project yang 
 | `app/Http/Controllers/` | Controller HTTP untuk menangani request dan menghubungkan proses aplikasi dengan response. |
 | `app/Http/Middleware/` | Middleware khusus aplikasi untuk memproses request/response. Middleware framework didaftarkan oleh package. |
 | `app/Http/Requests/` | Form Request untuk validasi dan otorisasi input bila digunakan. |
-| `app/Providers/` | Service provider aplikasi; path komponen aplikasi didaftarkan di sini. |
+| `app/Providers/` | Tidak diperlukan untuk konfigurasi bawaan; provider framework didaftarkan otomatis oleh package. Buat provider aplikasi hanya saat aplikasi memiliki layanan sendiri. |
 | `app/Support/` | Kode pendukung khusus aplikasi. API frontend framework tersedia melalui package Composer. |
 | `app/Console/Commands/` | Command Artisan khusus aplikasi. Command framework tersedia melalui package Composer. |
 | `app/routes/` | Route web dan command berbasis closure milik aplikasi. Route framework didaftarkan oleh package. |
