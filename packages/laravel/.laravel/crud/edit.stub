@@ -2,19 +2,19 @@
 </script>
 
 <pages>
-<section class="crud-shell narrow-shell">
-    <header class="crud-form-heading">
-        <a href="{{ route('{{ROUTE_PREFIX}}.index') }}" class="back-link">&larr; Kembali ke daftar</a>
-        <p class="eyebrow">Perbarui data</p>
-        <h1 class="crud-title">Edit {{MODEL}}</h1>
-        <p class="crud-description">Ubah informasi {{MODEL}}.</p>
+<section class="mx-auto w-full max-w-2xl px-4 py-12 sm:px-6">
+    <header class="mb-6">
+        <a href="{{ route('{{ROUTE_PREFIX}}.index') }}" class="text-sm font-medium text-neutral-600 no-underline hover:text-neutral-950 hover:underline">&larr; Kembali ke daftar</a>
+        <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-neutral-500">Perbarui data</p>
+        <h1 class="m-0 text-3xl font-semibold tracking-tight text-neutral-950">Edit {{MODEL}}</h1>
+        <p class="mt-2 text-sm text-neutral-600">Ubah informasi {{MODEL}}.</p>
     </header>
 
-    <form method="POST" action="{{ route('{{ROUTE_PREFIX}}.update', ${{MODEL_VARIABLE}}) }}" class="barang-form">
+    <form method="POST" action="{{ route('{{ROUTE_PREFIX}}.update', ${{MODEL_VARIABLE}}) }}" class="block border-y border-neutral-200 bg-white py-5">
         @csrf
         @method('PUT')
         @if ($errors->any())
-            <div class="form-error-summary" role="alert">
+            <div class="mb-5 border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-800" role="alert">
                 <strong>Periksa kembali isian berikut:</strong>
                 <ul>
                     @foreach ($errors->all() as $error)
@@ -23,12 +23,12 @@
                 </ul>
             </div>
         @endif
-        <div class="barang-form-grid">
+        <div class="grid gap-4 sm:grid-cols-2">
 {{FORM_FIELDS}}
         </div>
-        <div class="crud-form-actions">
-            <a href="{{ route('{{ROUTE_PREFIX}}.index') }}" class="button button-secondary">Batal</a>
-            <button type="submit" class="button button-primary">Simpan perubahan</button>
+        <div class="mt-6 flex justify-end gap-3 border-t border-neutral-200 pt-4 max-sm:flex-col-reverse">
+            <a href="{{ route('{{ROUTE_PREFIX}}.index') }}" class="inline-flex min-h-10 items-center justify-center rounded border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-800 no-underline hover:bg-neutral-100">Batal</a>
+            <button type="submit" class="inline-flex min-h-10 items-center justify-center gap-2 rounded border border-neutral-950 px-4 py-2 text-sm font-semibold no-underline transition hover:cursor-pointer bg-neutral-950 text-white hover:bg-neutral-700">Simpan perubahan</button>
         </div>
     </form>
 </section>

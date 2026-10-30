@@ -92,7 +92,7 @@ Navigasi ringan hanya berlaku pada link yang ditandai. Link biasa tetap dapat di
 
 ## CSS dan Tailwind
 
-Entry CSS adalah `src/assets/css/app.css`. File ini mengimpor Tailwind CSS dan memuat beberapa rule untuk halaman CRUD hasil generator.
+Entry CSS aplikasi adalah `src/assets/css/app.css`; default-nya hanya mengimpor Tailwind CSS dan mendaftarkan source Blade aplikasi serta view pagination Laravel. Halaman dan generator menggunakan utility Tailwind langsung pada markup, jadi style CRUD tidak dibundel sebagai CSS global framework. Untuk tampilan khusus halaman, gunakan utility Tailwind atau `<style scoped>`.
 
 Tambahkan style pada source, bukan di `public/build/`. Jika menambahkan lokasi template/stub baru yang menggunakan class Tailwind, pastikan lokasinya tercakup dalam directive `@source`, jika tidak class dapat terhapus saat build.
 

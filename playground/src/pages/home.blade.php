@@ -14,30 +14,15 @@ button?.addEventListener('click', () => {
 })
 </script>
 
-<style scoped>
-.counter-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
-}
-
-.counter-label {
-    margin: 0;
-    color: #525252;
-    font-size: 0.875rem;
-}
-</style>
-
 <pages>
-    <section class="crud-shell">
-        <h1 class="crud-title">Home</h1>
-        <p class="crud-description">Contoh halaman satu file dengan Blade dan TypeScript.</p>
-        <div class="counter-row">
-            <button class="button button-primary" type="button" data-home-counter>
+    <section class="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
+        <h1 class="m-0 text-3xl font-semibold tracking-tight text-neutral-950">Home</h1>
+        <p class="mt-2 text-sm text-neutral-600">Contoh halaman satu file dengan Blade dan TypeScript.</p>
+        <div class="mt-6 flex items-center gap-4">
+            <button class="inline-flex min-h-10 items-center justify-center gap-2 rounded border border-neutral-950 px-4 py-2 text-sm font-semibold no-underline transition hover:cursor-pointer bg-neutral-950 text-white hover:bg-neutral-700" type="button" data-home-counter>
                 Klik saya
             </button>
-            <p class="counter-label" aria-live="polite">
+            <p class="m-0 text-sm text-neutral-600" aria-live="polite">
                 Jumlah klik: <output data-home-counter-value>0</output>
             </p>
         </div>

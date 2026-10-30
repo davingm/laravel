@@ -59,8 +59,8 @@ class MakePageCommand extends Command
 </script>
 
 <pages>
-    <section class="crud-shell">
-        <h1 class="crud-title">{$headline}</h1>
+    <section class="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
+        <h1 class="m-0 text-3xl font-semibold tracking-tight text-neutral-950">{$headline}</h1>
     </section>
 </pages>
 BLADE;

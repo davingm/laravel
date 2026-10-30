@@ -339,22 +339,22 @@ class CrudGenerateCommand extends Command
                 $selected = $isEdit
                     ? "@selected(old({$phpName}, \${$modelVariable}->{$name}) == \${$relatedVariable}->{$foreignColumn})"
                     : "@selected(old({$phpName}) == \${$relatedVariable}->{$foreignColumn})";
-                $lines[] = "    <label class=\"crud-field\">\n        {$label}\n        <select name=\"{$escapedName}\"{$required} class=\"crud-input\">\n            <option value=\"\">Pilih {$label}</option>\n            @foreach(\${$relationship['variable']} as \${$relatedVariable})\n                <option value=\"{{ \${$relatedVariable}->{$foreignColumn} }}\" {$selected}>{{ \${$relatedVariable}->{$displayColumn} }}</option>\n            @endforeach\n        </select>\n        @error({$phpName})<span class=\"form-error\">{{ \$message }}</span>@enderror\n    </label>";
+                $lines[] = "    <label class=\"grid content-start gap-2 text-sm font-medium text-neutral-700\">\n        {$label}\n        <select name=\"{$escapedName}\"{$required} class=\"w-full rounded border border-neutral-300 bg-white px-3 py-2.5 text-neutral-950 outline-none focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950\">\n            <option value=\"\">Pilih {$label}</option>\n            @foreach(\${$relationship['variable']} as \${$relatedVariable})\n                <option value=\"{{ \${$relatedVariable}->{$foreignColumn} }}\" {$selected}>{{ \${$relatedVariable}->{$displayColumn} }}</option>\n            @endforeach\n        </select>\n        @error({$phpName})<span class=\"text-xs font-medium text-neutral-700\">{{ \$message }}</span>@enderror\n    </label>";
 
                 continue;
             }
 
             if (in_array($field['column_type'], ['text', 'tinytext', 'longtext', 'mediumtext'], true)) {
-                $control = "<textarea name=\"{$escapedName}\"{$required} rows=\"4\" class=\"crud-input\">{{ {$valueExpression} }}</textarea>";
+                $control = "<textarea name=\"{$escapedName}\"{$required} rows=\"4\" class=\"w-full rounded border border-neutral-300 bg-white px-3 py-2.5 text-neutral-950 outline-none focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950\">{{ {$valueExpression} }}</textarea>";
             } elseif ($field['type'] === 'checkbox') {
-                $lines[] = "    <label class=\"crud-checkbox-field\">\n        <input type=\"hidden\" name=\"{$escapedName}\" value=\"0\">\n        <input type=\"checkbox\" name=\"{$escapedName}\" value=\"1\" class=\"crud-checkbox\" @checked({$oldValue})>\n        {$label}\n        @error({$phpName})<span class=\"form-error\">{{ \$message }}</span>@enderror\n    </label>";
+                $lines[] = "    <label class=\"flex items-center gap-2 text-sm font-medium text-neutral-700\">\n        <input type=\"hidden\" name=\"{$escapedName}\" value=\"0\">\n        <input type=\"checkbox\" name=\"{$escapedName}\" value=\"1\" class=\"size-4 accent-neutral-950\" @checked({$oldValue})>\n        {$label}\n        @error({$phpName})<span class=\"text-xs font-medium text-neutral-700\">{{ \$message }}</span>@enderror\n    </label>";
 
                 continue;
             } else {
-                $control = "<input type=\"{$field['type']}\" name=\"{$escapedName}\" value=\"{{ {$valueExpression} }}\"{$required} class=\"crud-input\">";
+                $control = "<input type=\"{$field['type']}\" name=\"{$escapedName}\" value=\"{{ {$valueExpression} }}\"{$required} class=\"w-full rounded border border-neutral-300 bg-white px-3 py-2.5 text-neutral-950 outline-none focus:border-neutral-950 focus:ring-1 focus:ring-neutral-950\">";
             }
 
-            $lines[] = "    <label class=\"crud-field\">\n        {$label}\n        {$control}\n        @error({$phpName})<span class=\"form-error\">{{ \$message }}</span>@enderror\n    </label>";
+            $lines[] = "    <label class=\"grid content-start gap-2 text-sm font-medium text-neutral-700\">\n        {$label}\n        {$control}\n        @error({$phpName})<span class=\"text-xs font-medium text-neutral-700\">{{ \$message }}</span>@enderror\n    </label>";
         }
 
         return $lines;
