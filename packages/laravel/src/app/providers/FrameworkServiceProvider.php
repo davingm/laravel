@@ -42,6 +42,8 @@ final class FrameworkServiceProvider extends ServiceProvider
             PreviewCommand::class,
         ]);
 
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        $this->app->booted(function (): void {
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
     }
 }

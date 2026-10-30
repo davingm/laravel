@@ -61,10 +61,35 @@ class PageRouter
                 continue;
             }
 
+            // Application routes take precedence, including resource routes
+            // generated after installation. This keeps CRUD pages from
+            // requiring edits to the framework's route registration.
+            if (self::routeAlreadyRegistered($uri)) {
+                continue;
+            }
+
             Route::middleware($middleware)->get($uri, function () use ($viewKey, $pageKey, $extraData) {
                 return Frontend::render($viewKey, $pageKey, $extraData);
             })->name($routeName);
         }
+    }
+
+    private static function routeAlreadyRegistered(string $uri): bool
+    {
+        $normalise = static fn (string $value): string => preg_replace('/\{[^}]+\??\}/', '{}', trim($value, '/')) ?? trim($value, '/');
+        $expected = $normalise($uri);
+
+        foreach (Route::getRoutes()->getRoutes() as $route) {
+            if (! in_array('GET', $route->methods(), true) && ! in_array('HEAD', $route->methods(), true)) {
+                continue;
+            }
+
+            if ($normalise($route->uri()) === $expected) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
