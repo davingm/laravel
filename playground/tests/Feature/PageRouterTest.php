@@ -11,7 +11,7 @@ class PageRouterTest extends TestCase
     {
         $this->assertSame(
             ['/about', 'about.index', 'about', 'pages.about'],
-            \App\Support\PageRouter::resolve(
+            \Davingm\LaravelRuntime\App\Support\PageRouter::resolve(
                 base_path('src/pages/about/index.blade.php'),
                 base_path('src/pages'),
             ),
@@ -20,9 +20,9 @@ class PageRouterTest extends TestCase
 
     public function test_page_router_supports_exact_and_wildcard_exclusions(): void
     {
-        $this->assertTrue(\App\Support\PageRouter::isExcluded('admin', '/admin', ['admin']));
-        $this->assertFalse(\App\Support\PageRouter::isExcluded('admin.users', '/admin/users', ['admin']));
-        $this->assertTrue(\App\Support\PageRouter::isExcluded('admin.users', '/admin/users', ['admin/*']));
+        $this->assertTrue(\Davingm\LaravelRuntime\App\Support\PageRouter::isExcluded('admin', '/admin', ['admin']));
+        $this->assertFalse(\Davingm\LaravelRuntime\App\Support\PageRouter::isExcluded('admin.users', '/admin/users', ['admin']));
+        $this->assertTrue(\Davingm\LaravelRuntime\App\Support\PageRouter::isExcluded('admin.users', '/admin/users', ['admin/*']));
     }
 
     public function test_make_page_preserves_an_existing_route_cache(): void

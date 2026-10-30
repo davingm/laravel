@@ -8,12 +8,12 @@ Path pada bab ini relatif terhadap **root aplikasi**, yaitu folder project yang 
 |---|---|
 | `app/Models/` | Model Eloquent untuk data aplikasi. |
 | `app/Http/Controllers/` | Controller HTTP untuk menangani request dan menghubungkan proses aplikasi dengan response. |
-| `app/Http/Middleware/` | Middleware untuk memproses request/response. |
+| `app/Http/Middleware/` | Middleware khusus aplikasi untuk memproses request/response. Middleware framework didaftarkan oleh package. |
 | `app/Http/Requests/` | Form Request untuk validasi dan otorisasi input bila digunakan. |
-| `app/Providers/` | Service provider aplikasi; di sini directive Blade dan path komponen didaftarkan. |
-| `app/Support/` | Kode pendukung khusus, termasuk `PageRouter`, `Frontend`, dan helper halaman. |
-| `app/Console/Commands/` | Command Artisan aplikasi seperti build dan preview. |
-| `app/routes/` | Route web dan command berbasis closure. |
+| `app/Providers/` | Service provider aplikasi; path komponen aplikasi didaftarkan di sini. |
+| `app/Support/` | Kode pendukung khusus aplikasi. API frontend framework tersedia melalui package Composer. |
+| `app/Console/Commands/` | Command Artisan khusus aplikasi. Command framework tersedia melalui package Composer. |
+| `app/routes/` | Route web dan command berbasis closure milik aplikasi. Route framework didaftarkan oleh package. |
 | `app/database/` | Migration, factory, seeder, dan file SQLite sesuai konfigurasi bootstrap. |
 
 ## Frontend Blade dan asset

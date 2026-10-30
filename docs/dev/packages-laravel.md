@@ -9,8 +9,8 @@ Path pada tabel relatif terhadap `packages/laravel/`. Tujuan folder yang masih k
 | Path | Isi saat ini | Kegunaan atau status |
 | --- | --- | --- |
 | `composer.json` | Manifest `davingm/laravel-runtime`, autoload PSR-4 `Davingm\LaravelRuntime\` dari `src/`, dan deklarasi Composer plugin. | Konfigurasi package. Pertahankan atau ubah sesuai kebutuhan package Composer. |
-| `src/` | `RuntimePlugin.php` dan beberapa direktori kosong. | Source PHP yang di-autoload dari package Composer. Kode di sini berada di package/vendor; bukan berkas aplikasi dan bukan isi `.laravel/`. |
-| `src/app/` | Subfolder kosong: `compat/`, `internal/`, `plugin/`, `providers/`, `support/`, `utils/`. | Kandidat pengelompokan source integrasi aplikasi. Nama-nama ini belum menjadi struktur wajib. |
+| `src/` | Plugin Composer dan source PHP framework yang di-autoload. | Kode framework aktif berada di package/vendor; bukan berkas aplikasi dan bukan isi `.laravel/`. |
+| `src/app/` | `commands/`, `helpers/`, `middleware/`, `providers/`, `routes/`, dan `support/`. | Integrasi aplikasi Laravel seperti service provider, routing halaman, frontend, middleware, helper, dan command framework. |
 | `src/compiler/` | Subfolder kosong: `plugin/`, `runtime/`. | Kandidat area kompilasi; belum memiliki implementasi. |
 | `src/core/` | Subfolder kosong: `plugin/`, `utils/`. | Kandidat area komponen inti; belum memiliki implementasi. |
 | `src/imports/` | Kosong. | Belum ada tanggung jawab atau API yang ditetapkan. |
@@ -42,6 +42,8 @@ Source launcher global berada di `packages/laravel/src/cli/`. Composer plugin ti
 Runtime package berada di `packages/laravel/.laravel/`. Saat diinstal, Composer plugin menyalin isinya ke `.laravel/` pada root aplikasi. Folder tujuan di aplikasi merupakan output lokal yang diabaikan Git; jangan mengedit salinan tersebut sebagai source.
 
 ## Batas `src/` dan `.laravel/`
+
+`FrameworkServiceProvider` didaftarkan melalui Laravel package discovery. Ia mendaftarkan command, middleware, directive Blade, route halaman otomatis, dan endpoint telemetry; aplikasi tidak perlu menyalin kelas tersebut ke `app/` atau mengaturnya di `bootstrap/app.php`.
 
 Kedua lokasi ini mempunyai tujuan dan lokasi instalasi berbeda:
 

@@ -18,9 +18,17 @@
     "autoload": {
         "psr-4": {
             "Davingm\\LaravelRuntime\\": "src/"
-        }
+        },
+        "files": [
+            "src/app/helpers/helpers.php"
+        ]
     },
     "extra": {
-        "class": "Davingm\\LaravelRuntime\\RuntimePlugin"
+        "class": "Davingm\\LaravelRuntime\\RuntimePlugin",
+        "laravel": {
+            "providers": [
+                "Davingm\\LaravelRuntime\\App\\Providers\\FrameworkServiceProvider"
+            ]
+        }
     }
 }
