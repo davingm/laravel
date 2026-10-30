@@ -39,7 +39,7 @@ Blade dijalankan di server. Gunakan escaping Blade standar untuk data pengguna a
 
 ### Halaman satu file
 
-Halaman dapat ditulis dalam satu file `.blade.php` tanpa `@extends`, `@section`, atau kerangka dokumen HTML. Gunakan `<script setup lang="ts">` untuk interaksi browser, `<style scoped>` bila halaman memiliki CSS sendiri, dan `<pages>` untuk membungkus HTML:
+Halaman dapat ditulis dalam satu file `.blade.php` tanpa `@extends`, `@section`, atau kerangka dokumen HTML. `<pages>` wajib sebagai pembungkus HTML; `<script setup lang="ts">` dan `<style scoped>` bersifat opsional. Tambahkan blok TypeScript hanya saat halaman membutuhkan interaksi browser, misalnya:
 
 ```blade
 <script setup lang="ts">
@@ -67,7 +67,7 @@ button?.addEventListener('click', () => {
 
 TypeScript di dalam script adalah kode browser biasa, termasuk penggunaan API DOM seperti `addEventListener`; framework tidak menambahkan event directive. Import TypeScript diperbolehkan, tetapi export tidak digunakan dalam blok setup. Ekspresi dan directive Blade di markup, seperti `{{ $name }}` dan `@if`, tetap diproses Laravel di server. Framework mengurus layout dokumen dan metadata default: title dari nama halaman dan aplikasi, description dari nama halaman, serta gambar Open Graph dari `public/Laravel.svg`. Layout juga mengeluarkan metadata Open Graph dan Twitter. Route yang memakai `page()` dapat memberi `title`, `description`, `ogTitle`, `ogDescription`, `ogImage`, dan `ogUrl` untuk mengganti nilai default.
 
-Compiler mengumpulkan TypeScript dan CSS halaman sebelum Vite membangun asset. `<pages>` adalah pembungkus source saja: saat dirender, compiler menggantinya dengan `<div data-page-scope="…">` standar agar tidak ada custom tag yang bocor ke HTML. CSS pada `<style scoped>` dan script halaman memakai atribut scope tersebut. Hasil kompilasi berada di `.laravel/generated/`; jangan diedit manual. Dalam production, middleware framework juga memadatkan HTML response menjadi satu baris. Halaman Blade konvensional dan komponen anonymous tetap didukung; komponen dapat dipakai di dalam `<pages>` dan hasilnya dirender di dalam layout yang dipilih.
+Compiler mengumpulkan TypeScript dan CSS halaman sebelum Vite membangun asset. Jika tidak ada blok setup TypeScript, compiler tidak membuat modul TypeScript per halaman; runtime framework bersama tetap dimuat oleh layout. `<pages>` adalah pembungkus source saja: saat dirender, compiler menggantinya dengan `<div data-page-scope="…">` standar agar tidak ada custom tag yang bocor ke HTML. CSS pada `<style scoped>` dan script halaman memakai atribut scope tersebut. Hasil kompilasi berada di `.laravel/generated/`; jangan diedit manual. Dalam production, middleware framework juga memadatkan HTML response menjadi satu baris. Halaman Blade konvensional dan komponen anonymous tetap didukung; komponen dapat dipakai di dalam `<pages>` dan hasilnya dirender di dalam layout yang dipilih.
 
 ## Metadata halaman dan payload
 

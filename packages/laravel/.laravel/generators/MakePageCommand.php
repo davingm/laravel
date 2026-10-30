@@ -55,9 +55,6 @@ class MakePageCommand extends Command
         $headline = Str::headline(basename(str_replace('/', ' ', $name)));
 
         return <<<BLADE
-<script setup lang="ts">
-</script>
-
 <pages>
     <section class="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         <h1 class="m-0 text-3xl font-semibold tracking-tight text-neutral-950">{$headline}</h1>

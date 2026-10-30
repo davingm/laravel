@@ -26,8 +26,8 @@ final class SingleFilePageCompiler
         $pageCount = preg_match_all('~<pages\s*>(.*?)</pages\s*>~is', $source, $pages);
         $styleCount = preg_match_all('~<style\s+scoped\s*>(.*?)</style\s*>~is', $source);
 
-        if ($scriptCount !== 1 || $pageCount !== 1 || $styleCount > 1) {
-            throw new InvalidArgumentException('A single-file page requires one <script setup lang="ts"> block, one <pages> block, and at most one <style scoped> block.');
+        if ($scriptCount > 1 || $pageCount !== 1 || $styleCount > 1) {
+            throw new InvalidArgumentException('A single-file page requires one <pages> block, with at most one <script setup lang="ts"> block and at most one <style scoped> block.');
         }
 
         if (! trim($pages[1][0])) {
@@ -65,7 +65,9 @@ final class SingleFilePageCompiler
             return null;
         }
 
-        if (preg_match_all('~<script\s+setup\s+lang=(?:"ts"|\'ts\')\s*>(.*?)</script\s*>~is', $source, $scripts) !== 1
+        $scriptCount = preg_match_all('~<script\s+setup\s+lang=(?:"ts"|\'ts\')\s*>(.*?)</script\s*>~is', $source, $scripts);
+
+        if ($scriptCount > 1
             || preg_match_all('~<pages\s*>(.*?)</pages\s*>~is', $source) !== 1
             || preg_match_all('~<style\s+scoped\s*>(.*?)</style\s*>~is', $source, $styles) > 1) {
             throw new InvalidArgumentException('Invalid single-file page structure.');
@@ -73,7 +75,7 @@ final class SingleFilePageCompiler
 
         return [
             'scope' => substr(hash('sha256', $source), 0, 12),
-            'script' => trim($scripts[1][0]),
+            'script' => trim($scripts[1][0] ?? ''),
             'style' => trim($styles[1][0] ?? ''),
         ];
     }

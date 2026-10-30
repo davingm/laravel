@@ -86,9 +86,6 @@ class MakeDashboardCommand extends Command
         $widgets = $this->buildWidgetsSection($models, $widgetStub);
 
         $content = <<<BLADE
-<script setup lang="ts">
-</script>
-
 <pages>
     <section class="space-y-8">
         <div>

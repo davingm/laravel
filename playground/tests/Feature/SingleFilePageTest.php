@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Davingm\LaravelRuntime\Compiler\Runtime\SingleFilePageCompiler;
 use Davingm\LaravelRuntime\App\Middleware\MinifyHtmlMiddleware;
-use InvalidArgumentException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -51,11 +50,13 @@ BLADE);
         );
     }
 
-    public function test_single_file_page_requires_typescript_setup(): void
+    public function test_single_file_page_can_omit_typescript_setup(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $compiled = SingleFilePageCompiler::prepareBlade('<pages><p>Plain page</p></pages>');
 
-        SingleFilePageCompiler::prepareBlade('<pages><p>Plain page</p></pages>');
+        $this->assertStringContainsString('<div data-page-scope="', $compiled);
+        $this->assertStringContainsString('<p>Plain page</p>', $compiled);
+        $this->assertStringNotContainsString('<pages', $compiled);
     }
 
     public function test_home_single_file_page_renders_inside_the_framework_layout_with_default_seo(): void

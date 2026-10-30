@@ -106,26 +106,30 @@ function generate(root) {
         if (!/<pages\s*>/i.test(source)) continue;
 
         const relativeName = path.relative(pagesDirectory, filePath).replaceAll('\\', '/');
-        const scripts = capture(source, scriptPattern, relativeName, '<script setup lang="ts">');
+        const scripts = capture(source, scriptPattern, relativeName, '<script setup lang="ts">', true);
         const pageMarkup = capture(source, pagesPattern, relativeName, '<pages>');
         const style = capture(source, stylePattern, relativeName, '<style scoped>', true);
         const scope = createHash('sha256').update(source).digest('hex').slice(0, 12);
 
         const openingScripts = source.match(/<script\b/gi)?.length ?? 0;
+        const setupScripts = [...source.matchAll(new RegExp(scriptPattern.source, scriptPattern.flags))].length;
         const openingStyles = source.match(/<style\b/gi)?.length ?? 0;
+        const scopedStyles = [...source.matchAll(new RegExp(stylePattern.source, stylePattern.flags))].length;
         const openingPages = source.match(/<pages\s*>/gi)?.length ?? 0;
 
-        if (openingScripts !== 1 || openingStyles !== (style ? 1 : 0) || openingPages !== 1) {
-            throw new Error(`${relativeName}: use one <script setup lang="ts">, one <pages>, and at most one <style scoped> block.`);
+        if (openingScripts !== setupScripts || setupScripts > 1 || openingStyles !== scopedStyles || scopedStyles > 1 || openingPages !== 1) {
+            throw new Error(`${relativeName}: use one <pages> block, with at most one <script setup lang="ts"> block and at most one <style scoped> block.`);
         }
 
         if (/@extends\s*\(/.test(source)) throw new Error(`${relativeName}: single-file pages use the framework layout automatically; remove @extends.`);
         if (!pageMarkup.trim()) throw new Error(`${relativeName}: <pages> cannot be empty.`);
 
-        const generatedName = `page-${scope}.ts`;
-        moduleNames.add(generatedName);
-        writeIfChanged(path.join(generatedDirectory, generatedName), prepareScript(scripts, relativeName, scope, ts));
-        modules.push({ name: generatedName, scope });
+        if (scripts) {
+            const generatedName = `page-${scope}.ts`;
+            moduleNames.add(generatedName);
+            writeIfChanged(path.join(generatedDirectory, generatedName), prepareScript(scripts, relativeName, scope, ts));
+            modules.push({ name: generatedName, scope });
+        }
         if (style) styles.push(scopeStyle(style, scope, relativeName, postcss));
     }
 
