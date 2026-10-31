@@ -1,6 +1,6 @@
 # 8. Blade dan frontend
 
-Frontend bawaan terdiri atas HTML yang dirender Laravel melalui Blade serta asset CSS dan TypeScript yang dikelola Vite. Kode interaksi aplikasi ditulis dalam TypeScript; JavaScript internal framework tetap disediakan terpisah oleh runtime.
+Frontend bawaan terdiri atas HTML yang dirender Laravel melalui Blade serta asset CSS dan TypeScript yang dikelola Vite. Kode interaksi aplikasi dan runtime browser framework ditulis dalam TypeScript.
 
 ## Blade pages, layouts, dan components
 

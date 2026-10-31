@@ -38,6 +38,8 @@ Berikut source runtime package yang saat ini disalin ke aplikasi:
 | `role/` | Stub middleware role. |
 | `LICENSE` | Lisensi yang ikut bersama runtime. |
 
+Runtime browser berada di TypeScript. File JavaScript yang masih ada di package merupakan launcher atau tooling Node yang dijalankan langsung oleh Node/Vite, bukan entry browser framework.
+
 Source launcher global berada di `packages/laravel/src/cli/`. Composer plugin tidak memasang executable global atau mengubah `PATH`; hook `post-create-project-cmd` menjalankan installer npm yang memeriksa versi global dan melewati instalasi bila launcher sudah tersedia.
 
 Runtime package berada di `packages/laravel/.laravel/`. Saat diinstal, Composer plugin menyalin isinya ke `.laravel/` pada root aplikasi. Folder tujuan di aplikasi merupakan output lokal yang diabaikan Git; jangan mengedit salinan tersebut sebagai source.
