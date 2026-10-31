@@ -141,16 +141,16 @@
         },
         {
             "name": "davingm/laravel-runtime",
-            "version": "v1.0.5",
+            "version": "v1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davingm/laravel-runtime.git",
-                "reference": "4f052ab3c54ccfde350f483c370a3e296ee22440"
+                "reference": "10a4eb535b66378fd0a96fa05476b968177c9015"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davingm/laravel-runtime/zipball/4f052ab3c54ccfde350f483c370a3e296ee22440",
-                "reference": "4f052ab3c54ccfde350f483c370a3e296ee22440",
+                "url": "https://api.github.com/repos/davingm/laravel-runtime/zipball/10a4eb535b66378fd0a96fa05476b968177c9015",
+                "reference": "10a4eb535b66378fd0a96fa05476b968177c9015",
                 "shasum": ""
             },
             "require": {
@@ -189,9 +189,9 @@
             "homepage": "https://github.com/davingm/laravel-runtime",
             "support": {
                 "issues": "https://github.com/davingm/laravel-runtime/issues",
-                "source": "https://github.com/davingm/laravel-runtime/tree/v1.0.5"
+                "source": "https://github.com/davingm/laravel-runtime/tree/v1.0.6"
             },
-            "time": "2026-10-31T02:07:10+00:00"
+            "time": "2026-10-31T04:12:14+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
