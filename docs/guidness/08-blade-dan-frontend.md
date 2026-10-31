@@ -222,7 +222,7 @@ Lihat panduan resmi [Laravel Vite](https://laravel.com/docs/13.x/vite), [Vite Pl
 - `src/assets/ts/app.ts`
 - `.laravel/generated/pages.css` dan `.laravel/generated/pages.ts` (dibuat dari blok halaman satu file oleh plugin Vite runtime)
 
-Konfigurasi `tsconfig.json` memeriksa source aplikasi di `src/assets/ts/` dan hasil kompilasi TypeScript halaman. `npm run build` menjalankan pemeriksaan tipe sebelum membangun asset.
+Konfigurasi `tsconfig.json` memeriksa source aplikasi di `src/assets/ts/`, modul runtime di `.laravel/frontend/`, dan hasil kompilasi TypeScript halaman. `npm run build` menjalankan pemeriksaan tipe sebelum membangun asset.
 
 Saat development, `artisan dev` menjalankan Vite dev server. Build production dilakukan dengan:
 
