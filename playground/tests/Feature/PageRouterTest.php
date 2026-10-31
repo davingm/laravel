@@ -38,8 +38,8 @@ class PageRouterTest extends TestCase
                 ->assertExitCode(0);
 
             $generatedPage = File::get($pagePath);
-            $this->assertStringContainsString('<script setup lang="ts">', $generatedPage);
             $this->assertStringContainsString('<pages>', $generatedPage);
+            $this->assertStringNotContainsString('<script setup lang="ts">', $generatedPage);
             $this->assertStringNotContainsString('@php', $generatedPage);
             $this->assertSame('stale route cache', File::get($routesCachePath));
         } finally {

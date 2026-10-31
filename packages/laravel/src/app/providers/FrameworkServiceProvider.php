@@ -42,13 +42,19 @@ final class FrameworkServiceProvider extends ServiceProvider
 
         Blade::directive('pageMeta', function (): string {
             return <<<'PHP'
-                <?php if (! empty($frontendPayload['meta']['title'] ?? null)): ?><title><?= e($frontendPayload['meta']['title']) ?></title><?php endif; ?>
-                <?php if (! empty($frontendPayload['meta']['description'] ?? null)): ?><meta name="description" content="<?= e($frontendPayload['meta']['description']) ?>"><?php endif; ?>
-                <?php if (! empty($frontendPayload['meta']['ogTitle'] ?? null)): ?><meta property="og:title" content="<?= e($frontendPayload['meta']['ogTitle']) ?>"><?php endif; ?>
-                <?php if (! empty($frontendPayload['meta']['ogDescription'] ?? null)): ?><meta property="og:description" content="<?= e($frontendPayload['meta']['ogDescription']) ?>"><?php endif; ?>
-                <?php if (! empty($frontendPayload['meta']['ogImage'] ?? null)): ?><meta property="og:image" content="<?= e($frontendPayload['meta']['ogImage']) ?>"><?php endif; ?>
-                <?php if (! empty($frontendPayload['meta']['ogUrl'] ?? null)): ?><meta property="og:url" content="<?= e($frontendPayload['meta']['ogUrl']) ?>"><meta property="og:type" content="website"><meta property="og:site_name" content="<?= e(config('app.name', 'Laravel')) ?>"><?php endif; ?>
-                <?php if (! empty($frontendPayload['meta']['title'] ?? null)): ?><meta name="twitter:title" content="<?= e($frontendPayload['meta']['ogTitle'] ?? $frontendPayload['meta']['title']) ?>"><meta name="twitter:description" content="<?= e($frontendPayload['meta']['ogDescription'] ?? $frontendPayload['meta']['description'] ?? '') ?>"><meta name="twitter:image" content="<?= e($frontendPayload['meta']['ogImage'] ?? '') ?>"><meta name="twitter:card" content="summary_large_image"><?php endif; ?>
+                <title><?= e($frontendPayload['meta']['title'] ?? config('app.name', 'Laravel')) ?></title>
+                <meta name="description" content="<?= e($frontendPayload['meta']['description'] ?? '') ?>">
+                <meta property="og:title" content="<?= e($frontendPayload['meta']['ogTitle'] ?? $frontendPayload['meta']['title'] ?? '') ?>">
+                <meta property="og:description" content="<?= e($frontendPayload['meta']['ogDescription'] ?? $frontendPayload['meta']['description'] ?? '') ?>">
+                <meta property="og:image" content="<?= e($frontendPayload['meta']['ogImage'] ?? '') ?>">
+                <meta property="og:url" content="<?= e($frontendPayload['meta']['ogUrl'] ?? request()->url()) ?>">
+                <meta property="og:type" content="<?= e($frontendPayload['meta']['ogType'] ?? 'website') ?>">
+                <meta property="og:site_name" content="<?= e(config('app.name', 'Laravel')) ?>">
+                <meta name="twitter:title" content="<?= e($frontendPayload['meta']['twitterTitle'] ?? $frontendPayload['meta']['ogTitle'] ?? $frontendPayload['meta']['title'] ?? '') ?>">
+                <meta name="twitter:description" content="<?= e($frontendPayload['meta']['twitterDescription'] ?? $frontendPayload['meta']['ogDescription'] ?? $frontendPayload['meta']['description'] ?? '') ?>">
+                <meta name="twitter:image" content="<?= e($frontendPayload['meta']['twitterImage'] ?? $frontendPayload['meta']['ogImage'] ?? '') ?>">
+                <meta name="twitter:card" content="<?= e($frontendPayload['meta']['twitterCard'] ?? 'summary_large_image') ?>">
+                <?php if (! empty($frontendPayload['meta']['articleAuthor'] ?? null)): ?><meta property="article:author" content="<?= e($frontendPayload['meta']['articleAuthor']) ?>"><?php endif; ?>
                 PHP;
         });
 

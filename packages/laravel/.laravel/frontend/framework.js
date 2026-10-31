@@ -64,6 +64,11 @@ window.__AUTO_LARAVEL__ = {
 
 			currentMain.replaceWith(nextMain);
 			document.title = documentFromResponse.title;
+			const seoMetaSelector = 'meta[name="description"], meta[name^="twitter:"], meta[property^="og:"], meta[property="article:author"]';
+			document.head.querySelectorAll(seoMetaSelector).forEach((element) => element.remove());
+			documentFromResponse.head.querySelectorAll(seoMetaSelector).forEach((element) => {
+				document.head.append(element.cloneNode(true));
+			});
 			history.pushState({}, '', url);
 			window.scrollTo({ top: 0, behavior: 'instant' });
 			window.dispatchEvent(new CustomEvent('auto:navigated', { detail: { url } }));

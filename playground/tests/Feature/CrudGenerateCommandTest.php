@@ -66,8 +66,9 @@ class CrudGenerateCommandTest extends TestCase
             $this->assertStringContainsString('function update(Request $request', $controller);
             $this->assertStringContainsString('function destroy(', $controller);
             foreach ([$indexView, $createView, $editView] as $pageView) {
-                $this->assertStringContainsString('<script setup lang="ts">', $pageView);
                 $this->assertStringContainsString('<pages>', $pageView);
+                $this->assertStringContainsString('text-neutral-', $pageView);
+                $this->assertStringNotContainsString('<script setup lang="ts">', $pageView);
                 $this->assertStringNotContainsString("@extends('layouts.app')", $pageView);
             }
             $this->assertStringContainsString('<textarea name="description"', $createView);

@@ -17,10 +17,17 @@ class Frontend
         $layout = self::resolveLayout($layout);
 
         $appName = config('app.name', 'Laravel');
-        $pageTitle = $data['title'] ?? Str::headline(last(explode('.', $pageKey)) ?: $appName);
-        $documentTitle = Str::endsWith($pageTitle, ' | '.$appName) ? $pageTitle : $pageTitle.' | '.$appName;
-        $pageDescription = $data['description'] ?? 'Halaman '.$pageTitle.'.';
-        $ogImage = $data['ogImage'] ?? asset('Laravel.svg');
+        $pageSeo = self::pageSeo($pageKey);
+        $fallbackTitle = Str::headline(last(explode('.', $pageKey)) ?: $appName);
+        $pageTitle = $data['title'] ?? $pageSeo['title'] ?? $fallbackTitle;
+        $documentTitle = isset($data['title'])
+            ? (Str::endsWith($pageTitle, ' | '.$appName) ? $pageTitle : $pageTitle.' | '.$appName)
+            : $pageTitle;
+        if (! isset($data['title']) && ! isset($pageSeo['title'])) {
+            $documentTitle .= ' | '.$appName;
+        }
+        $pageDescription = $data['description'] ?? $pageSeo['description'] ?? 'Halaman '.$pageTitle.'.';
+        $ogImage = $data['ogImage'] ?? $pageSeo['ogImage'] ?? asset('Laravel.svg');
         $payload = [
             'page' => $pageKey,
             'url' => request()->fullUrl(),
@@ -29,10 +36,16 @@ class Frontend
             'meta' => [
                 'title' => $documentTitle,
                 'description' => $pageDescription,
-                'ogTitle' => $data['ogTitle'] ?? $pageTitle,
-                'ogDescription' => $data['ogDescription'] ?? $pageDescription,
+                'ogTitle' => $data['ogTitle'] ?? $pageSeo['ogTitle'] ?? $pageTitle,
+                'ogDescription' => $data['ogDescription'] ?? $pageSeo['ogDescription'] ?? $pageDescription,
                 'ogImage' => $ogImage,
-                'ogUrl' => $data['ogUrl'] ?? request()->url(),
+                'ogUrl' => $data['ogUrl'] ?? $pageSeo['ogUrl'] ?? request()->url(),
+                'ogType' => $data['ogType'] ?? $pageSeo['ogType'] ?? 'website',
+                'twitterTitle' => $data['twitterTitle'] ?? $pageSeo['twitterTitle'] ?? ($pageSeo['ogTitle'] ?? $pageTitle),
+                'twitterDescription' => $data['twitterDescription'] ?? $pageSeo['twitterDescription'] ?? ($pageSeo['ogDescription'] ?? $pageDescription),
+                'twitterImage' => $data['twitterImage'] ?? $pageSeo['twitterImage'] ?? $ogImage,
+                'twitterCard' => $data['twitterCard'] ?? $pageSeo['twitterCard'] ?? 'summary_large_image',
+                'articleAuthor' => $data['articleAuthor'] ?? $pageSeo['articleAuthor'] ?? null,
             ],
             'generated_at' => now()->toIso8601String(),
         ];
@@ -73,6 +86,20 @@ class Frontend
         }
 
         return $view;
+    }
+
+    private static function pageSeo(string $pageKey): array
+    {
+        $path = base_path('.laravel/generated/pages-seo.json');
+
+        if (! File::exists($path)) {
+            return [];
+        }
+
+        $pages = json_decode(File::get($path), true);
+        $metadata = is_array($pages) ? ($pages[$pageKey] ?? []) : [];
+
+        return is_array($metadata) ? $metadata : [];
     }
 
     public static function payload(string $page): ?array

@@ -124,8 +124,8 @@ PHP,
             $this->assertTrue(File::exists($dashboardPath));
 
             $dashboard = File::get($dashboardPath);
-            $this->assertStringContainsString('<script setup lang="ts">', $dashboard);
             $this->assertStringContainsString('<pages>', $dashboard);
+            $this->assertStringNotContainsString('<script setup lang="ts">', $dashboard);
             $this->assertStringContainsString('\\App\\Models\\Product::class', $dashboard);
             $this->assertStringContainsString('\\App\\Models\\Order::class', $dashboard);
             $this->assertStringContainsString('{{ $model::count() }}', $dashboard);

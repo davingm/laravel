@@ -11,7 +11,7 @@ Path pada tabel relatif terhadap `packages/laravel/`. Tujuan folder yang masih k
 | `composer.json` | Manifest `davingm/laravel-runtime`, autoload PSR-4 `Davingm\LaravelRuntime\` dari `src/`, dan deklarasi Composer plugin. | Konfigurasi package. Pertahankan atau ubah sesuai kebutuhan package Composer. |
 | `src/` | Plugin Composer dan source PHP framework yang di-autoload. | Kode framework aktif berada di package/vendor; bukan berkas aplikasi dan bukan isi `.laravel/`. |
 | `src/app/` | `commands/`, `helpers/`, `middleware/`, `providers/`, `routes/`, dan `support/`. | Integrasi aplikasi Laravel seperti service provider, routing halaman, frontend, middleware, helper, dan command framework. |
-| `src/Compiler/` | `Plugin/vite.mjs`, `Runtime/SingleFilePageCompiler.php`. | Plugin Vite mengumpulkan TypeScript dan CSS scoped halaman; compiler PHP menyiapkan markup sebelum Blade memprosesnya. |
+| `src/Compiler/` | `Plugin/vite.mjs`, `Runtime/SingleFilePageCompiler.php`. | Plugin Vite mengumpulkan TypeScript, CSS scoped, dan metadata SEO SSR; compiler PHP menyiapkan markup sebelum Blade memprosesnya. |
 | `src/core/` | Subfolder kosong: `plugin/`, `utils/`. | Kandidat area komponen inti; belum memiliki implementasi. |
 | `src/imports/` | Kosong. | Belum ada tanggung jawab atau API yang ditetapkan. |
 | `src/runtime/` | Kosong. | Belum ada tanggung jawab atau API yang ditetapkan. |
@@ -32,6 +32,7 @@ Berikut source runtime package yang saat ini disalin ke aplikasi:
 | `cli/` | Pendukung CLI, termasuk telemetry request dan terminal panel. |
 | `crud/` | Stub controller, model, form, dan halaman CRUD. |
 | `frontend/framework.js` | JavaScript framework yang digunakan aplikasi. |
+| `frontend/seo-meta.ts` | Composable SEO internal yang di-auto-import oleh compiler halaman. |
 | `generators/` | Implementasi command generator halaman, controller, migration, CRUD, dashboard, roles, dan command terkait. |
 | `layouts/` | Stub layout navbar dan sidebar untuk generator. |
 | `role/` | Stub middleware role. |

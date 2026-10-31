@@ -65,13 +65,32 @@ button?.addEventListener('click', () => {
 </pages>
 ```
 
-TypeScript di dalam script adalah kode browser biasa, termasuk penggunaan API DOM seperti `addEventListener`; framework tidak menambahkan event directive. Import TypeScript diperbolehkan, tetapi export tidak digunakan dalam blok setup. Ekspresi dan directive Blade di markup, seperti `{{ $name }}` dan `@if`, tetap diproses Laravel di server. Framework mengurus layout dokumen dan metadata default: title dari nama halaman dan aplikasi, description dari nama halaman, serta gambar Open Graph dari `public/Laravel.svg`. Layout juga mengeluarkan metadata Open Graph dan Twitter. Route yang memakai `page()` dapat memberi `title`, `description`, `ogTitle`, `ogDescription`, `ogImage`, dan `ogUrl` untuk mengganti nilai default.
+TypeScript di dalam script adalah kode browser biasa, termasuk penggunaan API DOM seperti `addEventListener`; framework tidak menambahkan event directive. Import TypeScript diperbolehkan, tetapi export tidak digunakan dalam blok setup. Ekspresi dan directive Blade di markup, seperti `{{ $name }}` dan `@if`, tetap diproses Laravel di server.
+
+### Metadata SEO dari TypeScript
+
+Gunakan composable internal `useSeoMeta()` langsung di `<script setup lang="ts">`; tidak perlu import atau membuat komponen SEO di `src/components/`:
+
+```ts
+useSeoMeta({
+    title: 'Frontend Engineer & Web Developer',
+    description: 'Portofolio Davin GM, pengembang web yang berfokus pada Nuxt.js dan Next.js.',
+    ogTitle: 'Davin GM — Web Developer',
+    ogDescription: 'Membangun pengalaman web dengan Nuxt.js dan Next.js.',
+    ogImage: 'https://example.com/og-home.png',
+    ogUrl: 'https://example.com/',
+    ogType: 'website',
+    twitterCard: 'summary_large_image',
+})
+```
+
+Nilai string literal diekstrak saat Vite berjalan atau build agar metadata sudah ada pada HTML server-rendered. Pemanggilan yang sama memperbarui `<head>` saat halaman dipasang atau navigasi ringan berlangsung. Nilai dinamis TypeScript tetap diperbarui di browser, tetapi tidak dapat dimasukkan ke SSR awal. Bila tidak memakai `useSeoMeta()`, framework menyediakan metadata default; route `page()` tetap dapat memberi nilai metadata melalui data halaman.
 
 Compiler mengumpulkan TypeScript dan CSS halaman sebelum Vite membangun asset. Jika tidak ada blok setup TypeScript, compiler tidak membuat modul TypeScript per halaman; runtime framework bersama tetap dimuat oleh layout. `<pages>` adalah pembungkus source saja: saat dirender, compiler menggantinya dengan `<div data-page-scope="…">` standar agar tidak ada custom tag yang bocor ke HTML. CSS pada `<style scoped>` dan script halaman memakai atribut scope tersebut. Hasil kompilasi berada di `.laravel/generated/`; jangan diedit manual. Dalam production, middleware framework juga memadatkan HTML response menjadi satu baris. Halaman Blade konvensional dan komponen anonymous tetap didukung; komponen dapat dipakai di dalam `<pages>` dan hasilnya dirender di dalam layout yang dipilih.
 
 ## Metadata halaman dan payload
 
-Data `title` dan `description` yang diberikan melalui `page()` atau `Frontend::render()` dapat dipakai untuk metadata. Directive `@pageMeta` menghasilkan title dan description pada layout; directive `@payload` menambahkan payload JSON halaman.
+Layout default memakai satu directive `@pageMeta` untuk mengeluarkan metadata yang disiapkan oleh framework atau `useSeoMeta()`. Directive `@payload` menambahkan payload JSON halaman.
 
 Payload dan manifest adalah file runtime di `.laravel/cache/`. Jangan mengedit hasil tersebut sebagai source; ubah halaman atau kode `Frontend`, lalu generate ulang bila diperlukan.
 

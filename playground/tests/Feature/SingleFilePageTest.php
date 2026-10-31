@@ -79,6 +79,41 @@ BLADE);
 
     }
 
+    public function test_typescript_seo_composable_metadata_is_rendered_server_side(): void
+    {
+        $path = base_path('.laravel/generated/pages-seo.json');
+        $hadManifest = File::exists($path);
+        $originalManifest = $hadManifest ? File::get($path) : null;
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, json_encode([
+            'about.me' => [
+                'title' => 'Frontend Engineer & Web Developer',
+                'description' => 'Portofolio Davin GM.',
+                'ogTitle' => 'Davin GM — Web Developer',
+                'ogImage' => 'https://example.com/og-home.png',
+                'ogUrl' => 'https://example.com/',
+                'twitterCard' => 'summary_large_image',
+            ],
+        ]));
+
+        try {
+            $this->get('/about/me')
+                ->assertOk()
+                ->assertSee('<title>Frontend Engineer &amp; Web Developer</title>', false)
+                ->assertSee('<meta name="description" content="Portofolio Davin GM.">', false)
+                ->assertSee('<meta property="og:title" content="Davin GM — Web Developer">', false)
+                ->assertSee('<meta property="og:image" content="https://example.com/og-home.png">', false)
+                ->assertSee('<meta property="og:url" content="https://example.com/">', false)
+                ->assertSee('<meta name="twitter:card" content="summary_large_image">', false);
+        } finally {
+            if ($hadManifest) {
+                File::put($path, $originalManifest);
+            } else {
+                File::delete($path);
+            }
+        }
+    }
+
     public function test_production_html_is_minified_to_one_line(): void
     {
         config(['app.env' => 'production']);

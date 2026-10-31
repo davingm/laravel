@@ -57,7 +57,53 @@ function prepareScript(source, filePath, scope, ts) {
         body.push(parsed.text.slice(statement.getFullStart(), statement.end));
     }
 
-    return `${imports.join('\n')}\nexport async function mount(): Promise<void> {\n    if (!document.querySelector('[data-page-scope="${scope}"]')) return;\n${body.join('\n')}\n}\n`;
+    return `import { useSeoMeta } from '../frontend/seo-meta';\n${imports.join('\n')}\nexport async function mount(): Promise<void> {\n    if (!document.querySelector('[data-page-scope="${scope}"]')) return;\n${body.join('\n')}\n}\n`;
+}
+
+function pageKey(relativeName) {
+    const segments = relativeName.replace(/\.blade\.php$/, '').split('/');
+    if (segments.length > 1 && segments.at(-1) === 'index') segments.pop();
+    return segments.join('.');
+}
+
+function extractSeoMeta(source, filePath, ts) {
+    const parsed = ts.createSourceFile(filePath, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const fields = new Set([
+        'title', 'description', 'ogTitle', 'ogDescription', 'ogImage', 'ogUrl', 'ogType',
+        'twitterTitle', 'twitterDescription', 'twitterImage', 'twitterCard', 'articleAuthor',
+    ]);
+    const metadata = {};
+
+    const staticString = (expression) => {
+        while (ts.isParenthesizedExpression(expression) || ts.isAsExpression(expression)
+            || ts.isTypeAssertionExpression(expression) || ts.isSatisfiesExpression(expression)) {
+            expression = expression.expression;
+        }
+
+        if (ts.isStringLiteralLike(expression) || ts.isNoSubstitutionTemplateLiteral(expression)) return expression.text;
+        return undefined;
+    };
+
+    const visit = (node) => {
+        if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === 'useSeoMeta') {
+            const argument = node.arguments[0];
+            if (argument && ts.isObjectLiteralExpression(argument)) {
+                for (const property of argument.properties) {
+                    if (!ts.isPropertyAssignment(property)) continue;
+                    const name = property.name;
+                    const key = ts.isIdentifier(name) || ts.isStringLiteralLike(name) ? name.text : undefined;
+                    if (!key || !fields.has(key)) continue;
+                    const value = staticString(property.initializer);
+                    if (value !== undefined) metadata[key] = value;
+                }
+            }
+        }
+
+        ts.forEachChild(node, visit);
+    };
+
+    visit(parsed);
+    return metadata;
 }
 
 function scopeStyle(source, scope, filePath, postcss) {
@@ -100,6 +146,7 @@ function generate(root) {
     const modules = [];
     const styles = [':where([data-page-scope]) { display: contents; }'];
     const moduleNames = new Set();
+    const seoPages = {};
 
     for (const filePath of filesIn(pagesDirectory)) {
         const source = fs.readFileSync(filePath, 'utf8');
@@ -129,6 +176,8 @@ function generate(root) {
             moduleNames.add(generatedName);
             writeIfChanged(path.join(generatedDirectory, generatedName), prepareScript(scripts, relativeName, scope, ts));
             modules.push({ name: generatedName, scope });
+            const metadata = extractSeoMeta(scripts, relativeName, ts);
+            if (Object.keys(metadata).length > 0) seoPages[pageKey(relativeName)] = metadata;
         }
         if (style) styles.push(scopeStyle(style, scope, relativeName, postcss));
     }
@@ -143,6 +192,7 @@ function generate(root) {
     const mounts = modules.map((_, index) => `    await mountPage${index}();`).join('\n');
     writeIfChanged(path.join(generatedDirectory, 'pages.ts'), `${imports}\n\nasync function mountCurrentPage(): Promise<void> {\n${mounts}\n}\n\nvoid mountCurrentPage();\nwindow.addEventListener('auto:navigated', () => { void mountCurrentPage(); });\n`);
     writeIfChanged(path.join(generatedDirectory, 'pages.css'), styles.join('\n\n'));
+    writeIfChanged(path.join(generatedDirectory, 'pages-seo.json'), `${JSON.stringify(seoPages, null, 2)}\n`);
 }
 
 export function laravelPages() {
