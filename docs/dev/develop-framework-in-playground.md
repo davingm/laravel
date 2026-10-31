@@ -50,7 +50,7 @@ node .laravel/cli.js test --compact
 
 Jalankan perubahan aplikasi dari `playground/`. Jalankan `npm ci` jika dependency frontend belum ada dan `npm run build` jika perubahan menyentuh asset.
 
-Path repository lokal hanya untuk monorepo. `.materialize-playground.php` menghapus konfigurasi repository lokal dan mengganti constraint `dev-main` menjadi `^1.0.3` saat membuat starter. Constraint rentang ini membolehkan Composer memilih versi runtime 1.x terbaru yang kompatibel, bukan mengunci starter pada satu patch; perubahan source runtime harus lebih dulu diterbitkan sebagai tag package agar tersedia di Packagist. Hook `post-create-project-cmd` memasang launcher npm global `@davingm/laravel-cli` bila belum ada. Composer plugin sendiri tidak membuat file `artisan` di root atau mengubah `PATH`. Path repository serta opsi versi package mengikuti [dokumentasi Composer](https://getcomposer.org/doc/05-repositories.md#path).
+Path repository lokal hanya untuk monorepo. `.materialize-playground.php` menghapus konfigurasi repository lokal dan mengganti constraint `dev-main` menjadi `^1.0.5` saat membuat starter. Constraint rentang ini membolehkan Composer memilih versi runtime 1.x terbaru yang kompatibel, bukan mengunci starter pada satu patch; perubahan source runtime harus lebih dulu diterbitkan sebagai tag package agar tersedia di Packagist. Hook `post-create-project-cmd` memasang launcher npm global `@davingm/laravel-cli` bila belum ada. Composer plugin sendiri tidak membuat file `artisan` di root atau mengubah `PATH`. Path repository serta opsi versi package mengikuti [dokumentasi Composer](https://getcomposer.org/doc/05-repositories.md#path).
 
 ## Alur command tanpa file `artisan` di root
 

@@ -105,7 +105,7 @@ try {
     $applicationManifest['require'] ??= [];
     // The monorepo playground uses a local path repository. Generated starter
     // applications consume the released package from Packagist instead.
-    $applicationManifest['require']['davingm/laravel-runtime'] = '^1.0.3';
+    $applicationManifest['require']['davingm/laravel-runtime'] = '^1.0.5';
     $applicationManifest['config'] ??= [];
     $applicationManifest['config']['allow-plugins'] ??= [];
     $applicationManifest['config']['allow-plugins']['davingm/laravel-runtime'] = true;

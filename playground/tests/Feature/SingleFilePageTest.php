@@ -62,21 +62,32 @@ BLADE);
 
     public function test_home_single_file_page_renders_inside_the_framework_layout_with_default_seo(): void
     {
-        $response = $this->get('/home');
+        $pagePath = base_path('src/pages/single-file-default-layout-test.blade.php');
+        File::put($pagePath, <<<'BLADE'
+<script setup lang="ts">const count = 0</script>
+<style scoped>.counter { color: red; }</style>
+<pages><button>Klik saya</button></pages>
+BLADE);
 
-        $response
-            ->assertOk()
-            ->assertSee('<title>Home | Laravel</title>', false)
-            ->assertSee('<meta name="description" content="Halaman Home.">', false)
-            ->assertSee('<meta property="og:title" content="Home">', false)
-            ->assertSee('<meta property="og:image" content="'.asset('Laravel.svg').'">', false)
-            ->assertSee('<html lang="en">', false)
-            ->assertSee('<div data-page-scope="', false)
-            ->assertDontSee('<pages', false)
-            ->assertSee('Klik saya')
-            ->assertDontSee('<script setup lang="ts">', false)
-            ->assertDontSee('<style scoped>', false)
-            ->assertDontSee('@extends', false);
+        try {
+            Route::get('/single-file-default-layout-test', fn () => Frontend::render('single-file-default-layout-test'));
+
+            $this->get('/single-file-default-layout-test')
+                ->assertOk()
+                ->assertSee('<title>Single File Default Layout Test | Laravel</title>', false)
+                ->assertSee('<meta name="description" content="Halaman Single File Default Layout Test.">', false)
+                ->assertSee('<meta property="og:title" content="Single File Default Layout Test">', false)
+                ->assertSee('<meta property="og:image" content="'.asset('Laravel.svg').'">', false)
+                ->assertSee('<html lang="en">', false)
+                ->assertSee('<div data-page-scope="', false)
+                ->assertDontSee('<pages', false)
+                ->assertSee('Klik saya')
+                ->assertDontSee('<script setup lang="ts">', false)
+                ->assertDontSee('<style scoped>', false)
+                ->assertDontSee('@extends', false);
+        } finally {
+            File::delete($pagePath);
+        }
 
     }
 
@@ -141,16 +152,19 @@ BLADE);
     public function test_single_file_page_can_select_another_registered_layout(): void
     {
         $layoutPath = base_path('src/layouts/test-layout.blade.php');
+        $pagePath = base_path('src/pages/single-file-test-layout-page.blade.php');
         File::put($layoutPath, '<div data-selected-layout>@yield(\'content\')</div>');
-        Route::get('/home-with-test-layout', fn () => page('home', [], 'test-layout'));
+        File::put($pagePath, '<pages><p>Klik saya</p></pages>');
+        Route::get('/single-file-test-layout-page', fn () => page('single-file-test-layout-page', [], 'test-layout'));
 
         try {
-            $this->get('/home-with-test-layout')
+            $this->get('/single-file-test-layout-page')
                 ->assertOk()
                 ->assertSee('<div data-selected-layout>', false)
                 ->assertSee('Klik saya');
         } finally {
             File::delete($layoutPath);
+            File::delete($pagePath);
         }
     }
 }
