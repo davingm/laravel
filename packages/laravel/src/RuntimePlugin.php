@@ -44,7 +44,7 @@ final class RuntimePlugin implements PluginInterface, EventSubscriberInterface
 
     public function installGlobalCli(Event $event): void
     {
-        $npm = PHP_OS_FAMILY === 'Windows' ? 'npm.cmd' : 'npm';
+        $npm = $this->resolveNpmExecutable();
         $package = '@davingm/laravel-cli';
         $minimumVersion = '1.0.0';
         $installedVersion = $this->globalPackageVersion($npm, $package);
@@ -77,6 +77,27 @@ final class RuntimePlugin implements PluginInterface, EventSubscriberInterface
         }
 
         fwrite(STDOUT, "Global artisan command installed. Open a new terminal if `artisan` is not found in this one.\n");
+    }
+
+    private function resolveNpmExecutable(): string
+    {
+        if (PHP_OS_FAMILY !== 'Windows') {
+            return 'npm';
+        }
+
+        foreach (explode(PATH_SEPARATOR, getenv('PATH') ?: '') as $directory) {
+            $directory = trim($directory, " \t\n\r\0\x0B\"");
+            if ($directory === '') {
+                continue;
+            }
+
+            $candidate = rtrim($directory, '\\/').DIRECTORY_SEPARATOR.'npm.cmd';
+            if (is_file($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return 'npm.cmd';
     }
 
     public function installRuntime(Event $event): void
