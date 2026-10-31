@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Davingm\LaravelRuntime\Compiler\Runtime\SingleFilePageCompiler;
 use Davingm\LaravelRuntime\App\Middleware\MinifyHtmlMiddleware;
+use Davingm\LaravelRuntime\App\Support\Frontend;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -81,6 +82,13 @@ BLADE);
 
     public function test_typescript_seo_composable_metadata_is_rendered_server_side(): void
     {
+        $pagePath = base_path('src/pages/seo-composable-test.blade.php');
+        File::put($pagePath, <<<'BLADE'
+<script setup lang="ts">
+useSeoMeta({ title: 'Frontend Engineer & Web Developer' })
+</script>
+<pages><h1>SEO Test</h1></pages>
+BLADE);
         $path = base_path('.laravel/generated/pages-seo.json');
         $hadManifest = File::exists($path);
         $originalManifest = $hadManifest ? File::get($path) : null;
@@ -97,7 +105,9 @@ BLADE);
         ]));
 
         try {
-            $this->get('/about/me')
+            Route::get('/seo-composable-test', fn () => Frontend::render('seo-composable-test', 'about.me'));
+
+            $this->get('/seo-composable-test')
                 ->assertOk()
                 ->assertSee('<title>Frontend Engineer &amp; Web Developer</title>', false)
                 ->assertSee('<meta name="description" content="Portofolio Davin GM.">', false)
@@ -111,6 +121,8 @@ BLADE);
             } else {
                 File::delete($path);
             }
+
+            File::delete($pagePath);
         }
     }
 
