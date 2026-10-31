@@ -11,7 +11,7 @@
   <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-13-18181B?style=flat&logo=laravel&logoColor=FF2D20" alt="Laravel 13"></a>
 </p>
 
-An early-stage Laravel framework project by [davingm](https://github.com/davingm). It combines a Laravel application with file-based Blade pages, framework generators, and a small server-rendered frontend toolchain.
+An early-stage Laravel framework project by [vuxilabs](https://github.com/vuxilabs). It combines a Laravel application with file-based Blade pages, framework generators, and a small server-rendered frontend toolchain.
 
 > [!WARNING]
 > **This project is still in its early stages** and continues to evolve. The API, conventions, supporting tools, and documentation are subject to change with each release. Do not assume backward compatibility or production readiness; evaluate the project in an isolated environment, pin the versions you have tested, and ensure it meets your requirements before relying on it. Be sure to read the framework's [License](https://github.com/davingm/laravel/blob/main/LICENSE) before getting started.
