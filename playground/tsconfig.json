@@ -9,5 +9,5 @@
         "noEmit": true,
         "skipLibCheck": true
     },
-    "include": ["src/assets/ts/**/*.ts", ".laravel/generated/**/*.ts"]
+    "include": ["src/assets/ts/**/*.ts", ".laravel/frontend/**/*.ts", ".laravel/generated/**/*.ts"]
 }

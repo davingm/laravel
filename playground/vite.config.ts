@@ -12,7 +12,7 @@ export default defineConfig({
                 'src/assets/css/app.css',
                 'node_modules/@davingm/welcome/dist/welcomepage.css',
                 '.laravel/generated/pages.css',
-                '.laravel/frontend/framework.js',
+                '.laravel/frontend/framework.ts',
                 'src/assets/ts/app.ts',
                 '.laravel/generated/pages.ts',
             ],

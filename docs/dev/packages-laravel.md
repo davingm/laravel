@@ -16,7 +16,7 @@ Path pada tabel relatif terhadap `packages/laravel/`. Tujuan folder yang masih k
 | `src/imports/` | Kosong. | Belum ada tanggung jawab atau API yang ditetapkan. |
 | `src/runtime/` | Kosong. | Belum ada tanggung jawab atau API yang ditetapkan. |
 | `src/cli/` | Manifest package npm `@davingm/laravel-cli` dan executable launcher global `artisan`. | Entry point global yang mencari project aktif lalu meneruskan command ke `.laravel/cli.js` project tersebut. Source package berada di dalam `src/`, lalu dipublikasikan terpisah dari runtime Composer. |
-| `.laravel/` | Berkas runtime, CLI, generator, template, JavaScript framework, dan manifest npm; rincian di bawah. | Source runtime yang memang disalin oleh Composer plugin ke folder `.laravel/` di root aplikasi. |
+| `.laravel/` | Berkas runtime, CLI, generator, template, TypeScript framework browser, dan manifest npm; rincian di bawah. | Source runtime yang memang disalin oleh Composer plugin ke folder `.laravel/` di root aplikasi. |
 | `LICENSE` | Lisensi package. | Metadata distribusi. |
 | `README.md` | Ringkasan singkat package dan mekanisme instalasi runtime. | Dokumentasi package. |
 
@@ -31,8 +31,8 @@ Berikut source runtime package yang saat ini disalin ke aplikasi:
 | `artisan.php`, `cli.js` | Bootstrap command internal dan entry CLI runtime. |
 | `cli/` | Pendukung CLI, termasuk telemetry request dan terminal panel. |
 | `crud/` | Stub controller, model, form, dan halaman CRUD. |
-| `frontend/framework.js` | JavaScript framework yang digunakan aplikasi. |
-| `frontend/seo-meta.ts` | Composable SEO internal yang di-auto-import oleh compiler halaman. |
+| `frontend/framework.ts` | Entry TypeScript runtime browser; menginisialisasi modul internal per fungsi. |
+| `frontend/*.ts` | Modul runtime untuk navigasi, payload, konfirmasi, table search, reveal, telemetry, SEO, dan tipe. |
 | `generators/` | Implementasi command generator halaman, controller, migration, CRUD, dashboard, roles, dan command terkait. |
 | `layouts/` | Stub layout navbar dan sidebar untuk generator. |
 | `role/` | Stub middleware role. |

@@ -31,7 +31,7 @@ Path pada bab ini relatif terhadap **root aplikasi**, yaitu folder project yang 
 
 | Path | Isi dan tanggung jawab |
 |---|---|
-| `.laravel/` | Tooling internal framework: CLI, bootstrap Artisan internal, JavaScript framework, generator, template, hasil kompilasi halaman, dan cache frontend. Folder ini dihasilkan Composer dan tidak perlu diedit developer aplikasi. |
+| `.laravel/` | Tooling internal framework: CLI, bootstrap Artisan internal, TypeScript framework browser, generator, template, hasil kompilasi halaman, dan cache frontend. Folder ini dihasilkan Composer dan tidak perlu diedit developer aplikasi. |
 | `bootstrap/` | Inisialisasi Laravel dan pendaftaran konfigurasi aplikasi. |
 | `config/` | Pengaturan Laravel, seperti database, view, cache, dan layanan lain. |
 | `vite.config.ts` | Konfigurasi build CSS dan TypeScript dengan Vite. |

@@ -96,7 +96,7 @@ Payload dan manifest adalah file runtime di `.laravel/cache/`. Jangan mengedit h
 
 ## TypeScript aplikasi dan runtime framework
 
-Kode JavaScript framework berada di `packages/laravel/.laravel/frontend/framework.js`, didistribusikan melalui Composer, dan disalin ke `.laravel/frontend/framework.js`. Layout dan Vite memuat hasil generate itu sebagai entry terpisah. Jangan menyalin atau mengedit kode framework ke dalam `src/`; Composer dapat membuat ulang runtime internal.
+Runtime browser framework ditulis dalam TypeScript di `packages/laravel/.laravel/frontend/`, didistribusikan melalui Composer, dan disalin ke `.laravel/frontend/`. Entry `.laravel/frontend/framework.ts` memuat modul internal per fungsi. Jangan menyalin atau mengedit kode framework ke dalam `src/`; Composer dapat membuat ulang runtime internal.
 
 `src/assets/ts/app.ts` adalah entry TypeScript bersama untuk interaksi aplikasi. Halaman satu file dapat memiliki TypeScript sendiri melalui `<script setup lang="ts">`; `npm run build` memeriksa tipe seluruh source sebelum membangun asset. Perilaku framework berikut tetap berada di entry internal:
 
@@ -179,7 +179,7 @@ export default defineConfig({
             input: [
                 'src/assets/css/app.css',
                 '.laravel/generated/pages.css',
-                '.laravel/frontend/framework.js',
+                '.laravel/frontend/framework.ts',
                 'src/assets/ts/app.ts',
                 '.laravel/generated/pages.ts',
             ],
@@ -201,7 +201,7 @@ export default defineConfig({
 });
 ```
 
-Ganti `nama-plugin-vite` dan `pluginTambahan` dengan nama package dan export plugin yang sebenarnya. Bentuk pemanggilan plugin dapat berbeda; ikuti dokumentasi package. Pertahankan `laravelPages()` sebelum plugin Laravel Vite agar entry halaman dibuat, entry CSS aplikasi, entry JavaScript internal `.laravel/frontend/framework.js`, entry TypeScript aplikasi, kedua entry `.laravel/generated/pages.*`, font, Tailwind, dan pengaturan watcher yang sudah ada. Jangan mendaftarkan library browser biasa sebagai plugin Vite.
+Ganti `nama-plugin-vite` dan `pluginTambahan` dengan nama package dan export plugin yang sebenarnya. Bentuk pemanggilan plugin dapat berbeda; ikuti dokumentasi package. Pertahankan `laravelPages()` sebelum plugin Laravel Vite agar entry halaman dibuat, entry CSS aplikasi, entry TypeScript internal `.laravel/frontend/framework.ts`, entry TypeScript aplikasi, kedua entry `.laravel/generated/pages.*`, font, Tailwind, dan pengaturan watcher yang sudah ada. Jangan mendaftarkan library browser biasa sebagai plugin Vite.
 
 Jika menambah file TypeScript atau CSS sebagai **entry terpisah**, tambahkan path-nya ke `input` Laravel Vite plugin dan muat entry tersebut dari layout menggunakan `@vite`. Jika package hanya di-import oleh `app.ts` atau `app.css`, biasanya tidak perlu menambah entry baru.
 
@@ -218,7 +218,7 @@ Lihat panduan resmi [Laravel Vite](https://laravel.com/docs/13.x/vite), [Vite Pl
 `vite.config.ts` mendaftarkan asset aplikasi dan entry runtime framework:
 
 - `src/assets/css/app.css`
-- `.laravel/frontend/framework.js` (source package berada di `packages/laravel/.laravel/frontend/framework.js`)
+- `.laravel/frontend/framework.ts` (source package berada di `packages/laravel/.laravel/frontend/framework.ts`)
 - `src/assets/ts/app.ts`
 - `.laravel/generated/pages.css` dan `.laravel/generated/pages.ts` (dibuat dari blok halaman satu file oleh plugin Vite runtime)
 

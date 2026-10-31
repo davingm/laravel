@@ -7,7 +7,7 @@ Panduan ini menjelaskan cara mengubah source framework, mengujinya di aplikasi p
 | Folder | Kegunaan |
 | --- | --- |
 | `packages/laravel/src/` | Source PHP package framework dan Composer plugin; di-autoload dari package/vendor dan tidak disalin ke runtime aplikasi. |
-| `packages/laravel/.laravel/` | Source CLI, bootstrap Artisan internal, JavaScript framework, generator, dan tooling runtime. |
+| `packages/laravel/.laravel/` | Source CLI, bootstrap Artisan internal, TypeScript framework browser, generator, dan tooling runtime. |
 | `playground/` | Aplikasi Laravel untuk pengembangan dan pengujian framework. |
 | `playground/.laravel/` | Runtime yang disalin Composer; output lokal dan diabaikan Git. Jangan mengeditnya langsung. |
 | `playground/src/index.blade.php` | Entry frontend yang memilih layout dan menempatkan halaman melalui PageRouter. |
@@ -16,7 +16,7 @@ Panduan ini menjelaskan cara mengubah source framework, mengujinya di aplikasi p
 
 `playground/tests/` dan tooling pengembangan tetap berada di repository untuk memeriksa framework. Materialisasi dan bundler starter mengecualikan folder `tests/` serta `scripts/` agar kode pengembangan tidak masuk ke project pengguna.
 
-Plugin Composer menyalin isi `packages/laravel/.laravel/` ke `.laravel/` pada root aplikasi. Root aplikasi hasil `create-project` tidak memiliki file `artisan`; command Laravel dijalankan melalui CLI framework. Entry JavaScript framework juga disediakan package dan dimuat dari `.laravel/`. Source PHP package tetap berada di `packages/laravel/src/` dalam package/vendor dan tidak ikut disalin.
+Plugin Composer menyalin isi `packages/laravel/.laravel/` ke `.laravel/` pada root aplikasi. Root aplikasi hasil `create-project` tidak memiliki file `artisan`; command Laravel dijalankan melalui CLI framework. Entry TypeScript framework browser juga disediakan package dan dimuat oleh Vite dari `.laravel/`. Source PHP package tetap berada di `packages/laravel/src/` dalam package/vendor dan tidak ikut disalin.
 
 Untuk peta isi package dan batas antara source Composer `packages/laravel/src/` dengan runtime yang disalin ke aplikasi, lihat [Struktur `packages/laravel`](./packages-laravel.md).
 
@@ -128,7 +128,7 @@ composer show davingm/laravel-runtime
 composer install --no-interaction --prefer-dist
 test -f .laravel/cli.js
 test -f .laravel/artisan.php
-test -f .laravel/frontend/framework.js
+test -f .laravel/frontend/framework.ts
 node .laravel/cli.js test --compact
 npm ci --ignore-scripts
 npm ls @davingm/welcome
