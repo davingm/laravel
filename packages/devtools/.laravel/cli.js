@@ -660,13 +660,14 @@ function createDevUI(url, startedAt, enabled) {
 }
 
 function startDev(extraArgs = []) {
-    const args = extraArgs.filter(arg => arg !== '--no-tui');
+    const args = extraArgs.filter(arg => arg !== '--no-tui' && arg !== '--no-open');
     const portArg = args.find(arg => arg.startsWith('--port='));
     const portIndex = args.indexOf('--port');
     const port = portArg ? portArg.slice('--port='.length) : portIndex >= 0 ? (args[portIndex + 1] || PORT) : PORT;
     const url = `http://localhost:${port}/`;
     const startedAt = Date.now();
     const useTui = process.stdin.isTTY && process.stdout.isTTY && !process.env.CI && !process.env.NO_TUI && !extraArgs.includes('--no-tui');
+    const autoOpen = !extraArgs.includes('--no-open') && !process.env.NO_OPEN;
     const ui = createDevUI(url, startedAt, useTui);
     activeDevUI = ui;
     ui.render();
@@ -690,6 +691,7 @@ function startDev(extraArgs = []) {
     let viteRequired = false;
     let viteListening = false;
     let viteProblem = '';
+    let browserOpened = false;
     const telemetry = createRequestTelemetry(ui);
     let telemetryUrl = '';
     const telemetryFile = resolve(projectRoot, '.laravel', 'cache', 'cli-telemetry-url');
@@ -707,6 +709,11 @@ function startDev(extraArgs = []) {
         restarting = false;
         const elapsed = ((Date.now() - startedAt) / 1000).toFixed(1);
         ui.setStatus('READY', viteProblem || `ready in ${elapsed}s`);
+        if (autoOpen && !browserOpened) {
+            browserOpened = true;
+            ui.log(`opening browser → ${url}`);
+            openBrowser();
+        }
     }
 
     function cleanExit() {

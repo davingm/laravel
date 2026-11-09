@@ -79,6 +79,8 @@ Memulai environment development lengkap dalam satu terminal:
 | `php artisan queue:work` | Queue worker dengan retry 3x |
 | `npm run dev` | Vite dev server untuk hot module replacement |
 
+Browser otomatis terbuka ketika server dan Vite siap. Gunakan `--no-open` untuk menonaktifkannya.
+
 Output diberi warna berdasarkan kecepatan response:
 
 - **Hijau** — kurang dari 200ms

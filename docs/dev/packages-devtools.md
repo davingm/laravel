@@ -12,7 +12,7 @@ Source PHP package berada di `src/`, runtime CLI/stub berada di `.laravel/`, dan
 
 ## Command
 
-- `php artisan dev` menjalankan panel development, server Laravel, queue worker, dan Vite. `php artisan dev --no-tui` menjalankan mode output biasa.
+- `php artisan dev` menjalankan panel development, server Laravel, queue worker, dan Vite, lalu otomatis membuka browser ketika semua siap. `php artisan dev --no-tui` menjalankan mode output biasa. `php artisan dev --no-open` menonaktifkan auto-open browser.
 - `php artisan devtools` membuka menu interaktif untuk semua generator package.
 - `php artisan make:migration product` membuat migration `create_products_table`.
 - `php artisan make:all Product`, `make:controller`, `make:page`, `make:dashboard`, dan `make:roles` tersedia seperti generator framework dengan path Laravel standar.

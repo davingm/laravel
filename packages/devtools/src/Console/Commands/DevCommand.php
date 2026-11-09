@@ -9,7 +9,7 @@ use RuntimeException;
 
 final class DevCommand extends Command
 {
-    protected $signature = 'dev {--no-tui : Run without the terminal dashboard}';
+    protected $signature = 'dev {--no-tui : Run without the terminal dashboard} {--no-open : Do not automatically open the browser}';
     protected $description = 'Start the development dashboard, Laravel server, queue worker, and Vite';
 
     public function handle(): int
@@ -23,6 +23,7 @@ final class DevCommand extends Command
 
         $command = [$node, $cli, 'dev'];
         if ($this->option('no-tui')) $command[] = '--no-tui';
+        if ($this->option('no-open')) $command[] = '--no-open';
         $pipes = [];
         $process = @proc_open($command, [0 => STDIN, 1 => STDOUT, 2 => STDERR], $pipes, base_path());
         if (!is_resource($process)) {
