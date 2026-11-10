@@ -1,9 +1,28 @@
 @import 'tailwindcss';
 
-@source '../../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../../storage/framework/views/*.php';
-@source '../../**/*.blade.php';
-@source '../../../stubs/crud/*.stub';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+.auth-page { display: grid; min-height: 100vh; place-items: center; padding: 2rem 1rem; background: #111; color: #f5f5f5; font-family: Arial, sans-serif; }
+.auth-card { width: min(100%, 27rem); border: 1px solid #303030; border-radius: .8rem; background: #1b1b1b; padding: 2rem; box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 24%); }
+.auth-brand { margin-bottom: 1.75rem; text-align: center; }
+.auth-brand-icon { width: 2rem; height: 2rem; color: #75b8ff; }
+.auth-title { margin: .75rem 0 .35rem; color: #f5f5f5; font-size: 1.35rem; font-weight: 650; }
+.auth-subtitle { margin: 0; color: #999; font-size: .85rem; }
+.auth-form { display: grid; gap: 1rem; }
+.auth-field { display: grid; gap: .4rem; }
+.auth-label { color: #ddd; font-size: .78rem; font-weight: 600; }
+.auth-input { width: 100%; min-height: 2.8rem; border: 1px solid #3a3a3a; border-radius: .4rem; background: #151515; padding: .65rem .8rem; color: #f5f5f5; font: inherit; }
+.auth-input:focus { border-color: #1677ff; outline: 2px solid rgb(22 119 255 / 24%); }
+.auth-submit { min-height: 2.8rem; border: 0; border-radius: .4rem; background: #1677ff; color: white; cursor: pointer; font: inherit; font-weight: 650; }
+.auth-submit:hover { background: #0866dd; }
+.auth-field-error,.auth-error { color: #ff8585; font-size: .78rem; }
+.auth-error { margin: 0 0 1rem; border: 1px solid #643b3b; border-radius: .4rem; background: #321f1f; padding: .7rem .8rem; }
+.auth-footer { margin: 1.25rem 0 0; color: #aaa; font-size: .82rem; text-align: center; }
+.auth-footer a { color: #75b8ff; text-decoration: none; }
+.auth-footer a:hover { text-decoration: underline; }
 
 .dashboard-page { height: 100vh; height: 100dvh; overflow: hidden; }
 .dashboard-page #page-view { height: 100%; min-height: 0; overflow: hidden; }

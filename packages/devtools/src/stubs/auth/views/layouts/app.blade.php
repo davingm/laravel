@@ -10,18 +10,16 @@
         @hasSection('title')
             <title>@yield('title') | {{ config('app.name', 'Laravel') }}</title>
         @endif
-        @pageMeta
     @endif
     @stack('head')
 
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['src/assets/css/app.css', 'src/assets/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
 </head>
 <body class="min-h-screen bg-white text-neutral-900 antialiased @yield('body-class')">
-    <main id="page-view" data-page="{{ $frontendPage ?? '' }}">
+    <main id="page-view">
         @yield('content')
     </main>
-    @payload
 </body>
 </html>

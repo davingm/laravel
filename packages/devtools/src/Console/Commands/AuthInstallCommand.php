@@ -146,7 +146,11 @@ final class AuthInstallCommand extends Command
         }
         $this->publishAssets($force);
         $this->file('resources/css/app.css', false);
-        $this->file('resources/js/app.js', true);
+        $this->file('resources/js/app.js', false);
+        $icons = $this->publishIcons($force);
+        foreach ($icons as $i => $icon) {
+            $this->file($icon, $i === count($icons) - 1);
+        }
         $this->done('Views and assets published');
 
         // ── Step 8: Register routes ────────────────────────────────────────────
@@ -428,8 +432,31 @@ final class AuthInstallCommand extends Command
         }
     }
 
-    // ── Routes ────────────────────────────────────────────────────────────────────
+    // Publish static dashboard icons outside the Vite manifest.
 
+    /** @return list<string> */
+    private function publishIcons(bool $force): array
+    {
+        $source = $this->stubPath('icons');
+        $destination = public_path('icons');
+        $published = [];
+
+        foreach (File::files($source) as $icon) {
+            $target = $destination.DIRECTORY_SEPARATOR.$icon->getFilename();
+
+            if (File::exists($target) && ! $force) {
+                continue;
+            }
+
+            File::ensureDirectoryExists($destination);
+            File::copy($icon->getPathname(), $target);
+            $published[] = 'public/icons/'.$icon->getFilename();
+        }
+
+        return $published;
+    }
+
+    // Register the generated auth endpoints in the application route file.
     private function registerRoutes(): void
     {
         $routeFile = base_path('routes/web.php');

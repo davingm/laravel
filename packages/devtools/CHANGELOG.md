@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+- Fix the auth starter's Vite and Tailwind entry points, publish dashboard icons to `public/icons`, and align dashboard links and views with the generated Laravel routes.
+
 ## 1.1.0
 
 - Add `auth:install` command: scaffolds login, register, dashboard, profile, and user management with 3 default role-based users (administrator, operator, user) on a clean Laravel 12 project. Views use the built-in dashboard UI kit. Runs migration and seeder automatically.

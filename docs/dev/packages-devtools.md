@@ -18,7 +18,7 @@ Source PHP package berada di `src/`, runtime CLI/stub berada di `.laravel/`, dan
 - `php artisan make:all Product`, `make:controller`, `make:page`, `make:dashboard`, dan `make:roles` tersedia seperti generator framework dengan path Laravel standar.
 - `php artisan crud:generate Product` membaca tabel `products` dari koneksi database aktif dan menghasilkan model, controller, Blade view di `resources/views/products/`, validasi dasar dari tipe/nullability kolom, serta route resource di `routes/web.php`.
 - Generator tidak membuat atau menjalankan migration. Jalankan migration lebih dulu. File yang telah ada dilewati.
-- `php artisan auth:install` memasang auth starter lengkap (login, register, dashboard, profil, manajemen user) pada project Laravel 12 yang bersih. Membutuhkan project yang belum memiliki controller auth, views auth, atau migration role. Gunakan `--force` untuk menimpa file yang sudah ada. Menyeed 3 user default: `administrator`, `operator`, dan `user` via `AuthSeeder` (bukan factory).
+- `php artisan auth:install` memasang auth starter lengkap (login, register, dashboard, profil, manajemen user) pada project Laravel 12 yang bersih. Membutuhkan project yang belum memiliki controller auth, views auth, atau migration role. Gunakan `--force` untuk menimpa file yang sudah ada. Template memakai entry Vite Laravel standar (`resources/css/app.css`, `resources/js/app.js`) dan menyalin ikon ke `public/icons/`. Menyediakan 3 user default: `administrator`, `operator`, dan `user` via `AuthSeeder` (bukan factory).
 
 Verifikasi package dilakukan pada contoh Laravel 12. Contoh Laravel 11 dan 13 dapat diuji terpisah.
 - `composer dev` dapat diteruskan ke `@php artisan dev` melalui script di `composer.json` root.

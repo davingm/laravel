@@ -3,27 +3,48 @@
 @section('title', 'Login')
 
 @section('content')
-<main class="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-12">
-    <h1 class="text-2xl font-semibold">Login</h1>
-
-    <form method="POST" action="{{ route('login.store') }}" class="mt-6 space-y-4">
-        @csrf
-
-        <div>
-            <label for="email" class="block text-sm font-medium">Email</label>
-            <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus
-                class="mt-1 w-full rounded border border-gray-300 px-3 py-2">
-            @error('email') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-brand">
+            <svg class="auth-brand-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09Z"/>
+            </svg>
+            <h1 class="auth-title">Masuk ke akun</h1>
+            <p class="auth-subtitle">Lanjutkan ke {{ config('app.name') }}</p>
         </div>
 
-        <div>
-            <label for="password" class="block text-sm font-medium">Password</label>
-            <input id="password" name="password" type="password" required
-                class="mt-1 w-full rounded border border-gray-300 px-3 py-2">
-            @error('password') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
+        @if (session('error'))
+            <p class="auth-error" role="alert">{{ session('error') }}</p>
+        @endif
 
-        <button type="submit" class="rounded bg-gray-950 px-4 py-2 text-white">Masuk</button>
-    </form>
-</main>
+        <form method="POST" action="{{ route('login.store') }}" class="auth-form">
+            @csrf
+
+            <div class="auth-field">
+                <label for="email" class="auth-label">Email</label>
+                <input id="email" name="email" type="email" value="{{ old('email') }}"
+                    required autofocus autocomplete="username" class="auth-input">
+                @error('email')
+                    <span class="auth-field-error">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="auth-field">
+                <label for="password" class="auth-label">Password</label>
+                <input id="password" name="password" type="password" required
+                    autocomplete="current-password" class="auth-input">
+                @error('password')
+                    <span class="auth-field-error">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <button type="submit" class="auth-submit">Masuk</button>
+        </form>
+
+        <p class="auth-footer">
+            Belum punya akun?
+            <a href="{{ route('register') }}">Daftar</a>
+        </p>
+    </div>
+</div>
 @endsection

@@ -10,14 +10,14 @@
             <h1>Selamat datang, Endministrator </h1>
             <p>Perlu kami siapkan secangkir kopi hangat untuk anda?.</p>
         </div>
-        <a class="dashboard-primary-button" href="{{ route('pages.dashboard') }}#projects"><img src="{{ Vite::asset('src/assets/icons/plus.svg') }}" alt=""> Buat proyek</a>
+        <a class="dashboard-primary-button" href="{{ route('dashboard') }}#projects"><img src="{{ asset('icons/plus.svg') }}" alt=""> Buat proyek</a>
     </section>
 
     <div class="dashboard-content-grid">
         <section class="dashboard-panel pipeline-panel" id="pipelines">
             <header class="dashboard-panel-heading">
                 <div><h2>CI / CD PIPELINE</h2><p>Build dan deployment · 7 hari terakhir</p></div>
-                <span class="pipeline-success-rate"><img src="{{ Vite::asset('src/assets/icons/check-circle.svg') }}" alt=""> 98.6% berhasil</span>
+                <span class="pipeline-success-rate"><img src="{{ asset('icons/check-circle.svg') }}" alt=""> 98.6% berhasil</span>
             </header>
             <div class="pipeline-chart" aria-label="Grafik build harian"><i style="height: 54%"></i><i style="height: 72%"></i><i style="height: 45%"></i><i style="height: 88%"></i><i style="height: 66%"></i><i style="height: 96%"></i><i style="height: 78%"></i><i style="height: 61%"></i><i style="height: 85%"></i><i style="height: 70%"></i><i style="height: 92%"></i><i style="height: 74%"></i><i style="height: 100%"></i><i style="height: 82%"></i><i style="height: 64%"></i><i style="height: 91%"></i><i style="height: 73%"></i><i style="height: 85%"></i><i style="height: 58%"></i><i style="height: 96%"></i><i style="height: 76%"></i><i style="height: 89%"></i><i style="height: 68%"></i><i style="height: 94%"></i></div>
             <div class="pipeline-legend"><span>2.386 build berhasil</span><span>32 gagal</span><span>Rata-rata 2m 14s</span></div>
@@ -54,12 +54,12 @@
         <section class="dashboard-panel repositories-panel" id="repositories">
             <header class="dashboard-panel-heading">
                 <div><h2>REPOSITORY</h2><p>Repository yang terakhir diperbarui</p></div>
-                <a href="{{ route('pages.dashboard') }}#repositories" class="panel-link">Semua repository <span>→</span></a>
+                <a href="{{ route('dashboard') }}#repositories" class="panel-link">Semua repository <span>→</span></a>
             </header>
             <div class="repository-list">
-                <div class="repository-item"><span class="provider-icon"><img src="{{ Vite::asset('src/assets/icons/simple-github.svg') }}" alt="GitHub"></span><span class="repository-copy"><strong>sinar-nusantara/commerce</strong><small>Laravel · diperbarui 12 menit lalu</small></span><span class="repo-branch"><img src="{{ Vite::asset('src/assets/icons/arrows-right-left.svg') }}" alt=""> main</span></div>
-                <div class="repository-item"><span class="provider-icon"><img src="{{ Vite::asset('src/assets/icons/simple-github.svg') }}" alt="GitHub"></span><span class="repository-copy"><strong>sinar-nusantara/core-api</strong><small>Node.js · diperbarui 1 jam lalu</small></span><span class="repo-branch"><img src="{{ Vite::asset('src/assets/icons/arrows-right-left.svg') }}" alt=""> main</span></div>
-                <div class="repository-item"><span class="provider-icon"><img src="{{ Vite::asset('src/assets/icons/simple-github.svg') }}" alt="GitHub"></span><span class="repository-copy"><strong>sinar-nusantara/mobile</strong><small>Flutter · diperbarui 3 jam lalu</small></span><span class="repo-branch"><img src="{{ Vite::asset('src/assets/icons/arrows-right-left.svg') }}" alt=""> develop</span></div>
+                <div class="repository-item"><span class="provider-icon"><img src="{{ asset('icons/simple-github.svg') }}" alt="GitHub"></span><span class="repository-copy"><strong>sinar-nusantara/commerce</strong><small>Laravel · diperbarui 12 menit lalu</small></span><span class="repo-branch"><img src="{{ asset('icons/arrows-right-left.svg') }}" alt=""> main</span></div>
+                <div class="repository-item"><span class="provider-icon"><img src="{{ asset('icons/simple-github.svg') }}" alt="GitHub"></span><span class="repository-copy"><strong>sinar-nusantara/core-api</strong><small>Node.js · diperbarui 1 jam lalu</small></span><span class="repo-branch"><img src="{{ asset('icons/arrows-right-left.svg') }}" alt=""> main</span></div>
+                <div class="repository-item"><span class="provider-icon"><img src="{{ asset('icons/simple-github.svg') }}" alt="GitHub"></span><span class="repository-copy"><strong>sinar-nusantara/mobile</strong><small>Flutter · diperbarui 3 jam lalu</small></span><span class="repo-branch"><img src="{{ asset('icons/arrows-right-left.svg') }}" alt=""> develop</span></div>
             </div>
         </section>
 
@@ -73,7 +73,7 @@
         <section class="dashboard-panel projects-panel" id="projects">
             <header class="dashboard-panel-heading">
                 <div><h2>Proyek</h2><p>Aktivitas terbaru dari workspace Anda</p></div>
-                <a href="{{ route('pages.dashboard') }}#projects" class="panel-link">Lihat semua <span>→</span></a>
+                <a href="{{ route('dashboard') }}#projects" class="panel-link">Lihat semua <span>→</span></a>
             </header>
             <div class="projects-table-wrap">
                 <table class="projects-table">
@@ -90,11 +90,11 @@
         </section>
 
         <section class="dashboard-panel activity-panel" id="deployments">
-            <header class="dashboard-panel-heading"><div><h2>Deployment terbaru</h2><p>Aktivitas rilis di semua proyek</p></div><a href="{{ route('pages.dashboard') }}#deployments" class="panel-link">Semua <span>→</span></a></header>
+            <header class="dashboard-panel-heading"><div><h2>Deployment terbaru</h2><p>Aktivitas rilis di semua proyek</p></div><a href="{{ route('dashboard') }}#deployments" class="panel-link">Semua <span>→</span></a></header>
             <div class="deployment-list">
-                <article class="deployment-item"><span class="deployment-icon"><img src="{{ Vite::asset('src/assets/icons/rocket-launch.svg') }}" alt=""></span><div class="deployment-copy"><strong>Sinar Commerce <span class="environment-tag">PRODUCTION</span></strong><p><span class="deployment-commit">main</span> · fix: checkout validation</p><small>oleh Andi Rahman · 8 menit lalu</small></div><span class="deployment-check"><img src="{{ Vite::asset('src/assets/icons/check-circle.svg') }}" alt=""></span></article>
-                <article class="deployment-item"><span class="deployment-icon"><img src="{{ Vite::asset('src/assets/icons/rocket-launch.svg') }}" alt=""></span><div class="deployment-copy"><strong>API Gateway <span class="environment-tag">STAGING</span></strong><p><span class="deployment-commit">feat/rate-limit</span> · add request throttling</p><small>oleh Budi Santoso · 42 menit lalu</small></div><span class="deployment-check"><img src="{{ Vite::asset('src/assets/icons/check-circle.svg') }}" alt=""></span></article>
-                <article class="deployment-item"><span class="deployment-icon"><img src="{{ Vite::asset('src/assets/icons/command-line.svg') }}" alt=""></span><div class="deployment-copy"><strong>Mobile App <span class="environment-tag">PREVIEW</span></strong><p><span class="deployment-commit">feat/new-onboarding</span> · update onboarding flow</p><small>oleh Rina Ayu · 2 jam lalu</small></div><span class="deployment-running">Building</span></article>
+                <article class="deployment-item"><span class="deployment-icon"><img src="{{ asset('icons/rocket-launch.svg') }}" alt=""></span><div class="deployment-copy"><strong>Sinar Commerce <span class="environment-tag">PRODUCTION</span></strong><p><span class="deployment-commit">main</span> · fix: checkout validation</p><small>oleh Andi Rahman · 8 menit lalu</small></div><span class="deployment-check"><img src="{{ asset('icons/check-circle.svg') }}" alt=""></span></article>
+                <article class="deployment-item"><span class="deployment-icon"><img src="{{ asset('icons/rocket-launch.svg') }}" alt=""></span><div class="deployment-copy"><strong>API Gateway <span class="environment-tag">STAGING</span></strong><p><span class="deployment-commit">feat/rate-limit</span> · add request throttling</p><small>oleh Budi Santoso · 42 menit lalu</small></div><span class="deployment-check"><img src="{{ asset('icons/check-circle.svg') }}" alt=""></span></article>
+                <article class="deployment-item"><span class="deployment-icon"><img src="{{ asset('icons/command-line.svg') }}" alt=""></span><div class="deployment-copy"><strong>Mobile App <span class="environment-tag">PREVIEW</span></strong><p><span class="deployment-commit">feat/new-onboarding</span> · update onboarding flow</p><small>oleh Rina Ayu · 2 jam lalu</small></div><span class="deployment-running">Building</span></article>
             </div>
         </section>
 
@@ -104,7 +104,7 @@
                 <h2>Tim Anda</h2>
                 <p>12 anggota di 4 tim</p>
                 </div>
-                <a href="{{ route('pages.dashboard') }}#team" class="panel-link">Kelola <span>→</span></a>
+                <a href="{{ route('dashboard') }}#team" class="panel-link">Kelola <span>→</span></a>
             </header>
 
             <div class="team-members">
@@ -139,16 +139,16 @@
                 </div>
             </div>
 
-            <a class="team-invite-link" href="{{ route('pages.dashboard') }}#team">
-                <img src="{{ Vite::asset('src/assets/icons/plus.svg') }}" alt=""> Undang anggota tim
+            <a class="team-invite-link" href="{{ route('dashboard') }}#team">
+                <img src="{{ asset('icons/plus.svg') }}" alt=""> Undang anggota tim
             </a>
             </section>
 
 
         <section class="dashboard-panel infrastructure-panel" id="infrastructure">
-            <header class="dashboard-panel-heading"><div><h2>Infrastruktur</h2><p>Status layanan dan server</p></div><a href="{{ route('pages.dashboard') }}#infrastructure" class="panel-link">Detail <span>→</span></a></header>
-            <div class="infrastructure-status"><span class="infrastructure-status-icon"><img src="{{ Vite::asset('src/assets/icons/server-stack.svg') }}" alt=""></span><div><strong>Production cluster</strong><small>Jakarta · 3 nodes</small></div><span class="infra-operational"><i></i> Normal</span></div>
-            <div class="infrastructure-status"><span class="infrastructure-status-icon"><img src="{{ Vite::asset('src/assets/icons/globe-alt.svg') }}" alt=""></span><div><strong>sinar-nusantara.id</strong><small>Web app · SSL aktif</small></div><span class="infra-operational"><i></i> Online</span></div>
+            <header class="dashboard-panel-heading"><div><h2>Infrastruktur</h2><p>Status layanan dan server</p></div><a href="{{ route('dashboard') }}#infrastructure" class="panel-link">Detail <span>→</span></a></header>
+            <div class="infrastructure-status"><span class="infrastructure-status-icon"><img src="{{ asset('icons/server-stack.svg') }}" alt=""></span><div><strong>Production cluster</strong><small>Jakarta · 3 nodes</small></div><span class="infra-operational"><i></i> Normal</span></div>
+            <div class="infrastructure-status"><span class="infrastructure-status-icon"><img src="{{ asset('icons/globe-alt.svg') }}" alt=""></span><div><strong>sinar-nusantara.id</strong><small>Web app · SSL aktif</small></div><span class="infra-operational"><i></i> Online</span></div>
             <div class="server-load"><span>Penggunaan CPU <strong>34%</strong></span><div><i style="width: 34%"></i></div></div>
         </section>
     </div>
