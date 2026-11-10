@@ -5,6 +5,11 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+*, *::before, *::after { box-sizing: border-box; }
+html { font-family: Arial, sans-serif; line-height: 1.5; }
+body { margin: 0; }
+button, input, select, textarea { font: inherit; }
+
 .auth-page { display: grid; min-height: 100vh; place-items: center; padding: 2rem 1rem; background: #111; color: #f5f5f5; font-family: Arial, sans-serif; }
 .auth-card { width: min(100%, 27rem); border: 1px solid #303030; border-radius: .8rem; background: #1b1b1b; padding: 2rem; box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 24%); }
 .auth-brand { margin-bottom: 1.75rem; text-align: center; }

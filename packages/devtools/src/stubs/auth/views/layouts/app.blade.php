@@ -13,11 +13,10 @@
     @endif
     @stack('head')
 
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @endif
+    <link rel="stylesheet" href="{{ asset('css/devtools-auth.css') }}">
+    <script src="{{ asset('js/devtools-auth.js') }}" defer></script>
 </head>
-<body class="min-h-screen bg-white text-neutral-900 antialiased @yield('body-class')">
+<body class="@yield('body-class')">
     <main id="page-view">
         @yield('content')
     </main>

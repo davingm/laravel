@@ -18,8 +18,8 @@
                     <p>Perbarui informasi akun dan kata sandi Anda.</p>
                 </div>
 
-                @if (session('status'))
-                    <div class="profile-alert profile-alert-success" role="status">{{ session('status') }}</div>
+                @if (session('success'))
+                    <div class="profile-alert profile-alert-success" role="status">{{ session('success') }}</div>
                 @endif
 
                 @if ($errors->any())
@@ -35,7 +35,7 @@
 
                 <form class="profile-form" method="POST" action="{{ route('profile.update') }}">
                     @csrf
-                    @method('PUT')
+                    @method('PATCH')
 
                     <div class="profile-section">
                         <h2>Informasi akun</h2>
@@ -47,11 +47,17 @@
                             <span>Email</span>
                             <input id="email" name="email" type="email" value="{{ old('email', auth()->user()->email) }}" required autocomplete="email">
                         </label>
+                        <div class="profile-actions">
+                            <button class="profile-save-button" type="submit">Simpan profil</button>
+                        </div>
                     </div>
+                </form>
 
+                <form class="profile-form" method="POST" action="{{ route('profile.password') }}">
+                    @csrf
+                    @method('PATCH')
                     <div class="profile-section">
                         <h2>Ubah kata sandi</h2>
-                        <p class="profile-hint">Biarkan kosong jika Anda tidak ingin mengganti kata sandi.</p>
                         <label class="profile-field" for="current_password">
                             <span>Kata sandi saat ini</span>
                             <input id="current_password" name="current_password" type="password" autocomplete="current-password">
@@ -64,10 +70,9 @@
                             <span>Konfirmasi kata sandi baru</span>
                             <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password">
                         </label>
-                    </div>
-
-                    <div class="profile-actions">
-                        <button class="profile-save-button" type="submit">Simpan perubahan</button>
+                        <div class="profile-actions">
+                            <button class="profile-save-button" type="submit">Ubah kata sandi</button>
+                        </div>
                     </div>
                 </form>
             </section>

@@ -147,6 +147,8 @@ final class AuthInstallCommand extends Command
         $this->publishAssets($force);
         $this->file('resources/css/app.css', false);
         $this->file('resources/js/app.js', false);
+        $this->file('public/css/devtools-auth.css', false);
+        $this->file('public/js/devtools-auth.js', false);
         $icons = $this->publishIcons($force);
         foreach ($icons as $i => $icon) {
             $this->file($icon, $i === count($icons) - 1);
@@ -167,6 +169,7 @@ final class AuthInstallCommand extends Command
         $this->line("  {$this->blue('operator@example.com')} password  {$this->gray('→')}  operator");
         $this->line("  {$this->blue('user@example.com')}     password  {$this->gray('→')}  user");
         $this->line('');
+        $this->line("  {$this->dim('Frontend assets:')}      served directly; npm is not required for auth UI");
         $this->line("  {$this->dim('Start dev server:')}  php artisan dev");
         $this->line("  {$this->dim('Open browser:')}      http://localhost:8000/login");
         $this->line('');
@@ -429,6 +432,21 @@ final class AuthInstallCommand extends Command
             // Keep existing bootstrap import, prepend our snippet
             $base = str_contains($jsContent, "import './bootstrap'") ? $jsContent : "import './bootstrap';\n";
             File::put($js, $authSnippet."\n".$base);
+        }
+
+        $staticCss = preg_replace('/^@(?:import|source)\\s+.*;\\s*$/m', '', File::get($cssStub));
+        $staticCss = "/* Standalone Devtools auth UI; no Node.js or Vite build required. */\n".$staticCss;
+        $staticCssPath = public_path('css/devtools-auth.css');
+        $staticJsPath = public_path('js/devtools-auth.js');
+
+        if (! File::exists($staticCssPath) || $force || ! str_contains(File::get($staticCssPath), 'auth-page')) {
+            File::ensureDirectoryExists(dirname($staticCssPath));
+            File::put($staticCssPath, $staticCss);
+        }
+
+        if (! File::exists($staticJsPath) || $force || ! str_contains(File::get($staticJsPath), '__DAVINGM__')) {
+            File::ensureDirectoryExists(dirname($staticJsPath));
+            File::copy($jsStub, $staticJsPath);
         }
     }
 

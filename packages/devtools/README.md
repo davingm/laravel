@@ -47,6 +47,12 @@ What it installs:
 
 The command refuses to run if auth controllers, auth views, or the role migration already exist. Pass `--force` to overwrite existing files.
 
+The auth UI publishes standalone CSS and JavaScript under `public/`; login and dashboard styling do not require Node.js, npm, or Vite. Start the Laravel development server with:
+
+```bash
+php artisan dev
+```
+
 `php artisan dev` starts the Laravel server, queue worker, and Vite, then automatically opens the application in your default browser once everything is ready. Pass `--no-open` to skip the browser:
 
 ```bash

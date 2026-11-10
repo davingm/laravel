@@ -846,7 +846,7 @@ function startDev(extraArgs = []) {
         const viteEntry = resolve(projectRoot, 'node_modules/vite/bin/vite.js');
         if (!existsSync(viteEntry)) {
             viteRequired = false;
-            ui.log('Frontend dependencies missing. Run npm ci in the project root.');
+            ui.log('Vite dependencies are missing. Auth starter assets work without npm; install frontend dependencies only if this app uses Vite.');
         } else {
             viteRequired = true;
             const viteOutput = [];
