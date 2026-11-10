@@ -24,6 +24,29 @@ php artisan make:roles admin editor
 php artisan crud:generate Product
 ```
 
+## auth:install
+
+Scaffolds a complete auth starter on a clean Laravel 12 project:
+
+```bash
+php artisan auth:install
+```
+
+What it installs:
+- Login and register views using the dashboard UI kit
+- Dashboard, profile, and user management pages
+- `EnsureUserIsAdministrator` and `EnsureUserIsOperator` middleware with `role.administrator` and `role.operator` aliases
+- Migration that adds a `role` column to the `users` table
+- `AuthSeeder` with 3 default users — credentials below, **change before deploying**
+
+| Email | Password | Role |
+|---|---|---|
+| admin@example.com | password | administrator |
+| operator@example.com | password | operator |
+| user@example.com | password | user |
+
+The command refuses to run if auth controllers, auth views, or the role migration already exist. Pass `--force` to overwrite existing files.
+
 `php artisan dev` starts the Laravel server, queue worker, and Vite, then automatically opens the application in your default browser once everything is ready. Pass `--no-open` to skip the browser:
 
 ```bash

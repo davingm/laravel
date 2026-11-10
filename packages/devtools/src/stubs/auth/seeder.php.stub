@@ -1,0 +1,52 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class AuthSeeder extends Seeder
+{
+    /**
+     * Seed default auth users.
+     *
+     * Three roles are seeded: administrator, operator, and user.
+     * Credentials are intentionally simple for local development only.
+     * Change all passwords before deploying to any shared environment.
+     */
+    public function run(): void
+    {
+        $users = [
+            [
+                'name'     => 'Administrator',
+                'email'    => 'admin@example.com',
+                'password' => Hash::make('password'),
+                'role'     => 'administrator',
+            ],
+            [
+                'name'     => 'Operator',
+                'email'    => 'operator@example.com',
+                'password' => Hash::make('password'),
+                'role'     => 'operator',
+            ],
+            [
+                'name'     => 'User',
+                'email'    => 'user@example.com',
+                'password' => Hash::make('password'),
+                'role'     => 'user',
+            ],
+        ];
+
+        foreach ($users as $data) {
+            DB::table('users')->updateOrInsert(
+                ['email' => $data['email']],
+                array_merge($data, [
+                    'email_verified_at' => now(),
+                    'created_at'        => now(),
+                    'updated_at'        => now(),
+                ])
+            );
+        }
+    }
+}
