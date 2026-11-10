@@ -61,6 +61,19 @@ php artisan dev --no-open
 
 The CRUD generator reads the active database schema, so run the table migrations first. It creates a model, controller, Blade views under `resources/views`, and a resource route in `routes/web.php`. It derives basic validation rules from column types and nullability. Existing files are preserved.
 
+The package also exposes `Davingm\LaravelDevtools\Crud\Schema\SchemaInspector` for inspecting an existing table without parsing migration files. It returns column definitions, primary key columns, and declared foreign key constraints as metadata. Composite foreign keys are preserved and marked as unsupported for a single Eloquent relationship. Column length is populated only when the active driver's Laravel schema metadata includes it; Laravel's common `getColumns()` result does not guarantee that field. Database drivers may also report type names and default values differently.
+
+## Package tests
+
+The package has an isolated PHPUnit suite. Install its development dependencies and run the schema tests from this directory:
+
+```bash
+composer install
+composer test
+```
+
+Tests bootstrap an in-memory SQLite connection with Laravel's database Capsule; they do not boot the playground application or its custom runtime.
+
 The interactive development panel also runs with `php artisan dev`. To expose the same entry point as `composer dev`, add this script to the root application's `composer.json`:
 
 ```json

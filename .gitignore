@@ -26,6 +26,10 @@ references
 
 # Dependencies and test caches
 /vendor/
+/packages/devtools/vendor/
+/packages/devtools/composer.lock
+/packages/devtools/.phpunit.cache/
+/packages/devtools/.phpunit.result.cache
 /node_modules/
 /playground/vendor/
 /playground/node_modules/

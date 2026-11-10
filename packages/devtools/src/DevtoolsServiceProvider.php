@@ -3,9 +3,8 @@
 declare(strict_types=1);
 
 namespace Davingm\LaravelDevtools;
-
 use Davingm\LaravelDevtools\Console\Commands\AuthInstallCommand;
-use Davingm\LaravelDevtools\Console\Commands\AutoCrudCommand;
+use Davingm\LaravelDevtools\Commands\CrudGenerateCommand;
 use Davingm\LaravelDevtools\Console\Commands\DevCommand;
 use Davingm\LaravelDevtools\Console\Commands\DevtoolsCommand;
 use Davingm\LaravelDevtools\Console\Commands\MakeAllCommand;
@@ -23,7 +22,7 @@ final class DevtoolsServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 AuthInstallCommand::class,
-                AutoCrudCommand::class,
+                CrudGenerateCommand::class,
                 DevCommand::class,
                 DevtoolsCommand::class,
                 MakeAllCommand::class,
