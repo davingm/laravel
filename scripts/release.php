@@ -141,11 +141,13 @@ final class SplitReleaseCommand
             $this->assertMainIsSynchronized();
 
             $versions = [];
+            $remoteMains = [];
             foreach ($selected as $key) {
                 $package = self::PACKAGES[$key];
                 $this->assertRemote($package['remote'], $package['repository']);
                 $latest = ReleaseVersion::latest($this->remoteTags($package['remote']));
                 $versions[$key] = $this->chooseVersion($package['label'], $latest);
+                $remoteMains[$key] = $this->fetchRemoteMain($package['remote']);
             }
 
             $this->assertIndexIsClean();
@@ -154,7 +156,8 @@ final class SplitReleaseCommand
             $commit = $this->git(['rev-parse', 'HEAD']);
             $splitCommits = [];
             foreach ($selected as $key) {
-                $splitCommits[$key] = $this->splitPackage($key);
+                $splitCommit = $this->splitPackage($key);
+                $splitCommits[$key] = $this->prepareSplitForPush($key, $splitCommit, $remoteMains[$key]);
             }
 
             $this->line('');
@@ -162,7 +165,9 @@ final class SplitReleaseCommand
             $this->line('  Commit monorepo: '.$commit);
             foreach ($selected as $key) {
                 $package = self::PACKAGES[$key];
-                $this->line("  {$package['label']}: {$versions[$key]} -> {$package['remote']}/main (split {$splitCommits[$key]})");
+                $split = $splitCommits[$key];
+                $branchAction = $split['pushBranch'] ? 'update main' : 'main unchanged';
+                $this->line("  {$package['label']}: {$versions[$key]} -> {$package['remote']}/main ({$branchAction}, {$split['commit']})");
             }
             $this->line('  Packagist diperbarui melalui webhook GitHub setelah tag didorong.');
 
@@ -175,6 +180,9 @@ final class SplitReleaseCommand
             foreach ($selected as $key) {
                 if (ReleaseVersion::hasTag($this->remoteTags(self::PACKAGES[$key]['remote']), $versions[$key])) {
                     throw new RuntimeException("Remote tag [{$versions[$key]}] appeared during planning; no push was attempted.");
+                }
+                if ($this->fetchRemoteMain(self::PACKAGES[$key]['remote']) !== $remoteMains[$key]) {
+                    throw new RuntimeException('A package main branch changed during planning. No push was attempted; rerun the release command.');
                 }
             }
 
@@ -253,8 +261,11 @@ final class SplitReleaseCommand
         $this->git(['fetch', '--quiet', 'origin', 'main']);
         $head = $this->git(['rev-parse', 'HEAD']);
         $originHead = $this->git(['rev-parse', 'origin/main']);
-        if ($head !== $originHead) {
-            throw new RuntimeException('Local main must match origin/main before release. Sync the branch, then rerun.');
+        $isBasedOnOrigin = $this->gitResult(['merge-base', '--is-ancestor', $originHead, $head]);
+        if ($isBasedOnOrigin['exitCode'] !== 0) {
+            $counts = $this->git(['rev-list', '--left-right', '--count', 'origin/main...HEAD']);
+            [$behind, $ahead] = array_map('intval', preg_split('/\s+/', trim($counts)) ?: [0, 0]);
+            throw new RuntimeException("Local main and origin/main have diverged (local is {$ahead} ahead and {$behind} behind). Sync them before release.");
         }
     }
 
@@ -288,6 +299,18 @@ final class SplitReleaseCommand
         }
 
         return $tags;
+    }
+
+    private function fetchRemoteMain(string $remote): string
+    {
+        $this->git(['fetch', '--quiet', '--no-tags', $remote, 'refs/heads/main']);
+        $commit = $this->git(['rev-parse', 'FETCH_HEAD']);
+
+        if (preg_match('/^[0-9a-f]{40,64}$/i', $commit) !== 1) {
+            throw new RuntimeException("Could not read [{$remote}/main].");
+        }
+
+        return $commit;
     }
 
     private function chooseVersion(string $label, ?string $latest): string
@@ -385,24 +408,86 @@ final class SplitReleaseCommand
         return $splitCommit;
     }
 
-    private function releasePackage(string $key, string $version, string $splitCommit): void
+    /** @param array{commit: string, pushBranch: bool} $split */
+    private function releasePackage(string $key, string $version, array $split): void
     {
         $package = self::PACKAGES[$key];
         if (ReleaseVersion::hasTag($this->remoteTags($package['remote']), $version)) {
             throw new RuntimeException("Remote tag [{$version}] appeared during planning; package branch was not pushed.");
         }
 
-        $this->line("Push {$package['remote']}/main...");
-        $this->git(['push', $package['remote'], $splitCommit.':refs/heads/main']);
+        if ($split['pushBranch']) {
+            $this->line("Push {$package['remote']}/main...");
+            $this->git(['push', $package['remote'], $split['commit'].':refs/heads/main']);
+        } else {
+            $this->line("{$package['remote']}/main sudah berisi source yang sama; hanya tag yang akan didorong.");
+        }
 
         $this->line("Push tag {$version}...");
-        $this->git(['push', $package['remote'], $splitCommit.':refs/tags/'.$version]);
+        $this->git(['push', $package['remote'], $split['commit'].':refs/tags/'.$version]);
         $this->line("Rilis {$package['composer']} {$version} didorong. Packagist akan diperbarui oleh webhook GitHub jika webhook package aktif.");
+    }
+
+    /** @return array{commit: string, pushBranch: bool} */
+    private function prepareSplitForPush(string $key, string $splitCommit, string $remoteMain): array
+    {
+        $package = self::PACKAGES[$key];
+        $ancestor = $this->gitResult(['merge-base', '--is-ancestor', $remoteMain, $splitCommit]);
+        if ($ancestor['exitCode'] === 0) {
+            return ['commit' => $splitCommit, 'pushBranch' => true];
+        }
+        if ($ancestor['exitCode'] !== 1) {
+            throw new RuntimeException("Could not compare [{$package['remote']}/main] with the package split.");
+        }
+
+        $remoteTree = $this->git(['rev-parse', $remoteMain.'^{tree}']);
+        $splitTree = $this->git(['rev-parse', $splitCommit.'^{tree}']);
+        if ($remoteTree === $splitTree) {
+            return ['commit' => $remoteMain, 'pushBranch' => false];
+        }
+
+        $splitHistory = $this->git(['log', '--format=%H%x09%T', $splitCommit]);
+        foreach (preg_split('/\R/', trim($splitHistory)) ?: [] as $line) {
+            [$historicalCommit, $historicalTree] = array_pad(explode("\t", $line, 2), 2, '');
+            if ($historicalTree !== $remoteTree) {
+                continue;
+            }
+
+            $mergeCommit = $this->git([
+                'commit-tree',
+                $splitTree,
+                '-p',
+                $remoteMain,
+                '-p',
+                $splitCommit,
+                '-m',
+                'chore: sync '.$package['path'].' with package repository history',
+            ]);
+
+            if (
+                $this->gitResult(['merge-base', '--is-ancestor', $remoteMain, $mergeCommit])['exitCode'] !== 0
+                || $this->gitResult(['merge-base', '--is-ancestor', $splitCommit, $mergeCommit])['exitCode'] !== 0
+                || $this->git(['rev-parse', $mergeCommit.'^{tree}']) !== $splitTree
+            ) {
+                throw new RuntimeException("Could not safely connect [{$package['remote']}/main] to the package split.");
+            }
+
+            $this->line("Remote tree matches historical package split {$historicalCommit}; preserving both histories.");
+
+            return ['commit' => $mergeCommit, 'pushBranch' => true];
+        }
+
+        throw new RuntimeException(
+            "[{$package['remote']}/main] has commits or files not included in the split for [{$package['path']}]. "
+            .'No push was attempted because the remote tree has no matching checkpoint in the split history. Review and reconcile the package source manually, '
+            .'commit and push the sync to origin/main, then rerun composer release. Do not force-push or overwrite the package branch.'
+        );
     }
 
     private function ask(string $prompt, string $default): string
     {
         echo $prompt.($default === '' ? ': ' : " [{$default}]: ");
+        fflush(STDOUT);
 
         $input = $this->stdinEnded ? false : fgets(STDIN);
         if ($input === false) {
@@ -424,12 +509,12 @@ final class SplitReleaseCommand
 
     private function confirm(string $prompt, bool $default): bool
     {
-        $answer = strtolower($this->ask($prompt.' (y/n)', $default ? 'y' : 'n'));
-        if (! in_array($answer, ['y', 'yes', 'n', 'no'], true)) {
-            throw new InvalidArgumentException('Answer y or n.');
+        $answer = strtolower($this->ask($prompt.' (y/n, ya/tidak)', $default ? 'y' : 'n'));
+        if (! in_array($answer, ['y', 'yes', 's', 'setuju', 'ya', 'iya', 'n', 'no', 'tidak'], true)) {
+            throw new InvalidArgumentException('Jawab y/ya/s untuk setuju atau n/tidak untuk membatalkan.');
         }
 
-        return in_array($answer, ['y', 'yes'], true);
+        return in_array($answer, ['y', 'yes', 's', 'setuju', 'ya', 'iya'], true);
     }
 
     private function openTerminalInput(): mixed
