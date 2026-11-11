@@ -2,6 +2,8 @@
 
 Panduan ini menjelaskan cara merilis source `packages/laravel` sebagai package Composer `davingm/laravel-runtime`. Source dikembangkan di monorepo ini; repository rilis terpisah berisi isi `packages/laravel` di root-nya.
 
+Untuk alur interaktif yang menangani bump versi, commit, split, dan push, gunakan [`composer release`](./release-packages.md). Panduan manual berikut tetap tersedia untuk memahami langkah-langkah dan memecahkan masalah.
+
 > Jangan menganggap versi atau status sinkronisasi dalam catatan lama sebagai kondisi saat ini. Sebelum merilis, periksa branch dan tag repository package serta metadata [Packagist](https://packagist.org/packages/davingm/laravel-runtime). Jangan menimpa atau memindahkan tag yang sudah diterbitkan.
 
 ## Sebelum merilis
