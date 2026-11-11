@@ -1,27 +1,110 @@
-# Laravel Devtools
+﻿# Laravel Devtools
 
-Development commands and a root `.laravel/` runtime for Laravel 11, 12, and 13. The package supports PHP 8.2 and newer, subject to the PHP requirement of the selected Laravel version.
+Generate conventional CRUD files for Laravel applications from the schema on the active database connection.
 
-Install it with Composer:
+[![PHP 8.2+](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![Laravel 11](https://img.shields.io/badge/Laravel-11-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
+[![License: AGPL-3.0-only](https://img.shields.io/badge/License-AGPL--3.0--only-blue)](https://www.gnu.org/licenses/agpl-3.0.html)
+
+## Requirements
+
+- PHP 8.2 or newer.
+- Laravel 11 is the minimum tested version. The package manifest also permits Laravel 12 and 13, but those versions have not been verified by the integration suite.
+
+## Installation
+
+Install the package as a development dependency from your Laravel application root:
 
 ```bash
 composer require --dev davingm/laravel-devtools
 ```
 
-Composer asks to allow the `davingm/laravel-devtools` plugin. Once enabled, its Composer plugin copies the runtime to the application root, and Laravel package discovery registers the Artisan commands.
+The package is a Composer plugin. Allow the plugin when Composer prompts you. Laravel package discovery registers the Artisan commands.
 
-Available commands:
+## Quick Start
+
+1. Create and migrate a `categories` table and a `products` table with these columns:
+
+   ```text
+   categories: id, name
+   products: id, category_id (foreign key), name, price, description,
+             is_active, created_at, updated_at
+   ```
+
+   The `category_id` foreign key should reference `categories.id`. Ensure the application has an `App\Models\Category` model for the generated relationship dropdown.
+
+2. Run the migrations against the database configured for the application:
+
+   ```bash
+   ./artisan migrate
+   ```
+
+3. Generate the CRUD from the application root:
+
+   ```bash
+   ./artisan crud:generate Product
+   ```
+
+4. Review the generated model, controller, three Blade views, and marked route block listed below.
+
+5. Start the application with `./artisan serve` and open [http://127.0.0.1:8000/products](http://127.0.0.1:8000/products).
+
+For a detailed walkthrough, see [Getting Started](docs/getting-started.md).
+
+## What Gets Generated
+
+For the `products` table, the command generates:
+
+- `app/Models/Product.php` — Eloquent model with fillable columns, supported casts, and detected single-column relationships.
+- `app/Http/Controllers/ProductController.php` — paginated index, create, store, edit, update, and destroy actions with basic validation.
+- `resources/views/products/index.blade.php` — paginated table and CRUD actions.
+- `resources/views/products/create.blade.php` — creation form.
+- `resources/views/products/edit.blade.php` — edit form.
+- A marked resource route block in `routes/web.php`; the generated resource excludes the `show` action.
+
+A detected single-column foreign key such as `category_id` creates a relationship dropdown. Boolean fields use checkboxes. The generated route block can be updated on subsequent runs without adding a duplicate block.
+
+## Commands Reference
+
+```text
+crud:generate {model} {--dry-run} {--force}
+```
+
+The required `model` argument accepts a model name or table name, for example `Product` or `products`.
+
+- `--dry-run` previews generated files and route changes without writing files.
+- `--force` overwrites existing model, controller, and view files. Auto CRUD route blocks are updated whenever the command runs.
+- The options cannot be combined.
+- Existing model, controller, and view files are skipped unless `--force` is provided. A recognized manual route may cause route registration to be skipped.
+
+The legacy command name `devtools:crud` remains available as a silent alias. New projects should use `crud:generate`; see [Upgrading](UPGRADING.md) for the alias status and migration notes.
+
+For full option details and output behavior, see [Commands](docs/commands.md).
+
+## Example
+
+Suppose the active database has these tables:
+
+```text
+categories
+- id
+- name
+
+products
+- id
+- category_id (foreign key to categories.id)
+- name
+- price
+- description (nullable)
+- is_active
+- created_at
+- updated_at
+```
+
+After the migrations have run, execute:
 
 ```bash
-php artisan dev
-php artisan devtools
-php artisan make:all Product
-php artisan make:controller Product --resource --model=Product
-php artisan make:migration product
-php artisan make:page about
-php artisan make:dashboard --layout=sidebar
-php artisan make:roles admin editor
-php artisan crud:generate Product
+./artisan crud:generate Product
 ```
 
 ## auth:install
@@ -61,13 +144,27 @@ php artisan dev --no-open
 
 The CRUD generator reads the active database schema, so run the table migrations first. It creates a model, controller, Blade views under `resources/views`, and a resource route in `routes/web.php`. It derives basic validation rules from column types and nullability. Existing files are preserved.
 
-The interactive development panel also runs with `php artisan dev`. To expose the same entry point as `composer dev`, add this script to the root application's `composer.json`:
+The generated controller provides the resource actions and validates submitted values using rules derived from column types, nullability, and supported foreign keys. The views render the category dropdown, a checkbox for `is_active`, and the product list. The route manager adds a marked `products` resource block to `routes/web.php` and updates that block on later runs.
 
-```json
-"dev": [
-  "Composer\\Config::disableProcessTimeout",
-  "@php artisan dev"
-]
+Use `--dry-run` to preview planned changes, or `--force` when you intend to overwrite generated model, controller, or view files.
+
+## Limitations
+
+The generator requires a single-column primary key. Composite foreign keys do not become Eloquent relationships, unique validation rules are not generated, and enum fields depend on metadata returned by the database driver. Route detection is limited to recognized resource and route-name patterns in `routes/web.php`. Laravel 12 and 13 have not been verified by the integration suite.
+
+See [Limitations](docs/limitations.md) for impacts and workarounds.
+
+## Testing
+
+Run the package test suite from the repository root:
+
+```bash
+vendor/bin/phpunit -c packages/devtools/phpunit.xml
 ```
 
-Composer packages cannot add scripts to a consuming project's root manifest automatically. The CLI and the Artisan commands invoke the application's normal Laravel bootstrap; they do not depend on this repository's custom framework runtime.
+## License
+
+This package is licensed under [GNU Affero General Public License v3.0 only (AGPL-3.0-only)](https://www.gnu.org/licenses/agpl-3.0.html).
+
+> [!WARNING]
+> This package is licensed under AGPL-3.0-only. If you integrate this into a network-accessible application, you must comply with AGPL's copyleft requirements, which may include releasing your application's source code. For commercial/proprietary use, contact the maintainer for a separate license.

@@ -11,10 +11,23 @@
         "illuminate/console": "^11.0 || ^12.0 || ^13.0",
         "illuminate/support": "^11.0 || ^12.0 || ^13.0"
     },
+    "require-dev": {
+        "illuminate/database": "^11.0 || ^12.0 || ^13.0",
+        "phpunit/phpunit": "^10.5",
+        "orchestra/testbench": "^9.0"
+    },
     "autoload": {
         "psr-4": {
             "Davingm\\LaravelDevtools\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "@php vendor/bin/phpunit"
     },
     "extra": {
         "class": "Davingm\\LaravelDevtools\\RuntimePlugin",
