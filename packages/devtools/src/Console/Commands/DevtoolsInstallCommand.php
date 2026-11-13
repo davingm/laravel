@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Davingm\LaravelDevtools\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 final class DevtoolsInstallCommand extends Command
@@ -43,8 +46,9 @@ final class DevtoolsInstallCommand extends Command
         $this->step(2, 6, 'Add database migrations');
         $migrationPaths = $this->publishMigrations();
 
-        $this->step(3, 6, 'Copy dashboard pages and native CSS');
+        $this->step(3, 6, 'Copy dashboard pages, UI components, and native CSS');
         $this->copyTree($this->stubPath('resources/views/pages'), resource_path('views/pages'), 'resources/views/pages');
+        $this->copyTree($this->stubPath('resources/views/components/ui'), resource_path('views/components/ui'), 'resources/views/components/ui');
         $this->publishStylesheet();
         $this->publishScript();
         $this->publishMiddleware();
@@ -71,6 +75,12 @@ final class DevtoolsInstallCommand extends Command
             return self::FAILURE;
         }
         $this->done('Sample categories and tools are ready');
+
+        $this->step(7, 7, 'Run preset smoke checks');
+        if (! $this->verifyInstallation()) {
+            $this->error('Preset terpasang, tetapi pemeriksaan menemukan masalah. Perbaiki pesan di atas sebelum menggunakan fitur peminjaman.');
+            return self::FAILURE;
+        }
 
         $this->line('');
         $this->info('Preset peminjaman berhasil dipasang.');
@@ -99,6 +109,7 @@ final class DevtoolsInstallCommand extends Command
             'resources/views/pages/loans',
             'resources/views/pages/returns',
             'resources/views/pages/users',
+            'resources/views/components/ui',
             'app/Http/Controllers/AlatController.php',
             'app/Http/Controllers/KategoriController.php',
             'app/Http/Controllers/PeminjamanController.php',
@@ -146,6 +157,54 @@ final class DevtoolsInstallCommand extends Command
         }
 
         return true;
+    }
+
+    private function verifyInstallation(): bool
+    {
+        $checks = [
+            'Tabel peminjaman tersedia' => fn (): bool => collect([
+                'kategoris', 'alats', 'peminjamans', 'peminjaman_items',
+            ])->every(fn (string $table): bool => Schema::hasTable($table)),
+            'Route pengajuan peminjaman terdaftar' => fn (): bool => Route::has('peminjaman.peminjamans.request'),
+            'Route persetujuan operator terdaftar' => fn (): bool => Route::has('peminjaman.peminjamans.approve'),
+            'CSS native dan komponen UI tersedia' => fn (): bool => File::exists(public_path('css/peminjaman.css'))
+                && File::exists(resource_path('views/components/ui/input.blade.php'))
+                && File::exists(resource_path('views/components/ui/button.blade.php')),
+        ];
+
+        $passed = true;
+        foreach ($checks as $label => $check) {
+            $ok = $check();
+            $passed = $ok && $passed;
+            $this->line(sprintf('  <fg=cyan>CHECK</> %-48s %s', $label, $ok ? '<fg=green>PASS</>' : '<fg=red>FAIL</>'));
+        }
+
+        $this->line('  <fg=cyan>CHECK</> Relasi item → tabel peminjaman                    <fg=yellow>RUNNING</>');
+        try {
+            $user = \App\Models\User::query()->firstOrFail();
+            $alat = \App\Models\Alat::query()->firstOrFail();
+
+            DB::beginTransaction();
+            try {
+                $loan = \App\Models\Peminjaman::query()->create([
+                    'user_id' => $user->id,
+                    'status' => 'menunggu',
+                ]);
+                $loan->items()->create(['alat_id' => $alat->id, 'jumlah' => 1]);
+                DB::rollBack();
+                $this->line('  <fg=green>PASS</> Foreign key menerima item dan transaksi uji di-rollback');
+            } catch (\Throwable $exception) {
+                if (DB::transactionLevel() > 0) {
+                    DB::rollBack();
+                }
+                throw $exception;
+            }
+        } catch (\Throwable $exception) {
+            $passed = false;
+            $this->line('  <fg=red>FAIL</> Foreign key item: '.$exception->getMessage());
+        }
+
+        return $passed;
     }
 
     private function stubPath(string $relative = ''): string

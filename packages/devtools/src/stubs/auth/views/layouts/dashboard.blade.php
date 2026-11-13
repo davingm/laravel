@@ -13,10 +13,10 @@
 
 @section('content')
 <div class="dashboard-shell">
-    @include('components.dashboard-header')
+    @include('components.app.dashboard-header')
 
     <div class="dashboard-workspace">
-        @include('components.dashboard-sidebar')
+        @include('components.app.dashboard-sidebar')
 
         <main class="dashboard-main" aria-label="Konten dashboard">
             @yield('dashboard-content')

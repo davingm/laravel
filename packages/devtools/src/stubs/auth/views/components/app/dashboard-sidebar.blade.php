@@ -19,7 +19,7 @@
                 $role = auth()->user()->role;
                 $peminjamanMenu = [
                     ['label' => 'Daftar alat', 'route' => 'peminjaman.alats.index', 'active' => 'peminjaman.alats.*', 'roles' => ['administrator', 'operator', 'user'], 'icon' => 'tools'],
-                    ['label' => 'Kategori alat', 'route' => 'peminjaman.kategoris.index', 'active' => 'peminjaman.kategoris.*', 'roles' => ['administrator'], 'icon' => 'categories'],
+                    ['label' => 'Kategori alat', 'route' => 'peminjaman.kategoris.index', 'active' => 'peminjaman.kategoris.*', 'roles' => ['administrator', 'operator'], 'icon' => 'categories'],
                     ['label' => 'Pengguna', 'route' => 'peminjaman.users.index', 'active' => 'peminjaman.users.*', 'roles' => ['administrator'], 'icon' => 'users'],
                     ['label' => 'Peminjaman', 'route' => 'peminjaman.peminjamans.index', 'active' => 'peminjaman.peminjamans.*', 'roles' => ['administrator', 'operator', 'user'], 'icon' => 'loans'],
                     ['label' => 'Pengembalian', 'route' => 'peminjaman.pengembalians.index', 'active' => 'peminjaman.pengembalians.*', 'roles' => ['administrator', 'operator'], 'icon' => 'returns'],

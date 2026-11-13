@@ -11,13 +11,25 @@ Route::middleware('auth')->prefix('peminjaman')->name('peminjaman.')->group(func
     Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
 
     Route::get('/tools', [AlatController::class, 'index'])->name('alats.index');
+    Route::middleware('role.operator')->group(function (): void {
+        Route::resource('tools', AlatController::class)
+            ->only(['create', 'store'])
+            ->parameters(['tools' => 'alat'])
+            ->names('alats');
+
+        Route::get('/categories', [KategoriController::class, 'index'])->name('kategoris.index');
+        Route::get('/categories/create', [KategoriController::class, 'create'])->name('kategoris.create');
+        Route::post('/categories', [KategoriController::class, 'store'])->name('kategoris.store');
+    });
+
     Route::middleware('role.administrator')->group(function (): void {
         Route::resource('tools', AlatController::class)
-            ->except(['index', 'show'])
+            ->except(['index', 'create', 'store'])
             ->parameters(['tools' => 'alat'])
             ->names('alats');
 
         Route::resource('categories', KategoriController::class)
+            ->except(['index', 'create', 'store'])
             ->parameters(['categories' => 'kategori'])
             ->names('kategoris');
 

@@ -26,7 +26,7 @@
         <a class="dashboard-utility-link" href="{{ route('dashboard') }}#analytics">Billing</a>
         <details class="dashboard-profile-menu">
             <summary class="dashboard-avatar" aria-label="Buka menu profil">
-                <img src="{{ asset('icons/user-circle.svg') }}" alt="">
+                <img src="https://cdn.davingm.com/author.webp" alt="">
             </summary>
             <div class="dashboard-profile-dropdown">
                 <span class="dashboard-profile-name">{{ auth()->user()->name }}</span>

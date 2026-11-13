@@ -1,26 +1,57 @@
 /* Native preset additions on top of the shared auth dashboard shell. */
-.developer-dashboard .dashboard-main { background: #202020; color: #ededed; }
+.dashboard-page .dashboard-workspace { background: #000; }
+.dashboard-page .dashboard-main { border: 1px solid #343434; border-radius: 18px 0 0 18px; background: #080808; background-clip: padding-box; color: #ededed; }
+.dashboard-page #profile-main,.dashboard-page .profile-main { background: #080808; color: #ededed; }
+.dashboard-page .dashboard-header,.dashboard-page .dashboard-sidebar { background: #000; }
+.dashboard-page .profile-heading h1 { color: #ededed; }
+.dashboard-page .profile-heading > p:last-child { color: #aaa; }
+.dashboard-page .profile-form,.dashboard-page .dashboard-panel,.dashboard-page .overview-card,.dashboard-page .overview-section,.dashboard-page .transaction-meta { border-color: #222; background: #0A0A0A; color: #ededed; }
+.dashboard-page .overview-card strong,.dashboard-page .transaction-meta strong { color: #eee; }
+.dashboard-page .overview-card span,.dashboard-page .transaction-meta span { color: #aaa; }
+.dashboard-page,.dashboard-page * { scrollbar-color: #303030 #080808; scrollbar-width: thin; }
+.dashboard-page *::-webkit-scrollbar { width: 7px; height: 7px; }
+.dashboard-page *::-webkit-scrollbar-track { background: #080808; }
+.dashboard-page *::-webkit-scrollbar-thumb { border: 2px solid #080808; border-radius: 8px; background: #303030; }
+.dashboard-page *::-webkit-scrollbar-thumb:hover { background: #484848; }
+.developer-dashboard .dashboard-main .barang-form input:not([type=hidden]):not([type=checkbox]),.developer-dashboard .dashboard-main .barang-form select,.developer-dashboard .dashboard-main .barang-form textarea,.developer-dashboard .dashboard-main input.crud-input,.developer-dashboard .dashboard-main select.crud-input,.developer-dashboard .dashboard-main textarea.crud-input,.developer-dashboard .dashboard-main input.crud-search {
+    border: 1px solid #292929;
+    border-radius: 3px;
+    background-color: #0A0A0A;
+    color: #eee;
+    color-scheme: dark;
+    font: inherit;
+}
+.developer-dashboard .dashboard-main .barang-form select,.developer-dashboard .dashboard-main select.crud-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23aaa' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .75rem center; background-size: .65rem; padding-right: 2rem; }
+.developer-dashboard .dashboard-main select option { background: #0A0A0A; color: #eee; }
+.developer-dashboard .dashboard-main .button-secondary { border-color: #292929; background: #0A0A0A; color: #eee; }
+.developer-dashboard .dashboard-main .button-secondary:hover { border-color: #444; background: #141414; color: #fff; }
+.dashboard-page .dashboard-avatar img { width: 1.85rem; height: 1.85rem; border-radius: 50%; background: transparent !important; filter: none !important; opacity: 1 !important; object-fit: cover; }
+.developer-dashboard .dashboard-main { border: 1px solid #343434; border-radius: 18px 0 0 18px; background: #080808; color: #ededed; }
 .developer-dashboard .dashboard-main .crud-title { color: #ededed; }
 .developer-dashboard .dashboard-main .crud-description,.developer-dashboard .dashboard-main .eyebrow { color: #a5a5a5; }
 .developer-dashboard .dashboard-main .crud-shell { color: #ededed; }
-.developer-dashboard .dashboard-main .table-wrap { margin: .35rem 0; border: 1px solid #414141; border-radius: 2px; background: #252525; padding: .4rem; }
+.developer-dashboard .dashboard-main .table-wrap { margin: .35rem 0; border: 1px solid #222; border-radius: 2px; background: #0A0A0A; padding: .4rem; }
 .developer-dashboard .dashboard-main .barang-table { border-collapse: separate; border-spacing: 0; color: #dedede; }
-.developer-dashboard .dashboard-main .barang-table thead { background: #303030; color: #c5c5c5; }
-.developer-dashboard .dashboard-main .barang-table th { border: 0; border-bottom: 1px solid #414141; padding: .8rem .85rem; color: #c5c5c5; }
-.developer-dashboard .dashboard-main .barang-table td { border: 0; border-bottom: 1px solid #383838; padding: .8rem .85rem; color: #dedede !important; }
-.developer-dashboard .dashboard-main .barang-table .number-column { border-right: 1px solid #414141; color: #9f9f9f !important; text-align: center; }
-.developer-dashboard .dashboard-main .barang-table tbody tr:nth-child(odd) td { background: #252525; }
-.developer-dashboard .dashboard-main .barang-table tbody tr:nth-child(even) td { background: #2b2b2b; }
-.developer-dashboard .dashboard-main .barang-table tbody tr:hover td { background: #363636; }
+.developer-dashboard .dashboard-main .barang-table thead { background: #0A0A0A; color: #c5c5c5; }
+.developer-dashboard .dashboard-main .barang-table th { border: 0; border-bottom: 1px solid #222; padding: .8rem .85rem; color: #c5c5c5; }
+.developer-dashboard .dashboard-main .barang-table td { border: 0; border-bottom: 1px solid #1b1b1b; padding: .8rem .85rem; color: #dedede !important; }
+.developer-dashboard .dashboard-main .barang-table .number-column { border-right: 1px solid #222; color: #9f9f9f !important; text-align: center; }
+.developer-dashboard .dashboard-main .barang-table tbody tr:nth-child(odd) td,.developer-dashboard .dashboard-main .barang-table tbody tr:nth-child(even) td { background: #0A0A0A; }
+.developer-dashboard .dashboard-main .barang-table tbody tr:hover td { background: #141414; }
 .developer-dashboard .dashboard-main .barang-table tbody tr:last-child td { border-bottom: 0; }
 .developer-dashboard .dashboard-main .barang-table tbody tr[data-edit-url] { cursor: pointer; }
 .developer-dashboard .dashboard-main .barang-table tbody tr[data-edit-url]:focus-visible { outline: 2px solid #1677ff; outline-offset: -2px; }
 .developer-dashboard .dashboard-main .empty-state { color: #aaa !important; text-align: center; }
-.developer-dashboard .dashboard-main .crud-summary { color: #aaa; }
+.developer-dashboard .dashboard-main .crud-summary { min-height: 3.75rem; border: 1px solid #222; border-radius: 2px; background: #0A0A0A; padding: .65rem 1rem; color: #aaa; }
 .developer-dashboard .dashboard-main .crud-summary-count { color: #f0f0f0; }
-.developer-dashboard .dashboard-main .crud-search,.developer-dashboard .dashboard-main .crud-input { border-color: #454545; border-radius: 2px; background: #292929; color: #eee; }
+.developer-dashboard .dashboard-main .crud-search,.developer-dashboard .dashboard-main .crud-input { border: 1px solid #292929; border-radius: 2px; background-color: #0A0A0A; color: #eee; color-scheme: dark; }
+.developer-dashboard .dashboard-main .crud-search,.developer-dashboard .dashboard-main .crud-input { min-height: 2.5rem; padding: .55rem .7rem; font: inherit; }
+.developer-dashboard .dashboard-main select.crud-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23aaa' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .75rem center; background-size: .65rem; padding-right: 2rem; }
+.developer-dashboard .dashboard-main .button { appearance: none; border: 1px solid transparent; border-radius: 2px; padding: .6rem .9rem; font: inherit; font-size: .82rem; line-height: 1.2; cursor: pointer; }
+.developer-dashboard .dashboard-main .crud-search::placeholder,.developer-dashboard .dashboard-main .crud-input::placeholder { color: #999; opacity: 1; }
+.developer-dashboard .dashboard-main .crud-search:focus,.developer-dashboard .dashboard-main .crud-input:focus { border-color: #1677ff; outline: 2px solid rgb(22 119 255 / 24%); outline-offset: 1px; }
 .developer-dashboard .dashboard-main .crud-field { color: #ddd; }
-.developer-dashboard .dashboard-main .barang-form,.developer-dashboard .dashboard-main .loan-item-picker { border-color: #414141; background: #252525; color: #eee; }
+.developer-dashboard .dashboard-main .barang-form,.developer-dashboard .dashboard-main .loan-item-picker { border-color: #222; background: #0A0A0A; color: #eee; }
 .developer-dashboard .dashboard-main .loan-item-option { border-color: #3b3b3b; }
 .developer-dashboard .dashboard-main .loan-item-option small,.developer-dashboard .dashboard-main .loan-dates dt { color: #aaa; }
 .developer-dashboard .dashboard-main .loan-item-option strong,.developer-dashboard .dashboard-main .loan-dates dd { color: #eee; }
@@ -28,7 +59,10 @@
 .developer-dashboard .dashboard-main .back-link { color: #aaa; }
 .developer-dashboard .dashboard-main .button-delete { border-color: #693b3b; background: #342323; color: #ffaaaa; }
 .developer-dashboard .dashboard-main .button-delete:hover { border-color: #8a4545; background: #482929; }
-.developer-dashboard .dashboard-main .quantity-input { width: 5.5rem; min-width: 5.5rem; }
+.developer-dashboard .dashboard-main .quantity-cell { min-width: 8rem; text-align: center; }
+.developer-dashboard .dashboard-main .quantity-control { display: inline-flex; width: auto; align-items: center; justify-content: center; }
+.developer-dashboard .dashboard-main input.quantity-input { display: block !important; width: 5.5rem !important; min-width: 5.5rem; min-height: 2.5rem; border: 1px solid #292929; border-radius: 3px; background: #0A0A0A; padding: .5rem .65rem; color: #f5f5f5; font: inherit; text-align: center; color-scheme: dark; }
+.developer-dashboard .dashboard-main input.quantity-input:focus { border-color: #1677ff; outline: 2px solid rgb(22 119 255 / 30%); outline-offset: 1px; }
 .developer-dashboard .dashboard-main .crud-form-actions { border-color: #414141; }
 .developer-dashboard .dashboard-main .loan-item-picker { display: grid; gap: .2rem; margin: 1rem 0; border: 1px solid #414141; padding: .75rem; }
 .developer-dashboard .dashboard-main .loan-item-picker legend { padding: 0 .3rem; color: #ddd; font-size: .8rem; font-weight: 600; }

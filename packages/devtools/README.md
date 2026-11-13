@@ -65,7 +65,7 @@ After the auth starter is installed, add the borrowing system based on the repos
 php artisan devtools:install --preset=peminjaman
 ```
 
-The preset keeps one dashboard at `/dashboard`, adds role based links to the existing sidebar, and places its pages directly under `resources/views/pages/` (`tools`, `categories`, `loans`, `returns`, and `users`). `/peminjaman/dashboard` redirects to the same dashboard. Administrators manage records, operators handle approvals and returns from the loan detail page, and regular users can select multiple tools and quantities in one request. All pages share the auth starter layout, dark `#202020` workspace, and locally served CSS/JavaScript without npm or Vite.
+The preset keeps one dashboard at `/dashboard`, adds role based links to the existing sidebar, and places its pages directly under `resources/views/pages/` (`tools`, `categories`, `loans`, `returns`, and `users`). `/peminjaman/dashboard` redirects to the same dashboard. Administrators retain full record and user management. Operators can add tools and categories, see all loan records (including approved loans shown as `Dipinjam`), and handle approvals and returns, but cannot manage users. Regular users can select multiple tools and quantities in one request. The dashboard header and sidebar are black, the workspace is near-black `#080808`, and dashboard tables, forms, and panels use `#0A0A0A`. CSS and JavaScript are served locally without npm or Vite.
 
 ## What Gets Generated
 

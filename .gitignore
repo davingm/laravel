@@ -56,8 +56,10 @@ references
 /playground/app/database/*.sqlite
 /playground/app/database/*.db
 
+# Examples ignored
 /examples/laravel11
 /examples/laravel12
+/examples/laravel-test
 
 # Monorepo-local artifacts
 .taks

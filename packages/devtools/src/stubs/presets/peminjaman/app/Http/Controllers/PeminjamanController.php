@@ -20,7 +20,6 @@ class PeminjamanController extends Controller
         $peminjamans = Peminjaman::query()
             ->with(['user', 'items.alat'])
             ->when($user->role === 'user', fn ($query) => $query->where('user_id', $user->id))
-            ->when($user->role === 'operator', fn ($query) => $query->whereIn('status', ['menunggu', 'menunggu_pengembalian']))
             ->latest()
             ->paginate(15);
 

@@ -11,7 +11,7 @@
         <p class="crud-description">Isi informasi Alat.</p>
     </header>
 
-    <form method="POST" action="{{ route('peminjaman.alats.store') }}" class="barang-form">
+    <x-ui.form method="POST" action="{{ route('peminjaman.alats.store') }}">
         @csrf
         @if ($errors->any())
             <div class="form-error-summary" role="alert">
@@ -26,34 +26,34 @@
         <div class="barang-form-grid">
     <label class="crud-field">
         Nama Alat
-        <input type="text" name="nama_alat" value="{{ old('nama_alat') }}" required class="crud-input">
+        <x-ui.input type="text" name="nama_alat" value="{{ old('nama_alat') }}" required />
         @error('nama_alat')<span class="form-error">{{ $message }}</span>@enderror
     </label>
     <label class="crud-field">
         Deskripsi
-        <textarea name="deskripsi" rows="4" class="crud-input">{{ old('deskripsi') }}</textarea>
+        <x-ui.textarea name="deskripsi" rows="4">{{ old('deskripsi') }}</x-ui.textarea>
         @error('deskripsi')<span class="form-error">{{ $message }}</span>@enderror
     </label>
     <label class="crud-field">
         Kategori
-        <select name="kategori_id" required class="crud-input">
+        <x-ui.select name="kategori_id" required>
             <option value="">Pilih kategori</option>
             @foreach($kategoris as $kategori)
                 <option value="{{ $kategori->id }}" @selected(old('kategori_id') == $kategori->id)>{{ $kategori->nama_kategori }}</option>
             @endforeach
-        </select>
+        </x-ui.select>
         @error('kategori_id')<span class="form-error">{{ $message }}</span>@enderror
     </label>
     <label class="crud-field">
         Jumlah stok
-        <input type="number" name="stok" value="{{ old('stok', 1) }}" min="0" required class="crud-input">
+        <x-ui.input type="number" name="stok" value="{{ old('stok', 1) }}" min="0" required />
         @error('stok')<span class="form-error">{{ $message }}</span>@enderror
     </label>
         </div>
         <div class="crud-form-actions">
             <a href="{{ route('peminjaman.alats.index') }}" class="button button-secondary">Batal</a>
-            <button type="submit" class="button button-primary">Simpan</button>
+            <x-ui.button type="submit">Simpan</x-ui.button>
         </div>
-    </form>
+    </x-ui.form>
 </section>
 @endsection

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('peminjaman_items', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('peminjaman_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('peminjaman_id')->constrained('peminjamans')->cascadeOnDelete();
             $table->foreignId('alat_id')->constrained()->restrictOnDelete();
             $table->unsignedInteger('jumlah');
             $table->timestamps();
