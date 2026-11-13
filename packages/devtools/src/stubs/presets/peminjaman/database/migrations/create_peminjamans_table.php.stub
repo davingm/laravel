@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('status')->default('menunggu');
             $table->timestamp('diminta_kembali_pada')->nullable();
             $table->timestamp('dikembalikan_pada')->nullable();
+            $table->unsignedInteger('hari_terlambat')->default(0);
+            $table->unsignedBigInteger('jumlah_denda')->default(0);
+            $table->timestamp('denda_dibayar_pada')->nullable();
             $table->timestamps();
         });
     }

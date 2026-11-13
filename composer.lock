@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d88dcbf937177251213be9400ee9f327",
+    "content-hash": "964d10d8c923fa5033eb6d2ac3b3c923",
     "packages": [
         {
             "name": "brick/math",
@@ -6370,6 +6370,57 @@
             "time": "2026-10-29T09:13:34+00:00"
         },
         {
+            "name": "davingm/laravel-devtools",
+            "version": "v1.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/davingm/laravel-devtools.git",
+                "reference": "b78e083e3cd4b10226be796740e57ad92c6cb5d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/davingm/laravel-devtools/zipball/b78e083e3cd4b10226be796740e57ad92c6cb5d4",
+                "reference": "b78e083e3cd4b10226be796740e57ad92c6cb5d4",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^2.2",
+                "illuminate/console": "^11.0 || ^12.0 || ^13.0",
+                "illuminate/support": "^11.0 || ^12.0 || ^13.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "illuminate/database": "^11.0 || ^12.0 || ^13.0",
+                "orchestra/testbench": "^9.0",
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Davingm\\LaravelDevtools\\RuntimePlugin",
+                "laravel": {
+                    "providers": [
+                        "Davingm\\LaravelDevtools\\DevtoolsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Davingm\\LaravelDevtools\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-only"
+            ],
+            "description": "Laravel 11, 12, and 13 development tools and generators.",
+            "homepage": "https://github.com/davingm/laravel-devtools",
+            "support": {
+                "issues": "https://github.com/davingm/laravel-devtools/issues",
+                "source": "https://github.com/davingm/laravel-devtools/tree/v1.1.7"
+            },
+            "time": "2026-11-13T12:26:38+00:00"
+        },
+        {
             "name": "fakerphp/faker",
             "version": "v1.24.1",
             "source": {
@@ -8986,5 +9037,5 @@
     "platform-overrides": {
         "php": "8.3.36"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

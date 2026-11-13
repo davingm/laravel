@@ -30,6 +30,7 @@
         "laravel/tinker": "^3.0"
     },
     "require-dev": {
+        "davingm/laravel-devtools": "*",
         "fakerphp/faker": "^1.23",
         "laravel/boost": "^2.10",
         "laravel/pail": "^1.2.5",

@@ -1,0 +1,6 @@
+<?php
+
+return [
+    // Denda flat per hari kalender terlambat. Set PEMINJAMAN_DENDA_PER_HARI=0 untuk menonaktifkan.
+    'denda_per_hari' => (int) env('PEMINJAMAN_DENDA_PER_HARI', 1000),
+];

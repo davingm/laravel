@@ -18,6 +18,9 @@ class Peminjaman extends Model
         'status',
         'diminta_kembali_pada',
         'dikembalikan_pada',
+        'hari_terlambat',
+        'jumlah_denda',
+        'denda_dibayar_pada',
     ];
 
     protected function casts(): array
@@ -27,6 +30,9 @@ class Peminjaman extends Model
             'tanggal_dipinjam' => 'datetime',
             'diminta_kembali_pada' => 'datetime',
             'dikembalikan_pada' => 'datetime',
+            'hari_terlambat' => 'integer',
+            'jumlah_denda' => 'integer',
+            'denda_dibayar_pada' => 'datetime',
         ];
     }
 

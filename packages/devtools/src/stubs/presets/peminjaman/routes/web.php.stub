@@ -79,4 +79,7 @@ Route::middleware('auth')->prefix('peminjaman')->name('peminjaman.')->group(func
     Route::post('/returns/{peminjaman}/cancel', [PengembalianController::class, 'cancel'])
         ->middleware('role.operator')
         ->name('pengembalians.cancel');
+    Route::post('/returns/{peminjaman}/fine-paid', [PengembalianController::class, 'markFinePaid'])
+        ->middleware('role.operator')
+        ->name('pengembalians.fine-paid');
 });

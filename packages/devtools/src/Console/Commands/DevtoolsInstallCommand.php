@@ -49,6 +49,7 @@ final class DevtoolsInstallCommand extends Command
         $this->step(3, 6, 'Copy dashboard pages, UI components, and native CSS');
         $this->copyTree($this->stubPath('resources/views/pages'), resource_path('views/pages'), 'resources/views/pages');
         $this->copyTree($this->stubPath('resources/views/components/ui'), resource_path('views/components/ui'), 'resources/views/components/ui');
+        $this->publishConfig();
         $this->publishStylesheet();
         $this->publishScript();
         $this->publishMiddleware();
@@ -123,6 +124,7 @@ final class DevtoolsInstallCommand extends Command
             'database/seeders/PeminjamanDemoSeeder.php',
             'public/css/peminjaman.css',
             'public/js/peminjaman.js',
+            'config/peminjaman.php',
         ];
 
         foreach ($required as $relative) {
@@ -316,7 +318,18 @@ final class DevtoolsInstallCommand extends Command
 
         $webRoutes = base_path('routes/web.php');
         File::append($webRoutes, "\n\n// preset:peminjaman\nrequire __DIR__.'/peminjaman.php';\n");
+        // This Artisan process booted before the installer added the require line.
+        // Load the new routes now so same-process route smoke checks see them.
+        require $routeFile;
         $this->file('routes/web.php');
+    }
+
+    private function publishConfig(): void
+    {
+        $target = config_path('peminjaman.php');
+        File::ensureDirectoryExists(dirname($target));
+        File::copy($this->stubPath('config/peminjaman.php.stub'), $target);
+        $this->file('config/peminjaman.php');
     }
 
     private function registerUserRoleAlias(): void

@@ -27,6 +27,9 @@
         <div><dt>Rencana kembali</dt><dd>{{ $peminjaman->tanggal_kembali?->format('d/m/Y') ?? '—' }}</dd></div>
         <div><dt>Dikembalikan</dt><dd>{{ $peminjaman->dikembalikan_pada?->format('d/m/Y H:i') ?? '—' }}</dd></div>
     </dl>
+    @if ($peminjaman->jumlah_denda > 0)
+        <p class="loan-note"><strong>Denda keterlambatan:</strong> {{ $peminjaman->hari_terlambat }} hari × Rp {{ number_format((int) config('peminjaman.denda_per_hari', 1000), 0, ',', '.') }} = <strong>Rp {{ number_format($peminjaman->jumlah_denda, 0, ',', '.') }}</strong> · {{ $peminjaman->denda_dibayar_pada ? 'Lunas' : 'Belum dibayar' }}</p>
+    @endif
     @if ($peminjaman->catatan)<p class="loan-note"><strong>Catatan:</strong> {{ $peminjaman->catatan }}</p>@endif
 
     <div class="crud-form-actions">
@@ -39,6 +42,9 @@
         @if (in_array(auth()->user()->role, ['administrator', 'operator'], true) && $peminjaman->status === 'menunggu_pengembalian')
             <form method="POST" action="{{ route('peminjaman.pengembalians.complete', $peminjaman) }}" data-confirm="Konfirmasi semua alat sudah diterima kembali?">@csrf<button class="button button-primary" type="submit">Konfirmasi pengembalian</button></form>
             <form method="POST" action="{{ route('peminjaman.pengembalians.cancel', $peminjaman) }}" data-confirm="Batalkan permintaan pengembalian ini?">@csrf<button class="button button-secondary" type="submit">Batalkan permintaan</button></form>
+        @endif
+        @if (in_array(auth()->user()->role, ['administrator', 'operator'], true) && $peminjaman->status === 'dikembalikan' && $peminjaman->jumlah_denda > 0 && ! $peminjaman->denda_dibayar_pada)
+            <form method="POST" action="{{ route('peminjaman.pengembalians.fine-paid', $peminjaman) }}" data-confirm="Tandai denda Rp {{ number_format($peminjaman->jumlah_denda, 0, ',', '.') }} sudah dibayar?">@csrf<button class="button button-primary" type="submit">Tandai denda lunas</button></form>
         @endif
     </div>
 </section>
