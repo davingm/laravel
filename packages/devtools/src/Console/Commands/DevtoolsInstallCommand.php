@@ -7,7 +7,6 @@ namespace Davingm\LaravelDevtools\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -38,15 +37,15 @@ final class DevtoolsInstallCommand extends Command
         $this->line(' Installing preset: peminjaman');
         $this->line('');
 
-        $this->step(1, 6, 'Add application models and controllers');
+        $this->step(1, 7, 'Add application models and controllers');
         $this->copyTree($this->stubPath('app/Http/Controllers'), app_path('Http/Controllers'), 'app/Http/Controllers');
         $this->copyTree($this->stubPath('app/Models'), app_path('Models'), 'app/Models');
         $this->done('Peminjaman application classes copied');
 
-        $this->step(2, 6, 'Add database migrations');
+        $this->step(2, 7, 'Add database migrations');
         $migrationPaths = $this->publishMigrations();
 
-        $this->step(3, 6, 'Copy dashboard pages, UI components, and native CSS');
+        $this->step(3, 7, 'Copy dashboard pages, UI components, and native CSS');
         $this->copyTree($this->stubPath('resources/views/pages'), resource_path('views/pages'), 'resources/views/pages');
         $this->copyTree($this->stubPath('resources/views/components/ui'), resource_path('views/components/ui'), 'resources/views/components/ui');
         $this->publishConfig();
@@ -57,20 +56,20 @@ final class DevtoolsInstallCommand extends Command
         $this->file('public/js/peminjaman.js');
         $this->done('Preset pages use local CSS and do not require Vite or npm');
 
-        $this->step(4, 6, 'Register preset routes and role middleware');
+        $this->step(4, 7, 'Register preset routes and role middleware');
         $this->publishRoutes();
         $this->call('route:clear');
         $this->registerUserRoleAlias();
         $this->publishSeeder();
         $this->done('Routes use the existing administrator, operator, and user roles');
 
-        $this->step(5, 6, 'Run migrations');
+        $this->step(5, 7, 'Run migrations');
         if ($this->call('migrate', ['--path' => $migrationPaths]) !== self::SUCCESS) {
             $this->error('Migration gagal. File sudah dibuat; perbaiki koneksi database lalu jalankan php artisan migrate.');
             return self::FAILURE;
         }
 
-        $this->step(6, 6, 'Seed sample tools and categories');
+        $this->step(6, 7, 'Seed sample tools and categories');
         if ($this->call('db:seed', ['--class' => 'PeminjamanDemoSeeder', '--force' => true]) !== self::SUCCESS) {
             $this->error('Seeder gagal. Jalankan php artisan db:seed --class=PeminjamanDemoSeeder setelah memperbaiki database.');
             return self::FAILURE;
@@ -163,12 +162,20 @@ final class DevtoolsInstallCommand extends Command
 
     private function verifyInstallation(): bool
     {
+        $routeFile = base_path('routes/peminjaman.php');
+        $webRoutes = base_path('routes/web.php');
+        $routeSource = File::exists($routeFile) ? File::get($routeFile) : '';
+        $webRouteSource = File::exists($webRoutes) ? File::get($webRoutes) : '';
+        $routeFileIsLoaded = str_contains($webRouteSource, "require __DIR__.'/peminjaman.php';");
+
         $checks = [
             'Tabel peminjaman tersedia' => fn (): bool => collect([
                 'kategoris', 'alats', 'peminjamans', 'peminjaman_items',
             ])->every(fn (string $table): bool => Schema::hasTable($table)),
-            'Route pengajuan peminjaman terdaftar' => fn (): bool => Route::has('peminjaman.peminjamans.request'),
-            'Route persetujuan operator terdaftar' => fn (): bool => Route::has('peminjaman.peminjamans.approve'),
+            'Route pengajuan tercantum dan dimuat' => fn (): bool => $routeFileIsLoaded
+                && str_contains($routeSource, "->name('peminjamans.request')"),
+            'Route persetujuan operator tercantum dan dimuat' => fn (): bool => $routeFileIsLoaded
+                && str_contains($routeSource, "->name('peminjamans.approve')"),
             'CSS native dan komponen UI tersedia' => fn (): bool => File::exists(public_path('css/peminjaman.css'))
                 && File::exists(resource_path('views/components/ui/input.blade.php'))
                 && File::exists(resource_path('views/components/ui/button.blade.php')),
@@ -318,9 +325,6 @@ final class DevtoolsInstallCommand extends Command
 
         $webRoutes = base_path('routes/web.php');
         File::append($webRoutes, "\n\n// preset:peminjaman\nrequire __DIR__.'/peminjaman.php';\n");
-        // This Artisan process booted before the installer added the require line.
-        // Load the new routes now so same-process route smoke checks see them.
-        require $routeFile;
         $this->file('routes/web.php');
     }
 
