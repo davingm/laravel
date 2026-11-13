@@ -1,6 +1,8 @@
 <header class="dashboard-header">
     <a class="dashboard-cloud-brand" href="{{ route('dashboard') }}" aria-label="Tencent Cloud">
-        <img src="{{ asset('icons/tencent-cloud.svg') }}" alt="">
+        <svg viewBox="0 0 40 32" aria-hidden="true">
+            <path d="M12.2 26.5h17.4a7.1 7.1 0 0 0 .8-14.2A10.7 10.7 0 0 0 10 10a8.3 8.3 0 0 0 2.2 16.5Z" />
+        </svg>
         <span>Vuxilabs Cloud</span>
     </a>
 

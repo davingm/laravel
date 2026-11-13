@@ -1,0 +1,39 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Alat;
+use App\Models\Kategori;
+use Illuminate\Database\Seeder;
+
+class PeminjamanDemoSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $perkakas = Kategori::firstOrCreate(
+            ['nama_kategori' => 'Perkakas'],
+            ['deskripsi' => 'Peralatan kerja dan perbaikan.'],
+        );
+        $elektronik = Kategori::firstOrCreate(
+            ['nama_kategori' => 'Elektronik'],
+            ['deskripsi' => 'Peralatan elektronik untuk kegiatan.'],
+        );
+
+        Alat::firstOrCreate(
+            ['nama_alat' => 'Bor listrik'],
+            ['kategori_id' => $perkakas->id, 'deskripsi' => 'Bor listrik untuk pekerjaan umum.', 'stok' => 4],
+        );
+        Alat::firstOrCreate(
+            ['nama_alat' => 'Tang kombinasi'],
+            ['kategori_id' => $perkakas->id, 'deskripsi' => 'Tang kombinasi ukuran standar.', 'stok' => 6],
+        );
+        Alat::firstOrCreate(
+            ['nama_alat' => 'Proyektor'],
+            ['kategori_id' => $elektronik->id, 'deskripsi' => 'Proyektor untuk presentasi.', 'stok' => 3],
+        );
+        Alat::firstOrCreate(
+            ['nama_alat' => 'Laptop'],
+            ['kategori_id' => $elektronik->id, 'deskripsi' => 'Laptop untuk kegiatan kantor.', 'stok' => 5],
+        );
+    }
+}

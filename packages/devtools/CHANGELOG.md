@@ -1,6 +1,14 @@
 ﻿# Changelog
 
 
+## 1.1.4
+
+- Add the `devtools:install --preset=peminjaman` starter with administrator, operator, and user permissions.
+- Copy standalone auth and preset CSS assets into `public/` so generated screens work without npm or Vite.
+- Keep the auth dashboard preview at `/dashboard` and add the borrowing system under `/peminjaman`.
+- Refine auth dashboard header, icon sizing, and sidebar navigation.
+- Return a failing exit code from `auth:install` when its role migration or default-user seeder fails.
+
 ## 1.1.1
 
 - Fix the auth starter's Vite and Tailwind entry points, publish dashboard icons to `public/icons`, and align dashboard links and views with the generated Laravel routes.

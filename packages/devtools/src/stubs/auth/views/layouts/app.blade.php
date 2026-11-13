@@ -11,9 +11,8 @@
             <title>@yield('title') | {{ config('app.name', 'Laravel') }}</title>
         @endif
     @endif
-    @stack('head')
-
     <link rel="stylesheet" href="{{ asset('css/devtools-auth.css') }}">
+    @stack('head')
     <script src="{{ asset('js/devtools-auth.js') }}" defer></script>
 </head>
 <body class="@yield('body-class')">

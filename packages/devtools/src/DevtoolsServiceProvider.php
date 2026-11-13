@@ -6,6 +6,7 @@ namespace Davingm\LaravelDevtools;
 use Davingm\LaravelDevtools\Console\Commands\AuthInstallCommand;
 use Davingm\LaravelDevtools\Commands\CrudGenerateCommand;
 use Davingm\LaravelDevtools\Console\Commands\DevCommand;
+use Davingm\LaravelDevtools\Console\Commands\DevtoolsInstallCommand;
 use Davingm\LaravelDevtools\Console\Commands\DevtoolsCommand;
 use Davingm\LaravelDevtools\Console\Commands\MakeAllCommand;
 use Davingm\LaravelDevtools\Console\Commands\MakeControllerCommand;
@@ -24,6 +25,7 @@ final class DevtoolsServiceProvider extends ServiceProvider
                 AuthInstallCommand::class,
                 CrudGenerateCommand::class,
                 DevCommand::class,
+                DevtoolsInstallCommand::class,
                 DevtoolsCommand::class,
                 MakeAllCommand::class,
                 MakeControllerCommand::class,

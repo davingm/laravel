@@ -111,11 +111,20 @@ final class AuthInstallCommand extends Command
 
         // ── Step 3: Run migration ──────────────────────────────────────────────
         $this->step(3, $total, 'Run migration');
-        $this->runMigration();
+        if (! $this->runMigration()) {
+            $this->error('Auth installation stopped because the role migration did not complete. Fix the database connection, then run php artisan migrate.');
+
+            return self::FAILURE;
+        }
 
         // ── Step 4: Add seeder ─────────────────────────────────────────────────
         $this->step(4, $total, 'Add seeder');
         $seederResult = $this->publishSeeder($force);
+        if ($seederResult === false) {
+            $this->error('Auth installation stopped because the default users could not be seeded. Fix the database, then run php artisan db:seed --class=AuthSeeder.');
+
+            return self::FAILURE;
+        }
         if ($seederResult === 'created') {
             $this->file('database/seeders/AuthSeeder.php');
         } else {
@@ -255,41 +264,57 @@ final class AuthInstallCommand extends Command
         return $filename;
     }
 
-    private function runMigration(): void
+    private function runMigration(): bool
     {
         try {
-            $this->call('migrate', ['--force' => true]);
+            if ($this->call('migrate', ['--force' => true]) !== self::SUCCESS) {
+                $this->warn('Migration failed. Run php artisan migrate manually after fixing the database connection.');
+
+                return false;
+            }
+
             $this->done('Migration executed');
+
+            return true;
         } catch (Throwable $e) {
             $this->warn("Migration failed: {$e->getMessage()}. Run php artisan migrate manually.");
+
+            return false;
         }
     }
 
     // ── Seeder ───────────────────────────────────────────────────────────────────
 
-    private function publishSeeder(bool $force): string
+    private function publishSeeder(bool $force): string|false
     {
         $path = database_path('seeders/AuthSeeder.php');
 
         if (File::exists($path) && ! $force) {
-            $this->runSeeder();
-            return 'skipped';
+            return $this->runSeeder() ? 'skipped' : false;
         }
 
         File::ensureDirectoryExists(database_path('seeders'));
         File::put($path, $this->stub('seeder.php.stub'));
 
-        $this->runSeeder();
-        return 'created';
+        return $this->runSeeder() ? 'created' : false;
     }
 
-    private function runSeeder(): void
+    private function runSeeder(): bool
     {
         try {
-            $this->call('db:seed', ['--class' => 'AuthSeeder', '--force' => true]);
+            if ($this->call('db:seed', ['--class' => 'AuthSeeder', '--force' => true]) !== self::SUCCESS) {
+                $this->warn('Seeder failed. Run php artisan db:seed --class=AuthSeeder manually after fixing the database.');
+
+                return false;
+            }
+
             $this->done('Seeder executed');
+
+            return true;
         } catch (Throwable $e) {
             $this->warn("Seeder failed: {$e->getMessage()}. Run php artisan db:seed --class=AuthSeeder manually.");
+
+            return false;
         }
     }
 

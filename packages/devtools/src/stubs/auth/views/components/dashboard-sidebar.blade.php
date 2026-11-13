@@ -1,44 +1,17 @@
 <aside class="dashboard-sidebar">
-    <button class="workspace-switcher" type="button">
-        <span class="workspace-avatar">FTs</span>
-        <span class="workspace-copy"><strong>PT NLFTs ltd</strong><small>Corporate workspace</small></span>
-        <img src="{{ asset('icons/chevron-down.svg') }}" alt="">
-    </button>
+    <a class="dashboard-brand" href="{{ route('dashboard') }}">
+        <span class="dashboard-brand-mark" aria-hidden="true">D</span>
+        <span>{{ config('app.name', 'Laravel') }}</span>
+    </a>
 
-    <nav class="dashboard-nav" aria-label="Navigasi workspace">
-        <span class="dashboard-nav-label">WORKSPACE</span>
-        <a class="dashboard-nav-link {{ request()->routeIs('dashboard') ? 'is-active' : '' }}" href="{{ route('dashboard') }}" @if (request()->routeIs('dashboard')) aria-current="page" @endif>
-            <img src="{{ asset('icons/squares-2x2.svg') }}" alt=""><span>Overview</span>
+    <nav class="dashboard-nav" aria-label="Menu utama">
+        <a class="dashboard-nav-link {{ request()->routeIs('dashboard') ? 'is-active' : '' }}"
+            href="{{ route('dashboard') }}"
+            @if (request()->routeIs('dashboard')) aria-current="page" @endif>
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M2 2h6v6H2zm10 0h6v6h-6zM2 12h6v6H2zm10 0h6v6h-6z" />
+            </svg>
+            <span>Dashboard</span>
         </a>
-
-        <span class="dashboard-nav-label">PLAN & BUILD</span>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#projects"><img src="{{ asset('icons/folder.svg') }}" alt=""><span>Projects</span><span class="nav-count">8</span></a>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#projects"><img src="{{ asset('icons/check-circle.svg') }}" alt=""><span>Tasks & sprints</span><span class="nav-count">12</span></a>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#projects"><img src="{{ asset('icons/chart-bar.svg') }}" alt=""><span>Roadmap</span></a>
-
-        <span class="dashboard-nav-label">TEAM</span>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#team"><img src="{{ asset('icons/users.svg') }}" alt=""><span>Members</span><span class="nav-count">12</span></a>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#deployments"><img src="{{ asset('icons/bell.svg') }}" alt=""><span>Team activity</span></a>
-
-        <span class="dashboard-nav-label">DEVELOPMENT</span>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#repositories"><img src="{{ asset('icons/code-bracket.svg') }}" alt=""><span>Repositories</span><span class="nav-count">6</span></a>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#repositories"><img src="{{ asset('icons/arrows-right-left.svg') }}" alt=""><span>Pull requests</span><span class="nav-count nav-count-alert">4</span></a>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#pipelines"><img src="{{ asset('icons/command-line.svg') }}" alt=""><span>CI / CD pipelines</span></a>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#deployments"><img src="{{ asset('icons/rocket-launch.svg') }}" alt=""><span>Deployments</span></a>
-
-        <span class="dashboard-nav-label">INFRASTRUCTURE</span>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#infrastructure"><img src="{{ asset('icons/server-stack.svg') }}" alt=""><span>Servers</span></a>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#infrastructure"><img src="{{ asset('icons/globe-alt.svg') }}" alt=""><span>Web apps & domains</span></a>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#infrastructure"><img src="{{ asset('icons/chart-bar.svg') }}" alt=""><span>Monitoring</span></a>
-
-        <span class="dashboard-nav-label">MANAGE</span>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#analytics"><img src="{{ asset('icons/chart-bar.svg') }}" alt=""><span>Analytics</span></a>
-        <a class="dashboard-nav-link" href="{{ route('dashboard') }}#settings"><img src="{{ asset('icons/cog-6-tooth.svg') }}" alt=""><span>Settings</span></a>
     </nav>
-
-    <div class="sidebar-help">
-        <span class="sidebar-help-icon">?</span>
-        <span><strong>Need a hand?</strong><small>Visit the developer docs</small></span>
-        <img src="{{ asset('icons/chevron-down.svg') }}" alt="">
-    </div>
 </aside>

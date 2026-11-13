@@ -1,6 +1,6 @@
 ﻿# Laravel Devtools
 
-Generate conventional CRUD files for Laravel applications from the schema on the active database connection.
+Laravel development commands, an auth starter, CRUD generation, and an optional borrowing-system preset for Laravel applications.
 
 [![PHP 8.2+](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![Laravel 11](https://img.shields.io/badge/Laravel-11-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
@@ -9,7 +9,7 @@ Generate conventional CRUD files for Laravel applications from the schema on the
 ## Requirements
 
 - PHP 8.2 or newer.
-- Laravel 11 is the minimum tested version. The package manifest also permits Laravel 12 and 13, but those versions have not been verified by the integration suite.
+- Laravel 11, 12, and 13 are allowed by the package manifest. The auth starter and borrowing preset have been exercised in an isolated Laravel 12 application; Laravel 11 and 13 are not part of that verification.
 
 ## Installation
 
@@ -36,20 +36,36 @@ The package is a Composer plugin. Allow the plugin when Composer prompts you. La
 2. Run the migrations against the database configured for the application:
 
    ```bash
-   ./artisan migrate
+   php artisan migrate
    ```
 
 3. Generate the CRUD from the application root:
 
    ```bash
-   ./artisan crud:generate Product
+   php artisan crud:generate Product
    ```
 
 4. Review the generated model, controller, three Blade views, and marked route block listed below.
 
-5. Start the application with `./artisan serve` and open [http://127.0.0.1:8000/products](http://127.0.0.1:8000/products).
+5. Start the application with `php artisan serve` and open [http://127.0.0.1:8000/products](http://127.0.0.1:8000/products).
 
 For a detailed walkthrough, see [Getting Started](docs/getting-started.md).
+
+## Auth Starter and Presets
+
+Install the auth starter on a clean Laravel application. Its CSS and JavaScript are copied into `public/`, so the auth and dashboard UI work without npm or Vite:
+
+```bash
+php artisan auth:install
+```
+
+After the auth starter is installed, add the borrowing system based on the repository's `references/preset-peminjaman` UI and workflows:
+
+```bash
+php artisan devtools:install --preset=peminjaman
+```
+
+The preset keeps the starter dashboard preview at `/dashboard` and adds its own summary and screens under `/peminjaman`. Administrators manage tools, categories, users, and loan actions; operators handle approvals and returns; regular users can request and return their own loans. Both starters serve CSS from `public/` without npm or Vite.
 
 ## What Gets Generated
 
@@ -104,7 +120,7 @@ products
 After the migrations have run, execute:
 
 ```bash
-./artisan crud:generate Product
+php artisan crud:generate Product
 ```
 
 ## auth:install
@@ -150,7 +166,7 @@ Use `--dry-run` to preview planned changes, or `--force` when you intend to over
 
 ## Limitations
 
-The generator requires a single-column primary key. Composite foreign keys do not become Eloquent relationships, unique validation rules are not generated, and enum fields depend on metadata returned by the database driver. Route detection is limited to recognized resource and route-name patterns in `routes/web.php`. Laravel 12 and 13 have not been verified by the integration suite.
+The generator requires a single-column primary key. Composite foreign keys do not become Eloquent relationships, unique validation rules are not generated, and enum fields depend on metadata returned by the database driver. Route detection is limited to recognized resource and route-name patterns in `routes/web.php`.
 
 See [Limitations](docs/limitations.md) for impacts and workarounds.
 

@@ -1,0 +1,68 @@
+<?php
+
+use App\Http\Controllers\AlatController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\PeminjamanDashboardController;
+use App\Http\Controllers\PeminjamanUserController;
+use App\Http\Controllers\PengembalianController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('auth')->prefix('peminjaman')->name('peminjaman.')->group(function (): void {
+    Route::get('/dashboard', [PeminjamanDashboardController::class, 'show'])->name('dashboard');
+
+    Route::get('/tools', [AlatController::class, 'index'])->name('alats.index');
+    Route::middleware('role.administrator')->group(function (): void {
+        Route::resource('tools', AlatController::class)
+            ->except(['index', 'show'])
+            ->parameters(['tools' => 'alat'])
+            ->names('alats');
+
+        Route::resource('categories', KategoriController::class)
+            ->parameters(['categories' => 'kategori'])
+            ->names('kategoris');
+
+        Route::resource('users', PeminjamanUserController::class)
+            ->except(['show'])
+            ->names('users');
+    });
+
+    Route::get('/loans', [PeminjamanController::class, 'index'])->name('peminjamans.index');
+    Route::get('/loans/create', [PeminjamanController::class, 'create'])
+        ->middleware('role.administrator')
+        ->name('peminjamans.create');
+    Route::post('/loans', [PeminjamanController::class, 'store'])
+        ->middleware('role.administrator')
+        ->name('peminjamans.store');
+    Route::post('/loans/request', [PeminjamanController::class, 'request'])
+        ->middleware('role.user')
+        ->name('peminjamans.request');
+    Route::get('/loans/{peminjaman}/edit', [PeminjamanController::class, 'edit'])
+        ->middleware('role.administrator')
+        ->name('peminjamans.edit');
+    Route::put('/loans/{peminjaman}', [PeminjamanController::class, 'update'])
+        ->middleware('role.administrator')
+        ->name('peminjamans.update');
+    Route::delete('/loans/{peminjaman}', [PeminjamanController::class, 'destroy'])
+        ->middleware('role.administrator')
+        ->name('peminjamans.destroy');
+    Route::post('/loans/{peminjaman}/approve', [PeminjamanController::class, 'approve'])
+        ->middleware('role.operator')
+        ->name('peminjamans.approve');
+    Route::post('/loans/{peminjaman}/reject', [PeminjamanController::class, 'reject'])
+        ->middleware('role.operator')
+        ->name('peminjamans.reject');
+    Route::post('/loans/{peminjaman}/return', [PeminjamanController::class, 'requestReturn'])
+        ->middleware('role.user')
+        ->name('peminjamans.return');
+
+    Route::get('/returns', [PengembalianController::class, 'index'])
+        ->middleware('role.operator')
+        ->name('pengembalians.index');
+    Route::post('/returns/{peminjaman}/complete', [PengembalianController::class, 'complete'])
+        ->middleware('role.operator')
+        ->name('pengembalians.complete');
+    Route::post('/returns/{peminjaman}/cancel', [PengembalianController::class, 'cancel'])
+        ->middleware('role.operator')
+        ->name('pengembalians.cancel');
+});
