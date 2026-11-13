@@ -1,4 +1,51 @@
-/* Small native additions for borrowing status labels. The dashboard shell and CRUD styles come from auth:install. */
+/* Native preset additions on top of the shared auth dashboard shell. */
+.developer-dashboard .dashboard-main { background: #202020; color: #ededed; }
+.developer-dashboard .dashboard-main .crud-title { color: #ededed; }
+.developer-dashboard .dashboard-main .crud-description,.developer-dashboard .dashboard-main .eyebrow { color: #a5a5a5; }
+.developer-dashboard .dashboard-main .crud-shell { color: #ededed; }
+.developer-dashboard .dashboard-main .table-wrap { margin: .35rem 0; border: 1px solid #414141; border-radius: 2px; background: #252525; padding: .4rem; }
+.developer-dashboard .dashboard-main .barang-table { border-collapse: separate; border-spacing: 0; color: #dedede; }
+.developer-dashboard .dashboard-main .barang-table thead { background: #303030; color: #c5c5c5; }
+.developer-dashboard .dashboard-main .barang-table th { border: 0; border-bottom: 1px solid #414141; padding: .8rem .85rem; color: #c5c5c5; }
+.developer-dashboard .dashboard-main .barang-table td { border: 0; border-bottom: 1px solid #383838; padding: .8rem .85rem; color: #dedede !important; }
+.developer-dashboard .dashboard-main .barang-table .number-column { border-right: 1px solid #414141; color: #9f9f9f !important; text-align: center; }
+.developer-dashboard .dashboard-main .barang-table tbody tr:nth-child(odd) td { background: #252525; }
+.developer-dashboard .dashboard-main .barang-table tbody tr:nth-child(even) td { background: #2b2b2b; }
+.developer-dashboard .dashboard-main .barang-table tbody tr:hover td { background: #363636; }
+.developer-dashboard .dashboard-main .barang-table tbody tr:last-child td { border-bottom: 0; }
+.developer-dashboard .dashboard-main .barang-table tbody tr[data-edit-url] { cursor: pointer; }
+.developer-dashboard .dashboard-main .barang-table tbody tr[data-edit-url]:focus-visible { outline: 2px solid #1677ff; outline-offset: -2px; }
+.developer-dashboard .dashboard-main .empty-state { color: #aaa !important; text-align: center; }
+.developer-dashboard .dashboard-main .crud-summary { color: #aaa; }
+.developer-dashboard .dashboard-main .crud-summary-count { color: #f0f0f0; }
+.developer-dashboard .dashboard-main .crud-search,.developer-dashboard .dashboard-main .crud-input { border-color: #454545; border-radius: 2px; background: #292929; color: #eee; }
+.developer-dashboard .dashboard-main .crud-field { color: #ddd; }
+.developer-dashboard .dashboard-main .barang-form,.developer-dashboard .dashboard-main .loan-item-picker { border-color: #414141; background: #252525; color: #eee; }
+.developer-dashboard .dashboard-main .loan-item-option { border-color: #3b3b3b; }
+.developer-dashboard .dashboard-main .loan-item-option small,.developer-dashboard .dashboard-main .loan-dates dt { color: #aaa; }
+.developer-dashboard .dashboard-main .loan-item-option strong,.developer-dashboard .dashboard-main .loan-dates dd { color: #eee; }
+.developer-dashboard .dashboard-main .loan-dates > div,.developer-dashboard .dashboard-main .loan-note { border-color: #414141; }
+.developer-dashboard .dashboard-main .back-link { color: #aaa; }
+.developer-dashboard .dashboard-main .button-delete { border-color: #693b3b; background: #342323; color: #ffaaaa; }
+.developer-dashboard .dashboard-main .button-delete:hover { border-color: #8a4545; background: #482929; }
+.developer-dashboard .dashboard-main .quantity-input { width: 5.5rem; min-width: 5.5rem; }
+.developer-dashboard .dashboard-main .crud-form-actions { border-color: #414141; }
+.developer-dashboard .dashboard-main .loan-item-picker { display: grid; gap: .2rem; margin: 1rem 0; border: 1px solid #414141; padding: .75rem; }
+.developer-dashboard .dashboard-main .loan-item-picker legend { padding: 0 .3rem; color: #ddd; font-size: .8rem; font-weight: 600; }
+.developer-dashboard .dashboard-main .loan-item-option { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid #3b3b3b; padding: .65rem .25rem; }
+.developer-dashboard .dashboard-main .loan-item-option:last-child { border-bottom: 0; }
+.developer-dashboard .dashboard-main .loan-item-option span { display: grid; gap: .2rem; }
+.developer-dashboard .dashboard-main .loan-item-option small { color: #aaa; font-size: .72rem; }
+.developer-dashboard .dashboard-main .loan-request-controls { display: grid; grid-template-columns: minmax(10rem, .8fr) minmax(12rem, 1.2fr) auto; align-items: end; gap: .75rem; margin: .8rem 0; }
+.developer-dashboard .dashboard-main .loan-dates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem 1rem; margin: 1.25rem 0; }
+.developer-dashboard .dashboard-main .loan-dates > div { border-bottom: 1px solid #414141; padding: .7rem 0; }
+.developer-dashboard .dashboard-main .loan-dates dt { color: #aaa; font-size: .72rem; }
+.developer-dashboard .dashboard-main .loan-dates dd { margin: .25rem 0 0; color: #eee; font-size: .85rem; }
+.developer-dashboard .dashboard-main .loan-note { border-top: 1px solid #414141; padding-top: .8rem; color: #ddd; }
+.developer-dashboard .dashboard-main .status-badge { border-color: #505050; background: #303030; color: #ddd; }
+.developer-dashboard .dashboard-main .status-badge.status-disetujui,.developer-dashboard .dashboard-main .status-badge.status-dikembalikan { border-color: #28623a; background: #203626; color: #a8e3b6; }
+.developer-dashboard .dashboard-main .status-badge.status-ditolak { border-color: #6c3c3c; background: #402525; color: #ffb3b3; }
+.developer-dashboard .dashboard-main .status-badge.status-menunggu,.developer-dashboard .dashboard-main .status-badge.status-menunggu_pengembalian { border-color: #705a2c; background: #3b3221; color: #f1d18c; }
 .status-badge {
     display: inline-flex;
     align-items: center;
@@ -33,4 +80,8 @@
 .table-muted {
     color: #737b86;
     font-size: .72rem;
+}
+
+@media (max-width: 700px) {
+    .developer-dashboard .dashboard-main .loan-request-controls { grid-template-columns: 1fr; }
 }

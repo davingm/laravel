@@ -36,8 +36,11 @@
 
             <div class="auth-field">
                 <label for="password" class="auth-label">Password</label>
+            <div class="auth-password-field">
                 <input id="password" name="password" type="password" required
                     autocomplete="new-password" class="auth-input">
+                <button type="button" class="auth-password-toggle" data-toggle-password="password" aria-controls="password" aria-label="Tampilkan password">Tampilkan</button>
+            </div>
                 @error('password')
                     <span class="auth-field-error">{{ $message }}</span>
                 @enderror
@@ -45,8 +48,11 @@
 
             <div class="auth-field">
                 <label for="password_confirmation" class="auth-label">Konfirmasi Password</label>
+            <div class="auth-password-field">
                 <input id="password_confirmation" name="password_confirmation" type="password"
                     required autocomplete="new-password" class="auth-input">
+                <button type="button" class="auth-password-toggle" data-toggle-password="password_confirmation" aria-controls="password_confirmation" aria-label="Tampilkan konfirmasi password">Tampilkan</button>
+            </div>
             </div>
 
             <button type="submit" class="auth-submit">Daftar</button>

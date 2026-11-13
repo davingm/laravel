@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Peminjaman extends Model
 {
@@ -11,10 +12,9 @@ class Peminjaman extends Model
 
     protected $fillable = [
         'user_id',
-        'alat_id',
-        'jumlah',
         'catatan',
         'tanggal_kembali',
+        'tanggal_dipinjam',
         'status',
         'diminta_kembali_pada',
         'dikembalikan_pada',
@@ -24,6 +24,7 @@ class Peminjaman extends Model
     {
         return [
             'tanggal_kembali' => 'date',
+            'tanggal_dipinjam' => 'datetime',
             'diminta_kembali_pada' => 'datetime',
             'dikembalikan_pada' => 'datetime',
         ];
@@ -34,9 +35,9 @@ class Peminjaman extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function alat(): BelongsTo
+    public function items(): HasMany
     {
-        return $this->belongsTo(Alat::class);
+        return $this->hasMany(PeminjamanItem::class);
     }
 
     public function stokSedangDipakai(): bool

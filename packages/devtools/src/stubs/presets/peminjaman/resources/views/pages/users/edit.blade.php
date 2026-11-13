@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Edit Pengguna')
-@section('body-class', 'dashboard-page')
+@section('body-class', 'dashboard-page developer-dashboard')
 
 @section('dashboard-content')
 <section class="crud-shell narrow-shell">

@@ -10,6 +10,9 @@
 - Use the auth dashboard's single layout and role-aware sidebar for every preset page; keep all generated screens under `resources/views/pages/`.
 - Return a failing exit code from `auth:install` when its role migration or default-user seeder fails.
 - Keep CRUD generator and `make:page` views under `resources/views/pages/`.
+- Place preset pages directly in `resources/views/pages/{tools,categories,loans,returns,users}` and align their native theme with the dashboard.
+- Support multi-tool loan requests with per-tool quantities, stock checks on approval, and borrowed/returned timestamps.
+- Add password visibility controls and row navigation for compact editable tables.
 
 ## 1.1.1
 

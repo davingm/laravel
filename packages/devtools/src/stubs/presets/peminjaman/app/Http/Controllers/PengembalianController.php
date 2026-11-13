@@ -14,9 +14,9 @@ class PengembalianController extends Controller
     {
         abort_unless(in_array(request()->user()->role, ['administrator', 'operator'], true), 403);
 
-        return view('pages.peminjaman.returns.index', [
+        return view('pages.returns.index', [
             'peminjamans' => Peminjaman::query()
-                ->with(['user', 'alat'])
+                ->with(['user', 'items.alat'])
                 ->whereIn('status', ['menunggu_pengembalian', 'dikembalikan'])
                 ->latest('updated_at')
                 ->paginate(15),
@@ -31,8 +31,9 @@ class PengembalianController extends Controller
             $loan = Peminjaman::query()->lockForUpdate()->findOrFail($peminjaman->id);
             abort_unless($loan->status === 'menunggu_pengembalian', 409, 'Permintaan pengembalian ini sudah diproses.');
 
-            Alat::query()->lockForUpdate()->findOrFail($loan->alat_id)
-                ->increment('stok', $loan->jumlah);
+            foreach ($loan->items()->orderBy('alat_id')->get() as $item) {
+                Alat::query()->lockForUpdate()->findOrFail($item->alat_id)->increment('stok', $item->jumlah);
+            }
 
             $loan->update([
                 'status' => 'dikembalikan',

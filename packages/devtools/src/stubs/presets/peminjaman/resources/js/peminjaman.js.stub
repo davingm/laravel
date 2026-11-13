@@ -1,0 +1,13 @@
+document.addEventListener('click', (event) => {
+    const row = event.target.closest('tr[data-edit-url]');
+    if (!row || event.target.closest('a,button,input,select,textarea,form,label')) return;
+    window.location.assign(row.dataset.editUrl);
+});
+
+document.addEventListener('keydown', (event) => {
+    const row = event.target.closest('tr[data-edit-url]');
+    if (!row || event.target.closest('a,button,input,select,textarea,form,label')) return;
+    if (!['Enter', ' '].includes(event.key)) return;
+    event.preventDefault();
+    window.location.assign(row.dataset.editUrl);
+});

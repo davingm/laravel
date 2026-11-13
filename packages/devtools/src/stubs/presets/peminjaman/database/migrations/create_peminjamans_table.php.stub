@@ -11,10 +11,9 @@ return new class extends Migration
         Schema::create('peminjamans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('alat_id')->constrained()->restrictOnDelete();
-            $table->unsignedInteger('jumlah')->default(1);
             $table->text('catatan')->nullable();
             $table->date('tanggal_kembali')->nullable();
+            $table->timestamp('tanggal_dipinjam')->nullable();
             $table->string('status')->default('menunggu');
             $table->timestamp('diminta_kembali_pada')->nullable();
             $table->timestamp('dikembalikan_pada')->nullable();

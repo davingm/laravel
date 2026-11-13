@@ -44,10 +44,12 @@ final class DevtoolsInstallCommand extends Command
         $migrationPaths = $this->publishMigrations();
 
         $this->step(3, 6, 'Copy dashboard pages and native CSS');
-        $this->copyTree($this->stubPath('resources/views/pages/peminjaman'), resource_path('views/pages/peminjaman'), 'resources/views/pages/peminjaman');
+        $this->copyTree($this->stubPath('resources/views/pages'), resource_path('views/pages'), 'resources/views/pages');
         $this->publishStylesheet();
+        $this->publishScript();
         $this->publishMiddleware();
         $this->file('public/css/peminjaman.css');
+        $this->file('public/js/peminjaman.js');
         $this->done('Preset pages use local CSS and do not require Vite or npm');
 
         $this->step(4, 6, 'Register preset routes and role middleware');
@@ -92,7 +94,11 @@ final class DevtoolsInstallCommand extends Command
         $conflicts = [];
         $required = [
             'routes/peminjaman.php',
-            'resources/views/pages/peminjaman',
+            'resources/views/pages/tools',
+            'resources/views/pages/categories',
+            'resources/views/pages/loans',
+            'resources/views/pages/returns',
+            'resources/views/pages/users',
             'app/Http/Controllers/AlatController.php',
             'app/Http/Controllers/KategoriController.php',
             'app/Http/Controllers/PeminjamanController.php',
@@ -101,9 +107,11 @@ final class DevtoolsInstallCommand extends Command
             'app/Models/Alat.php',
             'app/Models/Kategori.php',
             'app/Models/Peminjaman.php',
+            'app/Models/PeminjamanItem.php',
             'app/Http/Middleware/EnsureUserIsUserMiddleware.php',
             'database/seeders/PeminjamanDemoSeeder.php',
             'public/css/peminjaman.css',
+            'public/js/peminjaman.js',
         ];
 
         foreach ($required as $relative) {
@@ -112,7 +120,7 @@ final class DevtoolsInstallCommand extends Command
             }
         }
 
-        foreach (['create_kategoris_table', 'create_alats_table', 'add_stok_to_alats_table', 'create_peminjamans_table'] as $migration) {
+        foreach (['create_kategoris_table', 'create_alats_table', 'add_stok_to_alats_table', 'create_peminjamans_table', 'create_peminjaman_items_table'] as $migration) {
             if (glob(database_path("migrations/*_{$migration}.php")) !== []) {
                 $conflicts[] = "database/migrations/*_{$migration}.php";
             }
@@ -182,6 +190,7 @@ final class DevtoolsInstallCommand extends Command
             'create_alats_table.php.stub',
             'add_stok_to_alats_table.php.stub',
             'create_peminjamans_table.php.stub',
+            'create_peminjaman_items_table.php.stub',
         ];
         $base = now();
         $names = [];
@@ -214,6 +223,13 @@ final class DevtoolsInstallCommand extends Command
         $target = public_path('css/peminjaman.css');
         File::ensureDirectoryExists(dirname($target));
         File::put($target, $css);
+    }
+
+    private function publishScript(): void
+    {
+        $target = public_path('js/peminjaman.js');
+        File::ensureDirectoryExists(dirname($target));
+        File::copy($this->stubPath('resources/js/peminjaman.js.stub'), $target);
     }
 
     private function publishMiddleware(): void

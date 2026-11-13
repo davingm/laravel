@@ -4,6 +4,9 @@
     @if (file_exists(public_path('css/peminjaman.css')))
         <link rel="stylesheet" href="{{ asset('css/peminjaman.css') }}">
     @endif
+    @if (file_exists(public_path('js/peminjaman.js')))
+        <script src="{{ asset('js/peminjaman.js') }}" defer></script>
+    @endif
 @endpush
 
 @section('body-class', 'dashboard-page')

@@ -27,6 +27,9 @@ Route::middleware('auth')->prefix('peminjaman')->name('peminjaman.')->group(func
     });
 
     Route::get('/loans', [PeminjamanController::class, 'index'])->name('peminjamans.index');
+    Route::get('/loans/{peminjaman}', [PeminjamanController::class, 'show'])
+        ->whereNumber('peminjaman')
+        ->name('peminjamans.show');
     Route::get('/loans/create', [PeminjamanController::class, 'create'])
         ->middleware('role.administrator')
         ->name('peminjamans.create');

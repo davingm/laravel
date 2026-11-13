@@ -41,6 +41,17 @@ document.addEventListener('submit', (event) => {
 });
 
 document.addEventListener('click', (event) => {
+	const toggle = event.target.closest('[data-toggle-password]');
+	if (!toggle) return;
+	const input = document.getElementById(toggle.dataset.togglePassword);
+	if (!input) return;
+	const visible = input.type === 'password';
+	input.type = visible ? 'text' : 'password';
+	toggle.textContent = visible ? 'Sembunyikan' : 'Tampilkan';
+	toggle.setAttribute('aria-label', `${visible ? 'Sembunyikan' : 'Tampilkan'} password`);
+});
+
+document.addEventListener('click', (event) => {
 	const add = event.target.closest('[data-add-item]');
 	if (add) {
 		const container = add.closest('.crud-shell')?.querySelector('[data-items]');

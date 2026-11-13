@@ -12,14 +12,14 @@ class AlatController extends Controller
 {
     public function index(): View
     {
-        return view('pages.peminjaman.tools.index', [
+        return view('pages.tools.index', [
             'alats' => Alat::query()->with('kategori')->orderBy('nama_alat')->paginate(15),
         ]);
     }
 
     public function create(): View
     {
-        return view('pages.peminjaman.tools.create', [
+        return view('pages.tools.create', [
             'kategoris' => Kategori::query()->orderBy('nama_kategori')->get(),
         ]);
     }
@@ -43,7 +43,7 @@ class AlatController extends Controller
 
     public function edit(Alat $alat): View
     {
-        return view('pages.peminjaman.tools.edit', [
+        return view('pages.tools.edit', [
             'alat' => $alat,
             'kategoris' => Kategori::query()->orderBy('nama_kategori')->get(),
         ]);
@@ -63,7 +63,7 @@ class AlatController extends Controller
 
     public function destroy(Alat $alat): RedirectResponse
     {
-        if ($alat->peminjamans()->exists()) {
+        if ($alat->peminjamanItems()->exists()) {
             return back()->with('error', 'Alat tidak dapat dihapus karena sudah memiliki riwayat peminjaman.');
         }
 

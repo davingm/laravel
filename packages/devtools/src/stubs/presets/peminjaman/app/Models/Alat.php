@@ -21,8 +21,8 @@ class Alat extends Model
         return $this->belongsTo(\App\Models\Kategori::class, 'kategori_id', 'id');
     }
 
-    public function peminjamans(): HasMany
+    public function peminjamanItems(): HasMany
     {
-        return $this->hasMany(Peminjaman::class);
+        return $this->hasMany(PeminjamanItem::class);
     }
 }
