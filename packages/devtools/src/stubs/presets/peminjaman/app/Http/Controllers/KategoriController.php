@@ -11,14 +11,14 @@ class KategoriController extends Controller
 {
     public function index(): View
     {
-        return view('devtools-peminjaman.kategoris.index', [
+        return view('pages.peminjaman.categories.index', [
             'kategoris' => Kategori::query()->paginate(15),
         ]);
     }
 
     public function create(): View
     {
-        return view('devtools-peminjaman.kategoris.create', [
+        return view('pages.peminjaman.categories.create', [
 
         ]);
     }
@@ -40,7 +40,7 @@ class KategoriController extends Controller
 
     public function edit(Kategori $kategori): View
     {
-        return view('devtools-peminjaman.kategoris.edit', [
+        return view('pages.peminjaman.categories.edit', [
             'kategori' => $kategori,
 
         ]);

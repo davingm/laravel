@@ -113,7 +113,7 @@ abstract class IntegrationTestCase extends TestCase
             'app/Models',
             'app/Http/Controllers',
             'resources/views/layouts',
-            'resources/views/products',
+            'resources/views/pages/products',
             'bootstrap/cache',
             'storage/framework/views',
             'routes',

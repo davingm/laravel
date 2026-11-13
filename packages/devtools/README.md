@@ -65,7 +65,7 @@ After the auth starter is installed, add the borrowing system based on the repos
 php artisan devtools:install --preset=peminjaman
 ```
 
-The preset keeps the starter dashboard preview at `/dashboard` and adds its own summary and screens under `/peminjaman`. Administrators manage tools, categories, users, and loan actions; operators handle approvals and returns; regular users can request and return their own loans. Both starters serve CSS from `public/` without npm or Vite.
+The preset keeps one dashboard at `/dashboard`, adds role based links to the existing sidebar, and places its pages under `resources/views/pages/peminjaman/`. `/peminjaman/dashboard` redirects to the same dashboard. Administrators manage tools, categories, users, and loan actions; operators handle approvals and returns; regular users can request and return their own loans. All pages share the auth starter layout and locally served CSS without npm or Vite.
 
 ## What Gets Generated
 
@@ -73,9 +73,9 @@ For the `products` table, the command generates:
 
 - `app/Models/Product.php` — Eloquent model with fillable columns, supported casts, and detected single-column relationships.
 - `app/Http/Controllers/ProductController.php` — paginated index, create, store, edit, update, and destroy actions with basic validation.
-- `resources/views/products/index.blade.php` — paginated table and CRUD actions.
-- `resources/views/products/create.blade.php` — creation form.
-- `resources/views/products/edit.blade.php` — edit form.
+- `resources/views/pages/products/index.blade.php` — paginated table and CRUD actions.
+- `resources/views/pages/products/create.blade.php` — creation form.
+- `resources/views/pages/products/edit.blade.php` — edit form.
 - A marked resource route block in `routes/web.php`; the generated resource excludes the `show` action.
 
 A detected single-column foreign key such as `category_id` creates a relationship dropdown. Boolean fields use checkboxes. The generated route block can be updated on subsequent runs without adding a duplicate block.

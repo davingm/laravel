@@ -23,14 +23,14 @@ class PeminjamanController extends Controller
             ->latest()
             ->paginate(15);
 
-        return view('devtools-peminjaman.peminjamans.index', [
+        return view('pages.peminjaman.loans.index', [
             'peminjamans' => $peminjamans,
         ]);
     }
 
     public function create(): View
     {
-        return view('devtools-peminjaman.peminjamans.create', [
+        return view('pages.peminjaman.loans.create', [
             'users' => User::query()->orderBy('name')->get(),
             'alats' => Alat::query()->with('kategori')->orderBy('nama_alat')->get(),
         ]);
@@ -80,7 +80,7 @@ class PeminjamanController extends Controller
     {
         abort_unless($peminjaman->status === 'menunggu', 404);
 
-        return view('devtools-peminjaman.peminjamans.edit', [
+        return view('pages.peminjaman.loans.edit', [
             'peminjaman' => $peminjaman->load(['user', 'alat']),
             'users' => User::query()->orderBy('name')->get(),
             'alats' => Alat::query()->with('kategori')->orderBy('nama_alat')->get(),

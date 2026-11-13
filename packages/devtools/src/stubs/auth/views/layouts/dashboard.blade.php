@@ -1,5 +1,11 @@
 @extends('layouts.app')
 
+@push('head')
+    @if (file_exists(public_path('css/peminjaman.css')))
+        <link rel="stylesheet" href="{{ asset('css/peminjaman.css') }}">
+    @endif
+@endpush
+
 @section('body-class', 'dashboard-page')
 
 @section('content')

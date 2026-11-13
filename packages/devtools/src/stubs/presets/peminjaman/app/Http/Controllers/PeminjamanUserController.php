@@ -13,14 +13,14 @@ class PeminjamanUserController extends Controller
 {
     public function index(): View
     {
-        return view('devtools-peminjaman.users.index', [
+        return view('pages.peminjaman.users.index', [
             'users' => User::query()->orderBy('name')->paginate(15),
         ]);
     }
 
     public function create(): View
     {
-        return view('devtools-peminjaman.users.create');
+        return view('pages.peminjaman.users.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -40,7 +40,7 @@ class PeminjamanUserController extends Controller
 
     public function edit(User $user): View
     {
-        return view('devtools-peminjaman.users.edit', ['user' => $user]);
+        return view('pages.peminjaman.users.edit', ['user' => $user]);
     }
 
     public function update(Request $request, User $user): RedirectResponse

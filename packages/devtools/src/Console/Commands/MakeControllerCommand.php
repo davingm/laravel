@@ -55,7 +55,7 @@ PHP, ['__CLASS__' => $class]);
     {
         $variable = Str::camel($model);
         $plural = Str::plural($variable);
-        $view = Str::kebab(str_replace('_', ' ', Str::snake(Str::pluralStudly($model))));
+        $view = 'pages.'.Str::kebab(str_replace('_', ' ', Str::snake(Str::pluralStudly($model))));
         $route = $view;
         return strtr(<<<'PHP'
 <?php

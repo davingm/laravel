@@ -198,8 +198,8 @@ final class AuthInstallCommand extends Command
         }
 
         // No existing dashboard view
-        if (File::exists(resource_path('views/dashboard'))) {
-            $problems[] = 'resources/views/dashboard/ already exists';
+        if (File::exists(resource_path('views/pages/dashboard'))) {
+            $problems[] = 'resources/views/pages/dashboard/ already exists';
         }
 
         // No existing auth views

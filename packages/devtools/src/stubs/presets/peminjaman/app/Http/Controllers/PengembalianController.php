@@ -14,7 +14,7 @@ class PengembalianController extends Controller
     {
         abort_unless(in_array(request()->user()->role, ['administrator', 'operator'], true), 403);
 
-        return view('devtools-peminjaman.pengembalians.index', [
+        return view('pages.peminjaman.returns.index', [
             'peminjamans' => Peminjaman::query()
                 ->with(['user', 'alat'])
                 ->whereIn('status', ['menunggu_pengembalian', 'dikembalikan'])

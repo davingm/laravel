@@ -1,16 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Profile')
 @section('body-class', 'dashboard-page')
 
-@section('content')
-<div class="dashboard-shell">
-    @include('components.dashboard-header')
-
-    <div class="dashboard-workspace">
-        @include('components.dashboard-sidebar')
-
-        <main id="profile-main" class="dashboard-main profile-main">
+@section('dashboard-content')
+            <div id="profile-main" class="profile-main">
             <section class="profile-content">
                 <div class="profile-heading">
                     <p class="profile-eyebrow">Pengaturan akun</p>
@@ -76,7 +70,5 @@
                     </div>
                 </form>
             </section>
-        </main>
-    </div>
-</div>
+            </div>
 @endsection

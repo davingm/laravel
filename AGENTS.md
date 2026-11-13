@@ -27,15 +27,9 @@ Panduan ini berisi aturan kerja yang berlaku selama mengembangkan repository. In
 Jalankan perintah dari `playground/`, kecuali perintah menyebut lokasi lain:
 
 ```bash
-<<<<<<< HEAD
 artisan about
 artisan route:list
 artisan test --compact
-=======
-composer install
-php artisan test --compact
-npm ci
->>>>>>> 0135ad8ab7292abc5570312413cb66b3edbd9741
 npm run build
 ```
 

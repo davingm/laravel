@@ -81,9 +81,9 @@ For this example, the generator creates:
 
 - `app/Models/Product.php`
 - `app/Http/Controllers/ProductController.php`
-- `resources/views/products/index.blade.php`
-- `resources/views/products/create.blade.php`
-- `resources/views/products/edit.blade.php`
+- `resources/views/pages/products/index.blade.php`
+- `resources/views/pages/products/create.blade.php`
+- `resources/views/pages/products/edit.blade.php`
 - A marked resource route block in `routes/web.php`
 
 Generated routes exclude the `show` action. The index action paginates products, and the generated forms include the detected category relationship.
@@ -112,7 +112,7 @@ Check that the application is using the expected route file and that the generat
 
 ### Laravel reports that a view cannot be found
 
-Confirm the files are under `resources/views/products` and that the route uses the generated controller. The generator derives this view directory from the database table name.
+Confirm the files are under `resources/views/pages/products` and that the route uses the generated controller. The generator derives the nested view directory from the database table name.
 
 ### A column is missing from the form or index
 

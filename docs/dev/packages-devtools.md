@@ -10,7 +10,7 @@ Composer meminta izin untuk mengaktifkan plugin. Aplikasi pemakai perlu mengizin
 
 Source PHP package berada di `src/`, runtime CLI/stub berada di `.laravel/`, dan contoh instalasi Laravel 12 berada di `examples/laravel12/`. Folder runtime lokal aplikasi adalah hasil instalasi; ubah source package, bukan salinannya.
 
-Source preset peminjaman di `src/stubs/presets/peminjaman/` mengikuti kelompok Laravel: `app/Http/Controllers`, `app/Http/Middleware`, `app/Models`, `database/migrations`, `database/seeders`, `resources/css`, `resources/views`, dan `routes/`. Saat dipasang, command menyalin setiap kelompok ke folder aplikasi Laravel yang bersesuaian.
+Source preset peminjaman di `src/stubs/presets/peminjaman/` mengikuti kelompok Laravel: `app/Http/Controllers`, `app/Http/Middleware`, `app/Models`, `database/migrations`, `database/seeders`, `resources/css`, `resources/views/pages/peminjaman`, dan `routes/`. Halaman dashboard, profil, user, CRUD, dan preset berada di bawah `resources/views/pages/`; halaman login/register tetap di `resources/views/auth/`. Dashboard memakai satu `layouts/dashboard.blade.php` serta komponen header/sidebar yang sama.
 
 ## Command
 
@@ -18,10 +18,11 @@ Source preset peminjaman di `src/stubs/presets/peminjaman/` mengikuti kelompok L
 - `php artisan devtools` membuka menu interaktif untuk semua generator package.
 - `php artisan make:migration product` membuat migration `create_products_table`.
 - `php artisan make:all Product`, `make:controller`, `make:page`, `make:dashboard`, dan `make:roles` tersedia seperti generator framework dengan path Laravel standar.
-- `php artisan crud:generate Product` membaca tabel `products` dari koneksi database aktif dan menghasilkan model, controller, Blade view di `resources/views/products/`, validasi dasar dari tipe/nullability kolom, serta route resource di `routes/web.php`.
+- `php artisan crud:generate Product` membaca tabel `products` dari koneksi database aktif dan menghasilkan model, controller, Blade view di `resources/views/pages/products/`, validasi dasar dari tipe/nullability kolom, serta route resource di `routes/web.php`.
+- `php artisan make:page about` membuat view di `resources/views/pages/about.blade.php`; nama view boleh memakai subfolder seperti `admin/users`.
 - Generator tidak membuat atau menjalankan migration. Jalankan migration lebih dulu. File yang telah ada dilewati.
-- `php artisan auth:install` memasang auth starter lengkap (login, register, dashboard, profil, manajemen user) pada project Laravel 12 yang bersih. Membutuhkan project yang belum memiliki controller auth, views auth, atau migration role. Gunakan `--force` untuk menimpa file yang sudah ada. UI auth dilayani dari `public/css/devtools-auth.css` dan `public/js/devtools-auth.js`, serta ikon dari `public/icons/`; halaman auth tidak membutuhkan Node.js, npm, atau Vite. Menyediakan 3 user default: `administrator`, `operator`, dan `user` via `AuthSeeder` (bukan factory).
-- `php artisan devtools:install --preset=peminjaman` hanya berjalan setelah starter `auth:install` dan dashboard awal terpasang. Perintah menyalin preset dari `references/preset-peminjaman` yang telah diadaptasi ke struktur Laravel standar, menjalankan migration dan seeder contoh, serta mempertahankan preview `/dashboard`. Ringkasan sistem ada di `/peminjaman/dashboard`; semua halaman memakai role `administrator`, `operator`, dan `user` dari auth starter. CSS preset disalin ke `public/css/` dan tidak membutuhkan Vite atau npm.
+- `php artisan auth:install` memasang auth starter lengkap (login, register, dashboard, profil, manajemen user) pada project Laravel 12 yang bersih. Halaman dashboard, profil, dan user diletakkan di `resources/views/pages/`; login dan register tetap di `resources/views/auth/`. UI dilayani dari `public/css/devtools-auth.css` dan `public/js/devtools-auth.js`, serta ikon dari `public/icons/`; tidak membutuhkan Node.js, npm, atau Vite. Menyediakan 3 user default: `administrator`, `operator`, dan `user` via `AuthSeeder`.
+- `php artisan devtools:install --preset=peminjaman` hanya berjalan setelah starter `auth:install` terpasang. Perintah menyalin halaman ke `resources/views/pages/peminjaman/`, menjalankan migration dan seeder, lalu menambahkan menu role-aware ke sidebar auth yang sama. Semua halaman memakai header/sidebar dan tema `/dashboard`; route `/peminjaman/dashboard` mengarah kembali ke satu dashboard utama `/dashboard`. CSS status preset berada di `public/css/peminjaman.css`; tidak membutuhkan Vite atau npm.
 
 Verifikasi package dilakukan pada contoh Laravel 12. Contoh Laravel 11 dan 13 dapat diuji terpisah.
 - `composer dev` dapat diteruskan ke `@php artisan dev` melalui script di `composer.json` root.

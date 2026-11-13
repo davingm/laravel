@@ -25,6 +25,7 @@ final class ControllerStub
         $modelFqcn = '\\'.ltrim($modelFqcn, '\\');
         $collectionVar = Str::camel($table);
         $modelName = Str::studly(Str::singular($table));
+        $viewDirectory = 'pages.'.$table;
         $dropdownVariables = array_keys($dropdownData);
         $editVariables = array_merge([$modelVar], $dropdownVariables);
         $routeIndex = var_export($table.'.index', true);
@@ -45,15 +46,15 @@ final class ControllerStub
             '    public function index(): View',
             '    {',
             "        \${$collectionVar} = {$modelFqcn}::query()->paginate({$perPage});",
-            "        return view(".var_export($table.'.index', true).", ['{$collectionVar}' => \${$collectionVar}]);",
+            "        return view(".var_export($viewDirectory.'.index', true).", ['{$collectionVar}' => \${$collectionVar}]);",
             '    }',
             '',
             '    public function create(): View',
             '    {',
             ...$this->dropdownQueries($dropdownData),
             $dropdownData === []
-                ? '        return view('.var_export($table.'.create', true).');'
-                : '        return view('.var_export($table.'.create', true).', '.$this->compactCall($dropdownVariables).');',
+                ? '        return view('.var_export($viewDirectory.'.create', true).');'
+                : '        return view('.var_export($viewDirectory.'.create', true).', '.$this->compactCall($dropdownVariables).');',
             '    }',
             '',
             '    // TODO: extract to FormRequest if business logic grows',
@@ -68,8 +69,8 @@ final class ControllerStub
             '    {',
             ...$this->dropdownQueries($dropdownData),
             $dropdownData === []
-                ? "        return view(".var_export($table.'.edit', true).", ['{$modelVar}' => \${$modelVar}]);"
-                : '        return view('.var_export($table.'.edit', true).', '.$this->compactCall($editVariables).');',
+                ? "        return view(".var_export($viewDirectory.'.edit', true).", ['{$modelVar}' => \${$modelVar}]);"
+                : '        return view('.var_export($viewDirectory.'.edit', true).', '.$this->compactCall($editVariables).');',
             '    }',
             '',
             '    // TODO: extract to FormRequest if business logic grows',

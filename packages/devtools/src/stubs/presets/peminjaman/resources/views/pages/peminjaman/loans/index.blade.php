@@ -1,4 +1,4 @@
-@extends('devtools-peminjaman.layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Peminjaman')
 @section('body-class', 'dashboard-page')

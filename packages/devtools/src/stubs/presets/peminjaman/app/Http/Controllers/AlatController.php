@@ -12,14 +12,14 @@ class AlatController extends Controller
 {
     public function index(): View
     {
-        return view('devtools-peminjaman.alats.index', [
+        return view('pages.peminjaman.tools.index', [
             'alats' => Alat::query()->with('kategori')->orderBy('nama_alat')->paginate(15),
         ]);
     }
 
     public function create(): View
     {
-        return view('devtools-peminjaman.alats.create', [
+        return view('pages.peminjaman.tools.create', [
             'kategoris' => Kategori::query()->orderBy('nama_kategori')->get(),
         ]);
     }
@@ -43,7 +43,7 @@ class AlatController extends Controller
 
     public function edit(Alat $alat): View
     {
-        return view('devtools-peminjaman.alats.edit', [
+        return view('pages.peminjaman.tools.edit', [
             'alat' => $alat,
             'kategoris' => Kategori::query()->orderBy('nama_kategori')->get(),
         ]);

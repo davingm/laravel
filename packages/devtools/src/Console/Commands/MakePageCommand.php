@@ -16,9 +16,19 @@ final class MakePageCommand extends Command
     public function handle(): int
     {
         $name = trim(str_replace('\\', '/', (string) $this->argument('name')), '/');
-        $segments = array_filter(explode('/', str_replace('.', '/', $name)), static fn (string $part): bool => $part !== '');
+        $segments = array_values(array_filter(explode('/', str_replace('.', '/', $name)), static fn (string $part): bool => $part !== ''));
         if ($segments === [] || in_array('..', $segments, true)) {
             $this->error('Provide a valid view name.');
+            return self::FAILURE;
+        }
+
+        if ($segments[0] !== 'pages') {
+            array_unshift($segments, 'pages');
+        }
+
+        $uriSegments = array_slice($segments, 1);
+        if ($uriSegments === []) {
+            $this->error('Provide a page name below the pages directory.');
             return self::FAILURE;
         }
 
@@ -28,15 +38,16 @@ final class MakePageCommand extends Command
             $this->error("View already exists: {$path}");
             return self::FAILURE;
         }
-        File::ensureDirectoryExists(dirname($path));
-        File::put($path, $this->viewSource((string) end($segments)));
-
         $routeFile = base_path('routes/web.php');
         if (!File::exists($routeFile)) {
             $this->error('routes/web.php was not found.');
             return self::FAILURE;
         }
-        $uri = implode('/', array_map(static fn (string $part): string => Str::kebab($part), $segments));
+
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, $this->viewSource((string) end($segments)));
+
+        $uri = implode('/', array_map(static fn (string $part): string => Str::kebab($part), $uriSegments));
         $routeName = str_replace('/', '.', $uri);
         $routeLine = "\\Illuminate\\Support\\Facades\\Route::view('{$uri}', '{$view}')->name('{$routeName}');";
         if (!str_contains(File::get($routeFile), $routeLine)) File::append($routeFile, "\n{$routeLine}\n");

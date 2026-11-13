@@ -44,10 +44,10 @@ final class DevtoolsInstallCommand extends Command
         $migrationPaths = $this->publishMigrations();
 
         $this->step(3, 6, 'Copy dashboard pages and native CSS');
-        $this->copyTree($this->stubPath('resources/views'), resource_path('views/devtools-peminjaman'), 'resources/views/devtools-peminjaman');
+        $this->copyTree($this->stubPath('resources/views/pages/peminjaman'), resource_path('views/pages/peminjaman'), 'resources/views/pages/peminjaman');
         $this->publishStylesheet();
         $this->publishMiddleware();
-        $this->file('public/css/devtools-preset-peminjaman.css');
+        $this->file('public/css/peminjaman.css');
         $this->done('Preset pages use local CSS and do not require Vite or npm');
 
         $this->step(4, 6, 'Register preset routes and role middleware');
@@ -72,8 +72,7 @@ final class DevtoolsInstallCommand extends Command
 
         $this->line('');
         $this->info('Preset peminjaman berhasil dipasang.');
-        $this->line('Dashboard preview tetap tersedia di /dashboard.');
-        $this->line('Buka /peminjaman/dashboard untuk ringkasan peminjaman.');
+        $this->line('Dashboard utama tersedia di /dashboard.');
         $this->line('');
 
         return self::SUCCESS;
@@ -82,7 +81,7 @@ final class DevtoolsInstallCommand extends Command
     private function authStarterInstalled(): bool
     {
         return File::exists(database_path('seeders/AuthSeeder.php'))
-            && File::exists(resource_path('views/dashboard/index.blade.php'))
+            && File::exists(resource_path('views/pages/dashboard/index.blade.php'))
             && File::exists(public_path('css/devtools-auth.css'))
             && File::exists(base_path('bootstrap/app.php'))
             && File::exists(base_path('routes/web.php'));
@@ -92,20 +91,19 @@ final class DevtoolsInstallCommand extends Command
     {
         $conflicts = [];
         $required = [
-            'routes/devtools-peminjaman.php',
-            'resources/views/devtools-peminjaman',
+            'routes/peminjaman.php',
+            'resources/views/pages/peminjaman',
             'app/Http/Controllers/AlatController.php',
             'app/Http/Controllers/KategoriController.php',
             'app/Http/Controllers/PeminjamanController.php',
             'app/Http/Controllers/PengembalianController.php',
             'app/Http/Controllers/PeminjamanUserController.php',
-            'app/Http/Controllers/PeminjamanDashboardController.php',
             'app/Models/Alat.php',
             'app/Models/Kategori.php',
             'app/Models/Peminjaman.php',
             'app/Http/Middleware/EnsureUserIsUserMiddleware.php',
             'database/seeders/PeminjamanDemoSeeder.php',
-            'public/css/devtools-preset-peminjaman.css',
+            'public/css/peminjaman.css',
         ];
 
         foreach ($required as $relative) {
@@ -121,7 +119,7 @@ final class DevtoolsInstallCommand extends Command
         }
 
         $routes = File::get(base_path('routes/web.php'));
-        if (str_contains($routes, 'devtools:preset:peminjaman')) {
+        if (str_contains($routes, 'preset:peminjaman')) {
             $conflicts[] = 'routes/web.php preset marker';
         }
 
@@ -211,9 +209,9 @@ final class DevtoolsInstallCommand extends Command
     {
         $css = File::get($this->stubPath('resources/css/peminjaman.css.stub'));
         $css = preg_replace('/^@(?:import|source)\s+.*;\s*$/m', '', $css) ?? $css;
-        $css = "/* Preset Peminjaman styles copied from the Devtools preset. */\n*, *::before, *::after { box-sizing: border-box; }\nbody { margin: 0; }\n".$css;
+        $css = "/* Native status styles for the borrowing pages. */\n".$css;
 
-        $target = public_path('css/devtools-preset-peminjaman.css');
+        $target = public_path('css/peminjaman.css');
         File::ensureDirectoryExists(dirname($target));
         File::put($target, $css);
     }
@@ -236,13 +234,13 @@ final class DevtoolsInstallCommand extends Command
 
     private function publishRoutes(): void
     {
-        $routeFile = base_path('routes/devtools-peminjaman.php');
+        $routeFile = base_path('routes/peminjaman.php');
         File::ensureDirectoryExists(dirname($routeFile));
         File::copy($this->stubPath('routes/web.php.stub'), $routeFile);
-        $this->file('routes/devtools-peminjaman.php');
+        $this->file('routes/peminjaman.php');
 
         $webRoutes = base_path('routes/web.php');
-        File::append($webRoutes, "\n\n// devtools:preset:peminjaman\nrequire __DIR__.'/devtools-peminjaman.php';\n");
+        File::append($webRoutes, "\n\n// preset:peminjaman\nrequire __DIR__.'/peminjaman.php';\n");
         $this->file('routes/web.php');
     }
 

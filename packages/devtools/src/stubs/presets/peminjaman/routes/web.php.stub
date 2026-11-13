@@ -3,13 +3,12 @@
 use App\Http\Controllers\AlatController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PeminjamanController;
-use App\Http\Controllers\PeminjamanDashboardController;
 use App\Http\Controllers\PeminjamanUserController;
 use App\Http\Controllers\PengembalianController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->prefix('peminjaman')->name('peminjaman.')->group(function (): void {
-    Route::get('/dashboard', [PeminjamanDashboardController::class, 'show'])->name('dashboard');
+    Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
 
     Route::get('/tools', [AlatController::class, 'index'])->name('alats.index');
     Route::middleware('role.administrator')->group(function (): void {

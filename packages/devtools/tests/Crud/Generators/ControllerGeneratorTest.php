@@ -202,7 +202,7 @@ final class ControllerGeneratorTest extends TestCase
 
         $code = (new ControllerGenerator())->generate((new SchemaInspector())->inspect('products'));
 
-        self::assertStringContainsString("return view('products.create');", $code);
+        self::assertStringContainsString("return view('pages.products.create');", $code);
         self::assertStringNotContainsString('orderBy(', $code);
     }
 

@@ -114,7 +114,7 @@ final class CrudGenerateCommand extends Command
             ],
             [
                 'label' => 'Views',
-                'path' => 'resources/views/'.$table,
+                'path' => 'resources/views/pages/'.$table,
                 'call' => fn (): array => $this->generateViews($definition, $table, $viewGenerator, $viewWriter, $paths['views'], $dryRun, $force),
             ],
             [
@@ -204,7 +204,7 @@ final class CrudGenerateCommand extends Command
         foreach ($views as $viewName => $content) {
             $results[] = $this->writeFile(
                 $basePath.DIRECTORY_SEPARATOR.$table.DIRECTORY_SEPARATOR.$viewName.'.blade.php',
-                'resources/views/'.$table.'/'.$viewName.'.blade.php',
+                'resources/views/pages/'.$table.'/'.$viewName.'.blade.php',
                 $content,
                 $dryRun,
                 $force,
@@ -350,7 +350,7 @@ final class CrudGenerateCommand extends Command
         return [
             'models' => app_path('Models'),
             'controllers' => app_path('Http/Controllers'),
-            'views' => resource_path('views'),
+            'views' => resource_path('views/pages'),
             'routes' => base_path('routes/web.php'),
         ];
     }

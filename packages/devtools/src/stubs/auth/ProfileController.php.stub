@@ -12,7 +12,7 @@ class ProfileController extends Controller
 {
     public function edit(): View
     {
-        return view('profile.edit');
+        return view('pages.profile.edit');
     }
 
     public function update(Request $request): RedirectResponse

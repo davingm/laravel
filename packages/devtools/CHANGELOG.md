@@ -7,7 +7,9 @@
 - Copy standalone auth and preset CSS assets into `public/` so generated screens work without npm or Vite.
 - Keep the auth dashboard preview at `/dashboard` and add the borrowing system under `/peminjaman`.
 - Refine auth dashboard header, icon sizing, and sidebar navigation.
+- Use the auth dashboard's single layout and role-aware sidebar for every preset page; keep all generated screens under `resources/views/pages/`.
 - Return a failing exit code from `auth:install` when its role migration or default-user seeder fails.
+- Keep CRUD generator and `make:page` views under `resources/views/pages/`.
 
 ## 1.1.1
 
