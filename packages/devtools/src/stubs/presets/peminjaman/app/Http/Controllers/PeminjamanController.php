@@ -156,8 +156,14 @@ class PeminjamanController extends Controller
             ...($includeUser ? ['user_id' => ['required', 'integer', 'exists:users,id']] : []),
             'items' => ['required', 'array', 'min:1'],
             'items.*' => ['required', 'integer', 'min:0'],
-            'tanggal_kembali' => ['nullable', 'date', 'after_or_equal:today'],
+            'tanggal_kembali' => [
+                (int) config('peminjaman.denda_per_hari', 1000) > 0 ? 'required' : 'nullable',
+                'date',
+                'after_or_equal:today',
+            ],
             'catatan' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'tanggal_kembali.required' => 'Tanggal rencana kembali wajib diisi selama denda keterlambatan aktif.',
         ]);
     }
 

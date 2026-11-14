@@ -67,7 +67,7 @@ php artisan devtools:install --preset=peminjaman
 
 The preset keeps one dashboard at `/dashboard`, adds role based links to the existing sidebar, and places its pages directly under `resources/views/pages/` (`tools`, `categories`, `loans`, `returns`, and `users`). `/peminjaman/dashboard` redirects to the same dashboard. Administrators retain full record and user management. Operators can add tools and categories, see all loan records (including approved loans shown as `Dipinjam`), and handle approvals and returns, but cannot manage users. Regular users can select multiple tools and quantities in one request. The dashboard header and sidebar are black, the workspace is near-black `#080808`, and dashboard tables, forms, and panels use `#0A0A0A`. CSS and JavaScript are served locally without npm or Vite.
 
-When an operator confirms a return, the preset records a flat late fee per calendar day after the planned return date. The default is Rp1,000 per day and can be changed with `PEMINJAMAN_DENDA_PER_HARI` in `.env`; set it to `0` to disable fees. The operator marks an outstanding fee as paid manually. No online payment integration or interest is included.
+The preset creates `config/peminjaman.php` during installation. Change `denda_per_hari` there to configure the flat late fee (default Rp1,000 per calendar day), or set it to `0` to disable fees. While the fee is enabled, every loan request must include a planned return date; the form and server validation both enforce it. When an operator confirms a return, the app calculates days after that date and records the fee. The operator marks an outstanding fee as paid manually. No online payment integration or interest is included.
 
 ## What Gets Generated
 

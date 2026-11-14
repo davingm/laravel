@@ -38,6 +38,7 @@ class PengembalianController extends Controller
 
             $returnedAt = now();
             $daysLate = 0;
+            $dailyFine = max(0, (int) config('peminjaman.denda_per_hari', 1000));
             if ($loan->tanggal_kembali !== null && $returnedAt->copy()->startOfDay()->greaterThan($loan->tanggal_kembali->copy()->startOfDay())) {
                 $daysLate = (int) $loan->tanggal_kembali->copy()->startOfDay()->diffInDays($returnedAt->copy()->startOfDay());
             }
@@ -46,7 +47,7 @@ class PengembalianController extends Controller
                 'status' => 'dikembalikan',
                 'dikembalikan_pada' => $returnedAt,
                 'hari_terlambat' => $daysLate,
-                'jumlah_denda' => $daysLate * (int) config('peminjaman.denda_per_hari', 1000),
+                'jumlah_denda' => $daysLate * $dailyFine,
             ]);
         });
 

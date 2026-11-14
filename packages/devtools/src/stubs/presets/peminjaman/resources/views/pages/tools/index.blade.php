@@ -56,7 +56,9 @@
 
     @if (auth()->user()->role === 'user')
         <div class="loan-request-controls">
-            <label class="crud-field">Rencana tanggal kembali<x-ui.input type="date" name="tanggal_kembali" min="{{ now()->toDateString() }}" value="{{ old('tanggal_kembali') }}" /></label>
+            <label class="crud-field">Rencana tanggal kembali<x-ui.input type="date" name="tanggal_kembali" min="{{ now()->toDateString() }}" value="{{ old('tanggal_kembali') }}" :required="(int) config('peminjaman.denda_per_hari', 1000) > 0" />
+                @if ((int) config('peminjaman.denda_per_hari', 1000) > 0)<small>Wajib diisi. Denda Rp {{ number_format((int) config('peminjaman.denda_per_hari'), 0, ',', '.') }} per hari jika terlambat.</small>@else<small>Denda keterlambatan sedang dinonaktifkan.</small>@endif
+            </label>
             <label class="crud-field">Catatan (opsional)<x-ui.input type="text" name="catatan" maxlength="1000" value="{{ old('catatan') }}" /></label>
             <button class="button button-primary" type="submit">Ajukan peminjaman</button>
         </div>
