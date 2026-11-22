@@ -53,7 +53,7 @@ For a detailed walkthrough, see [Getting Started](docs/getting-started.md).
 
 ## Auth Starter and Presets
 
-Install the auth starter on a clean Laravel application. Its CSS and JavaScript are copied into `public/`, so the auth and dashboard UI work without npm or Vite:
+Install or refresh the auth starter on a Laravel application. Its managed files are overwritten with the package version, and pending migrations and demo seed data run automatically. Its CSS and JavaScript are copied into `public/`, so the auth and dashboard UI work without npm or Vite:
 
 ```bash
 php artisan auth:install
@@ -65,7 +65,9 @@ After the auth starter is installed, add the borrowing system based on the repos
 php artisan devtools:install --preset=peminjaman
 ```
 
-The preset keeps one dashboard at `/dashboard`, adds role based links to the existing sidebar, and places its pages directly under `resources/views/pages/` (`tools`, `categories`, `loans`, `returns`, and `users`). `/peminjaman/dashboard` redirects to the same dashboard. Administrators retain full record and user management. Operators can add tools and categories, see all loan records (including approved loans shown as `Dipinjam`), and handle approvals and returns, but cannot manage users. Regular users can select multiple tools and quantities in one request. The dashboard header and sidebar are black, the workspace is near-black `#080808`, and dashboard tables, forms, and panels use `#0A0A0A`. CSS and JavaScript are served locally without npm or Vite.
+The preset refreshes the auth starter automatically, overwrites its managed preset files with the package version, runs pending migrations and seeders, then performs smoke checks. It keeps one dashboard at `/dashboard`, adds role based links to the existing sidebar, and places its pages directly under `resources/views/pages/` (`tools`, `categories`, `loans`, `returns`, `users`, `activity`, and `reports`). `/peminjaman/dashboard` redirects to the same dashboard. Administrators retain full record and user management. Operators can add tools and categories, see all loan records (including approved loans shown as `Dipinjam`), and handle approvals and returns, but cannot manage users. Regular users can select multiple tools and quantities in one request. The dashboard header and sidebar are black, the workspace is near-black `#080808`, and dashboard tables, forms, and panels use `#0A0A0A`. CSS and JavaScript are served locally without npm, Vite, or extra Composer packages.
+
+The administrator-only `/activity` page lists user and operator actions. Relative timestamps continue updating in the browser without polling the server. Administrators and operators can view `/peminjaman/reports` and export a native CSV report.
 
 The preset creates `config/peminjaman.php` during installation. Change `denda_per_hari` there to configure the flat late fee (default Rp1,000 per calendar day), or set it to `0` to disable fees. While the fee is enabled, every loan request must include a planned return date; the form and server validation both enforce it. When an operator confirms a return, the app calculates days after that date and records the fee. The operator marks an outstanding fee as paid manually. No online payment integration or interest is included.
 
@@ -127,7 +129,7 @@ php artisan crud:generate Product
 
 ## auth:install
 
-Scaffolds a complete auth starter on a clean Laravel 12 project:
+Installs or refreshes the managed auth starter on a Laravel application, then runs pending migrations and seeds the demo accounts:
 
 ```bash
 php artisan auth:install
@@ -138,15 +140,17 @@ What it installs:
 - Dashboard, profile, and user management pages
 - `EnsureUserIsAdministrator` and `EnsureUserIsOperator` middleware with `role.administrator` and `role.operator` aliases
 - Migration that adds a `role` column to the `users` table
-- `AuthSeeder` with 3 default users — credentials below, **change before deploying**
+- `AuthSeeder` with 5 demo users — credentials below, **change before deploying**
 
-| Email | Password | Role |
-|---|---|---|
-| admin@example.com | password | administrator |
-| operator@example.com | password | operator |
-| user@example.com | password | user |
+| Name | Email | Password | Role |
+|---|---|---|---|
+| Endministrator | admin@example.com | password | administrator |
+| Perlica | operator@example.com | password | operator |
+| Nairha | user@example.com | password | user |
+| Davingm | davingm@example.com | password | user |
+| Erga | erga@example.com | password | user |
 
-The command refuses to run if auth controllers, auth views, or the role migration already exist. Pass `--force` to overwrite existing files.
+The installer refreshes the auth files it manages on every run. It creates or replaces the `User` model and standard users migration, prepares the role migration, and applies pending migrations automatically. If the users table is missing but its old migration is already recorded as applied, it adds a new repair migration so Laravel does not skip table creation.
 
 The auth UI publishes standalone CSS and JavaScript under `public/`; login and dashboard styling do not require Node.js, npm, or Vite. Start the Laravel development server with:
 

@@ -1,11 +1,17 @@
 <?php
 
 use App\Http\Controllers\AlatController;
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PeminjamanUserController;
 use App\Http\Controllers\PengembalianController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
+
+Route::middleware(['auth', 'role.administrator'])
+    ->get('/activity', [ActivityController::class, 'index'])
+    ->name('activity.index');
 
 Route::middleware('auth')->prefix('peminjaman')->name('peminjaman.')->group(function (): void {
     Route::get('/dashboard', fn () => redirect()->route('dashboard'))->name('dashboard');
@@ -82,4 +88,11 @@ Route::middleware('auth')->prefix('peminjaman')->name('peminjaman.')->group(func
     Route::post('/returns/{peminjaman}/fine-paid', [PengembalianController::class, 'markFinePaid'])
         ->middleware('role.operator')
         ->name('pengembalians.fine-paid');
+
+    Route::get('/reports', [ReportController::class, 'index'])
+        ->middleware('role.operator')
+        ->name('reports.index');
+    Route::get('/reports/export', [ReportController::class, 'export'])
+        ->middleware('role.operator')
+        ->name('reports.export');
 });

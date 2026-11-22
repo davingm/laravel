@@ -1,6 +1,6 @@
 # Merilis package split
 
-Gunakan command internal ini dari root monorepo untuk merilis `packages/laravel`, `packages/devtools`, atau keduanya ke repository package masing-masing:
+Gunakan command internal ini dari root monorepo untuk merilis `packages/laravel`, `packages/devtools`, atau `packages/argon` ke repository package masing-masing:
 
 ```bash
 composer release
@@ -10,7 +10,7 @@ Command bersifat interaktif. Ia membaca tag langsung dari remote package, menawa
 
 ## Alur
 
-1. Pilih runtime, devtools, atau keduanya.
+1. Pilih runtime, devtools, Argon, atau kombinasi package.
 2. CLI memastikan `origin` serta remote package mengarah ke repository yang diharapkan, branch aktif `main`, dan `origin/main` merupakan leluhur dari `main` lokal. Commit lokal yang belum di-push boleh diteruskan; branch yang tertinggal atau divergen ditolak.
 3. Pilih bump versi untuk setiap package. Versi yang sudah ada atau tidak lebih tinggi dari tag terakhir ditolak.
 4. Jika ada perubahan pada folder package terpilih, CLI menampilkan daftar file, meminta pesan commit, lalu hanya men-stage folder yang dipilih. Perubahan staged yang sudah ada menyebabkan proses berhenti.

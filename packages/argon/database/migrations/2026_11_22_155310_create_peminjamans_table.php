@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        if (Schema::hasTable('peminjamans')) {
+            return;
+        }
+
+        Schema::create('peminjamans', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->text('catatan')->nullable();
+            $table->date('tanggal_kembali')->nullable();
+            $table->timestamp('tanggal_dipinjam')->nullable();
+            $table->string('status')->default('menunggu');
+            $table->timestamp('diminta_kembali_pada')->nullable();
+            $table->timestamp('dikembalikan_pada')->nullable();
+            $table->unsignedInteger('hari_terlambat')->default(0);
+            $table->unsignedBigInteger('jumlah_denda')->default(0);
+            $table->timestamp('denda_dibayar_pada')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('peminjamans');
+    }
+};

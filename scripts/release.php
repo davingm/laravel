@@ -108,6 +108,14 @@ final class SplitReleaseCommand
             'composer' => 'davingm/laravel-devtools',
             'packagist' => 'https://packagist.org/packages/davingm/laravel-devtools',
         ],
+        'argon' => [
+            'label' => 'Argon Laravel Starter',
+            'path' => 'packages/argon',
+            'remote' => 'argon',
+            'repository' => 'https://github.com/davingm/argon.git',
+            'composer' => 'davingm/argon',
+            'packagist' => 'https://packagist.org/packages/davingm/argon',
+        ],
     ];
 
     private string $root;
@@ -576,7 +584,7 @@ final class SplitReleaseCommand
     private function usage(): void
     {
         $this->line('Usage: composer release');
-        $this->line('Starts the interactive split-release flow for packages/laravel and packages/devtools.');
+        $this->line('Starts the interactive split-release flow for packages/laravel, packages/devtools, and packages/argon.');
     }
 
     private function line(string $message): void

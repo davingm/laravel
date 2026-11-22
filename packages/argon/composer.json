@@ -1,0 +1,24 @@
+﻿{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "davingm/argon",
+    "type": "project",
+    "description": "Laravel 12 borrowing-system starter using Argon Dashboard.",
+    "license": "AGPL-3.0-only",
+    "authors": [
+        { "name": "davingm", "homepage": "https://github.com/davingm" }
+    ],
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0"
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "@php artisan key:generate"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "prefer-stable": true,
+    "minimum-stability": "stable"
+}

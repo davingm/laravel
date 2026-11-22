@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Alat;
+use App\Models\ActivityLog;
 use App\Models\Peminjaman;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 
 class PengembalianController extends Controller
@@ -29,7 +29,7 @@ class PengembalianController extends Controller
         abort_unless(in_array(request()->user()->role, ['administrator', 'operator'], true), 403);
 
         DB::transaction(function () use ($peminjaman): void {
-            $loan = Peminjaman::query()->lockForUpdate()->findOrFail($peminjaman->id);
+            $loan = Peminjaman::query()->with('user')->lockForUpdate()->findOrFail($peminjaman->id);
             abort_unless($loan->status === 'menunggu_pengembalian', 409, 'Permintaan pengembalian ini sudah diproses.');
 
             foreach ($loan->items()->orderBy('alat_id')->get() as $item) {
@@ -49,6 +49,7 @@ class PengembalianController extends Controller
                 'hari_terlambat' => $daysLate,
                 'jumlah_denda' => $daysLate * $dailyFine,
             ]);
+            ActivityLog::record(request()->user(), 'Menyetujui pengembalian '.$loan->user->name);
         });
 
         return redirect()->route('peminjaman.pengembalians.index')->with('success', 'Pengembalian alat sudah dikonfirmasi.');
@@ -73,6 +74,7 @@ class PengembalianController extends Controller
             'status' => 'disetujui',
             'diminta_kembali_pada' => null,
         ]);
+        ActivityLog::record(request()->user(), 'Menolak pengembalian '.$peminjaman->user->name);
 
         return redirect()->route('peminjaman.pengembalians.index')->with('success', 'Permintaan pengembalian dibatalkan.');
     }

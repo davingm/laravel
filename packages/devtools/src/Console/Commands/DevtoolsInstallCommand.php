@@ -24,28 +24,25 @@ final class DevtoolsInstallCommand extends Command
             return self::FAILURE;
         }
 
-        if (! $this->authStarterInstalled()) {
-            $this->error('Jalankan php artisan auth:install terlebih dahulu. Preset membutuhkan starter auth dan dashboard Devtools.');
-            return self::FAILURE;
-        }
-
-        if (! $this->canInstallPeminjaman()) {
-            return self::FAILURE;
-        }
-
         $this->line('');
         $this->line(' Installing preset: peminjaman');
         $this->line('');
+        $this->step(1, 8, 'Refresh the auth starter');
+        if ($this->call('auth:install', ['--defer-database' => true]) !== self::SUCCESS) {
+            $this->error('Auth starter gagal diperbarui; preset peminjaman belum dipasang.');
+            return self::FAILURE;
+        }
+        $this->done('Auth starter files are ready');
 
-        $this->step(1, 7, 'Add application models and controllers');
+        $this->step(2, 8, 'Add application models and controllers');
         $this->copyTree($this->stubPath('app/Http/Controllers'), app_path('Http/Controllers'), 'app/Http/Controllers');
         $this->copyTree($this->stubPath('app/Models'), app_path('Models'), 'app/Models');
         $this->done('Peminjaman application classes copied');
 
-        $this->step(2, 7, 'Add database migrations');
-        $migrationPaths = $this->publishMigrations();
+        $this->step(3, 8, 'Add database migrations');
+        $this->publishMigrations();
 
-        $this->step(3, 7, 'Copy dashboard pages, UI components, and native CSS');
+        $this->step(4, 8, 'Copy dashboard pages, UI components, and native CSS');
         $this->copyTree($this->stubPath('resources/views/pages'), resource_path('views/pages'), 'resources/views/pages');
         $this->copyTree($this->stubPath('resources/views/components/ui'), resource_path('views/components/ui'), 'resources/views/components/ui');
         $this->publishConfig();
@@ -56,27 +53,31 @@ final class DevtoolsInstallCommand extends Command
         $this->file('public/js/peminjaman.js');
         $this->done('Preset pages use local CSS and do not require Vite or npm');
 
-        $this->step(4, 7, 'Register preset routes and role middleware');
+        $this->step(5, 8, 'Register preset routes and role middleware');
         $this->publishRoutes();
         $this->call('route:clear');
         $this->registerUserRoleAlias();
         $this->publishSeeder();
         $this->done('Routes use the existing administrator, operator, and user roles');
 
-        $this->step(5, 7, 'Run migrations');
-        if ($this->call('migrate', ['--path' => $migrationPaths]) !== self::SUCCESS) {
+        $this->step(6, 8, 'Run migrations');
+        if ($this->call('migrate', ['--force' => true]) !== self::SUCCESS) {
             $this->error('Migration gagal. File sudah dibuat; perbaiki koneksi database lalu jalankan php artisan migrate.');
             return self::FAILURE;
         }
 
-        $this->step(6, 7, 'Seed sample tools and categories');
+        $this->step(7, 8, 'Seed sample tools and categories');
+        if ($this->call('db:seed', ['--class' => 'AuthSeeder', '--force' => true]) !== self::SUCCESS) {
+            $this->error('Seeder auth gagal. Jalankan php artisan db:seed --class=AuthSeeder setelah memperbaiki database.');
+            return self::FAILURE;
+        }
         if ($this->call('db:seed', ['--class' => 'PeminjamanDemoSeeder', '--force' => true]) !== self::SUCCESS) {
             $this->error('Seeder gagal. Jalankan php artisan db:seed --class=PeminjamanDemoSeeder setelah memperbaiki database.');
             return self::FAILURE;
         }
         $this->done('Sample categories and tools are ready');
 
-        $this->step(7, 7, 'Run preset smoke checks');
+        $this->step(8, 8, 'Run preset smoke checks');
         if (! $this->verifyInstallation()) {
             $this->error('Preset terpasang, tetapi pemeriksaan menemukan masalah. Perbaiki pesan di atas sebelum menggunakan fitur peminjaman.');
             return self::FAILURE;
@@ -90,76 +91,6 @@ final class DevtoolsInstallCommand extends Command
         return self::SUCCESS;
     }
 
-    private function authStarterInstalled(): bool
-    {
-        return File::exists(database_path('seeders/AuthSeeder.php'))
-            && File::exists(resource_path('views/pages/dashboard/index.blade.php'))
-            && File::exists(public_path('css/devtools-auth.css'))
-            && File::exists(base_path('bootstrap/app.php'))
-            && File::exists(base_path('routes/web.php'));
-    }
-
-    private function canInstallPeminjaman(): bool
-    {
-        $conflicts = [];
-        $required = [
-            'routes/peminjaman.php',
-            'resources/views/pages/tools',
-            'resources/views/pages/categories',
-            'resources/views/pages/loans',
-            'resources/views/pages/returns',
-            'resources/views/pages/users',
-            'resources/views/components/ui',
-            'app/Http/Controllers/AlatController.php',
-            'app/Http/Controllers/KategoriController.php',
-            'app/Http/Controllers/PeminjamanController.php',
-            'app/Http/Controllers/PengembalianController.php',
-            'app/Http/Controllers/PeminjamanUserController.php',
-            'app/Models/Alat.php',
-            'app/Models/Kategori.php',
-            'app/Models/Peminjaman.php',
-            'app/Models/PeminjamanItem.php',
-            'app/Http/Middleware/EnsureUserIsUserMiddleware.php',
-            'database/seeders/PeminjamanDemoSeeder.php',
-            'public/css/peminjaman.css',
-            'public/js/peminjaman.js',
-            'config/peminjaman.php',
-        ];
-
-        foreach ($required as $relative) {
-            if (File::exists(base_path($relative))) {
-                $conflicts[] = $relative;
-            }
-        }
-
-        foreach (['create_kategoris_table', 'create_alats_table', 'add_stok_to_alats_table', 'create_peminjamans_table', 'create_peminjaman_items_table'] as $migration) {
-            if (glob(database_path("migrations/*_{$migration}.php")) !== []) {
-                $conflicts[] = "database/migrations/*_{$migration}.php";
-            }
-        }
-
-        $routes = File::get(base_path('routes/web.php'));
-        if (str_contains($routes, 'preset:peminjaman')) {
-            $conflicts[] = 'routes/web.php preset marker';
-        }
-
-        if ($conflicts !== []) {
-            $this->error('Preset tidak dipasang karena file berikut sudah ada:');
-            foreach ($conflicts as $conflict) {
-                $this->line("  - {$conflict}");
-            }
-            return false;
-        }
-
-        $bootstrap = File::get(base_path('bootstrap/app.php'));
-        if (! str_contains($bootstrap, '->withMiddleware(') || ! str_contains($bootstrap, '->alias([')) {
-            $this->error('Tidak menemukan alias middleware Laravel di bootstrap/app.php.');
-            return false;
-        }
-
-        return true;
-    }
-
     private function verifyInstallation(): bool
     {
         $routeFile = base_path('routes/peminjaman.php');
@@ -170,12 +101,16 @@ final class DevtoolsInstallCommand extends Command
 
         $checks = [
             'Tabel peminjaman tersedia' => fn (): bool => collect([
-                'kategoris', 'alats', 'peminjamans', 'peminjaman_items',
+                'kategoris', 'alats', 'peminjamans', 'peminjaman_items', 'activity_logs',
             ])->every(fn (string $table): bool => Schema::hasTable($table)),
             'Route pengajuan tercantum dan dimuat' => fn (): bool => $routeFileIsLoaded
                 && str_contains($routeSource, "->name('peminjamans.request')"),
             'Route persetujuan operator tercantum dan dimuat' => fn (): bool => $routeFileIsLoaded
                 && str_contains($routeSource, "->name('peminjamans.approve')"),
+            'Route aktivitas dan laporan tercantum' => fn (): bool => $routeFileIsLoaded
+                && str_contains($routeSource, "->name('activity.index')")
+                && str_contains($routeSource, "->name('reports.index')")
+                && str_contains($routeSource, "->name('reports.export')"),
             'CSS native dan komponen UI tersedia' => fn (): bool => File::exists(public_path('css/peminjaman.css'))
                 && File::exists(resource_path('views/components/ui/input.blade.php'))
                 && File::exists(resource_path('views/components/ui/button.blade.php')),
@@ -250,8 +185,7 @@ final class DevtoolsInstallCommand extends Command
         }
     }
 
-    /** @return list<string> */
-    private function publishMigrations(): array
+    private function publishMigrations(): void
     {
         $migrations = [
             'create_kategoris_table.php.stub',
@@ -259,27 +193,34 @@ final class DevtoolsInstallCommand extends Command
             'add_stok_to_alats_table.php.stub',
             'create_peminjamans_table.php.stub',
             'create_peminjaman_items_table.php.stub',
+            'create_activity_logs_table.php.stub',
         ];
+        File::ensureDirectoryExists(database_path('migrations'));
         $base = now();
-        $names = [];
-        do {
-            $names = [];
-            foreach ($migrations as $index => $stub) {
-                $stamp = $base->copy()->addSeconds($index)->format('Y_m_d_His');
-                $name = $stamp.'_'.Str::before($stub, '.php.stub').'.php';
-                $names[] = $name;
-            }
-            $base->addSeconds(count($migrations));
-        } while (collect($names)->contains(fn (string $name): bool => File::exists(database_path('migrations/'.$name))));
+        $newMigrationIndex = 0;
+        foreach ($migrations as $stub) {
+            $suffix = Str::before($stub, '.php.stub');
+            $existing = glob(database_path("migrations/*_{$suffix}.php")) ?: [];
+            sort($existing);
+            if ($existing !== []) {
+                foreach ($existing as $target) {
+                    File::copy($this->stubPath('database/migrations/'.$stub), $target);
+                    $this->file('database/migrations/'.basename($target));
+                }
 
-        foreach ($migrations as $index => $stub) {
-            $target = database_path('migrations/'.$names[$index]);
+                continue;
+            } else {
+                $stamp = $base->copy()->addSeconds($newMigrationIndex++);
+                $target = database_path('migrations/'.$stamp->format('Y_m_d_His')."_{$suffix}.php");
+                while (File::exists($target)) {
+                    $stamp->addSecond();
+                    $target = database_path('migrations/'.$stamp->format('Y_m_d_His')."_{$suffix}.php");
+                }
+            }
             File::ensureDirectoryExists(dirname($target));
             File::copy($this->stubPath('database/migrations/'.$stub), $target);
-            $this->file('database/migrations/'.$names[$index]);
+            $this->file('database/migrations/'.basename($target));
         }
-
-        return array_map(static fn (string $name): string => 'database/migrations/'.$name, $names);
     }
 
     private function publishStylesheet(): void
@@ -324,7 +265,15 @@ final class DevtoolsInstallCommand extends Command
         $this->file('routes/peminjaman.php');
 
         $webRoutes = base_path('routes/web.php');
-        File::append($webRoutes, "\n\n// preset:peminjaman\nrequire __DIR__.'/peminjaman.php';\n");
+        File::ensureDirectoryExists(dirname($webRoutes));
+        if (! File::exists($webRoutes)) {
+            File::put($webRoutes, "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n");
+        }
+        $content = File::get($webRoutes);
+        $require = "require __DIR__.'/peminjaman.php';";
+        if (! str_contains($content, $require)) {
+            File::append($webRoutes, "\n\n// preset:peminjaman\n{$require}\n");
+        }
         $this->file('routes/web.php');
     }
 

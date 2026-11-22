@@ -24,6 +24,12 @@
                     ['label' => 'Peminjaman', 'route' => 'peminjaman.peminjamans.index', 'active' => 'peminjaman.peminjamans.*', 'roles' => ['administrator', 'operator', 'user'], 'icon' => 'loans'],
                     ['label' => 'Pengembalian', 'route' => 'peminjaman.pengembalians.index', 'active' => 'peminjaman.pengembalians.*', 'roles' => ['administrator', 'operator'], 'icon' => 'returns'],
                 ];
+                if (\Illuminate\Support\Facades\Route::has('activity.index')) {
+                    $peminjamanMenu[] = ['label' => 'Log aktivitas', 'route' => 'activity.index', 'active' => 'activity.*', 'roles' => ['administrator'], 'icon' => 'activity'];
+                }
+                if (\Illuminate\Support\Facades\Route::has('peminjaman.reports.index')) {
+                    $peminjamanMenu[] = ['label' => 'Laporan', 'route' => 'peminjaman.reports.index', 'active' => 'peminjaman.reports.*', 'roles' => ['administrator', 'operator'], 'icon' => 'reports'];
+                }
             @endphp
 
             @foreach ($peminjamanMenu as $item)
@@ -41,6 +47,12 @@
                                     @break
                                 @case('users')
                                     <path d="M10 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-6 7a6 6 0 0 1 12 0M15 5a3 3 0 0 1 0 6m1 2a5 5 0 0 1 2 4" />
+                                    @break
+                                @case('activity')
+                                    <path d="M2 10h3l2-6 4 12 2-6h5" />
+                                    @break
+                                @case('reports')
+                                    <path d="M3 3h14v14H3zM6 13V9m4 4V6m4 7v-3" />
                                     @break
                                 @default
                                     <path d="M3 5h14M3 10h14M3 15h14M6 3v4m8 1v4m-5 1v4" />

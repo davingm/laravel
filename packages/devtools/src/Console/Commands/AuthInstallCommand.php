@@ -5,23 +5,19 @@ declare(strict_types=1);
 namespace Davingm\LaravelDevtools\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Throwable;
 
 /**
- * Scaffolds a complete auth starter (login, register, dashboard, roles)
- * onto a clean Laravel 12 project.
- *
- * Guards:
- *  1. Package devtools must be present (always true when this runs).
- *  2. Project must be "clean" — no existing auth controllers, no non-welcome views,
- *     no existing role columns in the users table (migration already applied).
+ * Installs or refreshes the managed auth starter (login, register, dashboard, roles).
  */
 final class AuthInstallCommand extends Command
 {
-    protected $signature = 'auth:install {--force : Skip cleanliness check and overwrite existing files}';
-    protected $description = 'Install auth UI: login, register, dashboard, and 3 role-based users (administrator, operator, user)';
+    protected $signature = 'auth:install {--force : Kept for compatibility; managed Devtools files are always refreshed} {--defer-database : Internal option used by preset installers}';
+    protected $description = 'Install auth UI: login, register, dashboard, and demo users for administrator, operator, and user roles';
 
     // ── ANSI helpers ────────────────────────────────────────────────────────────
 
@@ -87,31 +83,29 @@ final class AuthInstallCommand extends Command
         $this->line(" {$this->bold('artisan auth:install')} {$this->dim('— Laravel Auth Starter')}");
         $this->line('');
 
-        $force = (bool) $this->option('force');
-
-        // ── Guard 1: cleanliness check ─────────────────────────────────────────
-        if (! $force && ! $this->isProjectClean()) {
-            return self::FAILURE;
-        }
+        // Auth starter files are owned by Devtools and refreshed on each install.
+        $force = true;
+        $deferDatabase = (bool) $this->option('defer-database');
 
         $total = 8;
 
         // ── Step 1: Check environment ──────────────────────────────────────────
         $this->step(1, $total, 'Initialize project');
-        $this->line("  {$this->gray('  Checking Laravel 12 environment...')}");
+        $this->line("  {$this->gray('  Checking Laravel 11, 12, or 13 environment...')}");
         $this->checkEnvironment();
-        $this->done('Laravel 12 environment ready');
+        $this->done('Laravel environment ready');
 
         // ── Step 2: Publish migration ──────────────────────────────────────────
         $this->step(2, $total, 'Add migration');
+        $this->ensureUsersMigration();
         $this->updateUserModel();
-        $migrationFile = $this->publishMigration($force);
+        $migrationFile = $this->publishMigration();
         $this->file("database/migrations/{$migrationFile}");
         $this->done('Migration for role column created');
 
         // ── Step 3: Run migration ──────────────────────────────────────────────
         $this->step(3, $total, 'Run migration');
-        if (! $this->runMigration()) {
+        if (! $deferDatabase && ! $this->runMigration()) {
             $this->error('Auth installation stopped because the role migration did not complete. Fix the database connection, then run php artisan migrate.');
 
             return self::FAILURE;
@@ -119,7 +113,7 @@ final class AuthInstallCommand extends Command
 
         // ── Step 4: Add seeder ─────────────────────────────────────────────────
         $this->step(4, $total, 'Add seeder');
-        $seederResult = $this->publishSeeder($force);
+        $seederResult = $this->publishSeeder(! $deferDatabase);
         if ($seederResult === false) {
             $this->error('Auth installation stopped because the default users could not be seeded. Fix the database, then run php artisan db:seed --class=AuthSeeder.');
 
@@ -130,7 +124,7 @@ final class AuthInstallCommand extends Command
         } else {
             $this->skip('database/seeders/AuthSeeder.php');
         }
-        $this->done('3 default users seeded (administrator, operator, user)');
+        $this->done($deferDatabase ? 'Auth seeder prepared for preset migration' : '5 demo users seeded (administrator, operator, and three users)');
 
         // ── Step 5: Add controllers ────────────────────────────────────────────
         $this->step(5, $total, 'Add controllers');
@@ -174,9 +168,11 @@ final class AuthInstallCommand extends Command
         $this->line(" {$this->green('●')} {$this->bold('Auth installed successfully!')}");
         $this->line('');
         $this->line("  {$this->dim('Default credentials (change before deploying):')}");
-        $this->line("  {$this->blue('admin@example.com')}    password  {$this->gray('→')}  administrator");
-        $this->line("  {$this->blue('operator@example.com')} password  {$this->gray('→')}  operator");
-        $this->line("  {$this->blue('user@example.com')}     password  {$this->gray('→')}  user");
+        $this->line("  {$this->blue('admin@example.com')}    password  {$this->gray('→')}  Endministrator");
+        $this->line("  {$this->blue('operator@example.com')} password  {$this->gray('→')}  Perlica");
+        $this->line("  {$this->blue('user@example.com')}     password  {$this->gray('→')}  Nairha");
+        $this->line("  {$this->blue('davingm@example.com')}  password  {$this->gray('→')}  Davingm");
+        $this->line("  {$this->blue('erga@example.com')}     password  {$this->gray('→')}  Erga");
         $this->line('');
         $this->line("  {$this->dim('Frontend assets:')}      served directly; npm is not required for auth UI");
         $this->line("  {$this->dim('Start dev server:')}  php artisan dev");
@@ -188,80 +184,124 @@ final class AuthInstallCommand extends Command
 
     // ── Guards ───────────────────────────────────────────────────────────────────
 
-    private function isProjectClean(): bool
-    {
-        $problems = [];
-
-        // No existing auth controllers
-        if (is_dir(app_path('Http/Controllers/Auth'))) {
-            $problems[] = 'app/Http/Controllers/Auth/ already exists';
-        }
-
-        // No existing dashboard view
-        if (File::exists(resource_path('views/pages/dashboard'))) {
-            $problems[] = 'resources/views/pages/dashboard/ already exists';
-        }
-
-        // No existing auth views
-        if (File::exists(resource_path('views/auth'))) {
-            $problems[] = 'resources/views/auth/ already exists';
-        }
-
-        // No existing dashboard layout
-        if (File::exists(resource_path('views/layouts/dashboard.blade.php'))) {
-            $problems[] = 'resources/views/layouts/dashboard.blade.php already exists';
-        }
-
-        // Migration for role column already exists
-        $migrations = glob(database_path('migrations/*_add_role_to_users_table.php'));
-        if ($migrations !== [] && $migrations !== false) {
-            $problems[] = 'Role migration already exists';
-        }
-
-        if ($problems !== []) {
-            $this->line('');
-            $this->error('Project does not look clean. auth:install aborted.');
-            foreach ($problems as $problem) {
-                $this->line("  {$this->gray('→')} {$problem}");
-            }
-            $this->line('');
-            $this->line("  Run with {$this->blue('--force')} to overwrite existing files.");
-            $this->line('');
-            return false;
-        }
-
-        return true;
-    }
-
     private function checkEnvironment(): void
     {
-        // Verify Laravel 12 (framework ^12)
+        // The package supports Laravel 11, 12, and 13.
         $composerJson = base_path('composer.json');
         if (File::exists($composerJson)) {
             $manifest = json_decode(File::get($composerJson), true);
             $framework = $manifest['require']['laravel/framework'] ?? $manifest['require-dev']['laravel/framework'] ?? '';
-            if ($framework !== '' && ! Str::contains($framework, ['12', '*'])) {
-                $this->warn("Detected framework requirement: {$framework}. This command is designed for Laravel 12.");
+            if ($framework !== '' && ! Str::contains($framework, '*') && ! preg_match('/(?:^|[^0-9])(?:11|12|13)(?:\.|$)/', $framework)) {
+                $this->warn("Detected Laravel framework requirement: {$framework}. Supported versions are 11, 12, and 13.");
             }
         }
     }
 
     // ── Migration ────────────────────────────────────────────────────────────────
 
-    private function publishMigration(bool $force): string
+    private function ensureUsersMigration(): void
     {
-        $timestamp = now()->format('Y_m_d_His');
-        $filename = "{$timestamp}_add_role_to_users_table.php";
-        $destination = database_path("migrations/{$filename}");
+        File::ensureDirectoryExists(database_path('migrations'));
+        $existing = glob(database_path('migrations/*_create_users_table.php')) ?: [];
+        sort($existing);
 
-        if (File::exists($destination) && ! $force) {
-            return basename($destination);
+        // Keep the standard Laravel users migration aligned with the managed
+        // auth schema, including on fresh installs after an upgrade.
+        foreach ($existing as $migration) {
+            File::put($migration, $this->stub('users-migration.php.stub'));
+        }
+
+        $usersTableExists = false;
+        try {
+            $usersTableExists = Schema::hasTable('users');
+        } catch (Throwable) {
+            // A missing SQLite file is created by Laravel migrate; provide its base table migration.
+        }
+
+        if ($usersTableExists) {
+            return;
+        }
+
+        if ($existing !== [] && ! $this->migrationWasApplied($existing[0])) {
+            return;
+        }
+
+        // Migration history can outlive a deleted migration file. In that case
+        // recreating the original filename would be skipped by `migrate`, so
+        // add a new repair migration instead.
+        $usersMigrationWasApplied = $existing !== []
+            ? $this->migrationWasApplied($existing[0])
+            : $this->hasAppliedUsersMigration();
+
+        $filename = $usersMigrationWasApplied
+            ? '0001_01_01_000003_restore_users_table.php'
+            : '0001_01_01_000000_create_users_table.php';
+        $destination = database_path('migrations/'.$filename);
+        $sequence = 3;
+        while (File::exists($destination)) {
+            $filename = sprintf('0001_01_01_%06d_restore_users_table.php', ++$sequence);
+            $destination = database_path('migrations/'.$filename);
+        }
+
+        File::put($destination, $this->stub('users-migration.php.stub'));
+        $this->file('database/migrations/'.$filename);
+    }
+
+    private function hasAppliedUsersMigration(): bool
+    {
+        try {
+            return Schema::hasTable('migrations')
+                && DB::table('migrations')->where('migration', 'like', '%_create_users_table')->exists();
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    private function publishMigration(): string
+    {
+        $existing = glob(database_path('migrations/*_add_role_to_users_table.php')) ?: [];
+        sort($existing);
+        $hasRole = false;
+        try {
+            $hasRole = Schema::hasTable('users') && Schema::hasColumn('users', 'role');
+        } catch (Throwable) {
+            // Let migrate report connection problems after the files have been prepared.
+        }
+
+        $destination = $existing[0] ?? null;
+        if ($destination !== null && ! $hasRole && $this->migrationWasApplied($destination)) {
+            $destination = null;
+        }
+
+        if ($destination === null) {
+            $filename = now()->format('Y_m_d_His').'_add_role_to_users_table.php';
+            $destination = database_path('migrations/'.$filename);
+            while (File::exists($destination)) {
+                $filename = now()->addSecond()->format('Y_m_d_His').'_add_role_to_users_table.php';
+                $destination = database_path('migrations/'.$filename);
+            }
+        } else {
+            $filename = basename($destination);
         }
 
         File::ensureDirectoryExists(database_path('migrations'));
+        foreach ($existing as $existingPath) {
+            File::put($existingPath, $this->stub('migration.php.stub'));
+        }
         File::put($destination, $this->stub('migration.php.stub'));
 
         return $filename;
+    }
+
+    private function migrationWasApplied(string $path): bool
+    {
+        try {
+            $name = pathinfo($path, PATHINFO_FILENAME);
+            return Schema::hasTable('migrations')
+                && DB::table('migrations')->where('migration', $name)->exists();
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     private function runMigration(): bool
@@ -285,16 +325,16 @@ final class AuthInstallCommand extends Command
 
     // ── Seeder ───────────────────────────────────────────────────────────────────
 
-    private function publishSeeder(bool $force): string|false
+    private function publishSeeder(bool $run = true): string|false
     {
         $path = database_path('seeders/AuthSeeder.php');
 
-        if (File::exists($path) && ! $force) {
-            return $this->runSeeder() ? 'skipped' : false;
-        }
-
         File::ensureDirectoryExists(database_path('seeders'));
         File::put($path, $this->stub('seeder.php.stub'));
+
+        if (! $run) {
+            return 'created';
+        }
 
         return $this->runSeeder() ? 'created' : false;
     }
@@ -503,22 +543,19 @@ final class AuthInstallCommand extends Command
     private function registerRoutes(): void
     {
         $routeFile = base_path('routes/web.php');
+        File::ensureDirectoryExists(dirname($routeFile));
         if (! File::exists($routeFile)) {
-            $this->warn('routes/web.php not found. Add auth routes manually.');
-            return;
+            File::put($routeFile, "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n");
         }
 
         $existing = File::get($routeFile);
-        $marker = "auth:install";
-
-        if (str_contains($existing, $marker)) {
-            $this->skip('routes/web.php (auth routes already registered)');
-            return;
+        if (! preg_match('/^use\\s+Illuminate\\\\Support\\\\Facades\\\\Route\\s*;/m', $existing)) {
+            $existing = preg_replace('/^<\?php\s*/', "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n", $existing, 1) ?? $existing;
         }
 
         $routes = <<<'PHP'
 
-// ── Auth routes — generated by artisan auth:install ───────────────────────────
+// BEGIN DEVTOOLS AUTH ROUTES
 Route::middleware('guest')->group(function () {
     Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'create'])->name('login');
     Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'store'])->name('login.store');
@@ -538,9 +575,28 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
     });
 });
+// END DEVTOOLS AUTH ROUTES
 PHP;
 
-        File::append($routeFile, $routes);
+        $start = strpos($existing, '// BEGIN DEVTOOLS AUTH ROUTES');
+        $endMarker = '// END DEVTOOLS AUTH ROUTES';
+        if ($start !== false && ($end = strpos($existing, $endMarker, $start)) !== false) {
+            $end += strlen($endMarker);
+            $existing = substr($existing, 0, $start).substr($existing, $end);
+        } else {
+            $legacyStart = strpos($existing, '// ── Auth routes — generated by artisan auth:install');
+            if ($legacyStart !== false) {
+                $routeStart = strpos($existing, "Route::middleware('guest')", $legacyStart);
+                $guestEnd = $routeStart === false ? null : $this->matchingRouteGroupEnd($existing, $routeStart);
+                $authStart = $guestEnd === null ? false : strpos($existing, "Route::middleware('auth')", $guestEnd);
+                $authEnd = $authStart === false ? null : $this->matchingRouteGroupEnd($existing, $authStart);
+                if ($authEnd !== null) {
+                    $existing = substr($existing, 0, $legacyStart).substr($existing, $authEnd);
+                }
+            }
+        }
+
+        File::put($routeFile, rtrim($existing).$routes."\n");
     }
 
     // ── Model: add role to fillable ───────────────────────────────────────────────
@@ -548,24 +604,33 @@ PHP;
     private function updateUserModel(): void
     {
         $modelPath = app_path('Models/User.php');
-        if (! File::exists($modelPath)) {
-            return;
+        File::ensureDirectoryExists(dirname($modelPath));
+        File::put($modelPath, $this->stub('User.php.stub'));
+    }
+
+    private function matchingRouteGroupEnd(string $routes, int $start): ?int
+    {
+        $opening = strpos($routes, '{', $start);
+        if ($opening === false) {
+            return null;
         }
 
-        $content = File::get($modelPath);
+        $depth = 0;
+        $length = strlen($routes);
+        for ($index = $opening; $index < $length; $index++) {
+            if ($routes[$index] === '{') {
+                $depth++;
+            } elseif ($routes[$index] === '}' && --$depth === 0) {
+                $end = $index + 1;
+                while ($end < $length && ctype_space($routes[$end])) {
+                    $end++;
+                }
 
-        // Only add 'role' if not already present
-        if (str_contains($content, "'role'")) {
-            return;
+                return substr($routes, $end, 2) === ');' ? $end + 2 : $index + 1;
+            }
         }
 
-        $content = str_replace(
-            "'name',\n        'email',\n        'password',",
-            "'name',\n        'email',\n        'password',\n        'role',",
-            $content
-        );
-
-        File::put($modelPath, $content);
+        return null;
     }
 
     // ── Stub helpers ─────────────────────────────────────────────────────────────

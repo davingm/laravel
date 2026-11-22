@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Alat;
+use App\Models\ActivityLog;
 use App\Models\Peminjaman;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -64,7 +65,11 @@ class PeminjamanController extends Controller
             $this->assertAvailableQuantities(collect($items)->mapWithKeys(
                 fn (array $item): array => [$item['alat_id'] => $item['jumlah']],
             )->all(), true);
-            return $this->createLoan($data + ['user_id' => $request->user()->id], $items);
+            $loan = $this->createLoan($data + ['user_id' => $request->user()->id], $items);
+            $totalItems = array_sum(array_column($items, 'jumlah'));
+            ActivityLog::record($request->user(), "Meminjam {$totalItems} item");
+
+            return $loan;
         });
 
         return redirect()->route('peminjaman.peminjamans.show', $loan)
@@ -114,13 +119,14 @@ class PeminjamanController extends Controller
     public function approve(Peminjaman $peminjaman): RedirectResponse
     {
         DB::transaction(function () use ($peminjaman): void {
-            $loan = Peminjaman::query()->lockForUpdate()->findOrFail($peminjaman->id);
+            $loan = Peminjaman::query()->with('user')->lockForUpdate()->findOrFail($peminjaman->id);
             abort_unless($loan->status === 'menunggu', 409, 'Pengajuan ini sudah diproses.');
             $items = $loan->items()->orderBy('alat_id')->get();
             abort_if($items->isEmpty(), 409, 'Pengajuan tidak memiliki alat.');
             $this->assertAvailableQuantities($items->mapWithKeys(fn ($item) => [$item->alat_id => $item->jumlah])->all(), true);
             $this->changeStock($items, false);
             $loan->update(['status' => 'disetujui', 'tanggal_dipinjam' => now()]);
+            ActivityLog::record(request()->user(), 'Menyetujui peminjaman '.$loan->user->name);
         });
 
         return redirect()->route('peminjaman.peminjamans.show', $peminjaman)->with('success', 'Peminjaman disetujui.');
@@ -130,6 +136,7 @@ class PeminjamanController extends Controller
     {
         abort_unless($peminjaman->status === 'menunggu', 409, 'Pengajuan ini sudah diproses.');
         $peminjaman->update(['status' => 'ditolak']);
+        ActivityLog::record(request()->user(), 'Menolak peminjaman '.$peminjaman->user->name);
 
         return redirect()->route('peminjaman.peminjamans.show', $peminjaman)->with('success', 'Peminjaman ditolak.');
     }
@@ -141,10 +148,14 @@ class PeminjamanController extends Controller
             404,
         );
 
-        $peminjaman->update([
-            'status' => 'menunggu_pengembalian',
-            'diminta_kembali_pada' => now(),
-        ]);
+        $totalItems = $peminjaman->items()->sum('jumlah');
+        DB::transaction(function () use ($peminjaman, $totalItems): void {
+            $peminjaman->update([
+                'status' => 'menunggu_pengembalian',
+                'diminta_kembali_pada' => now(),
+            ]);
+            ActivityLog::record(request()->user(), "Mengembalikan {$totalItems} item");
+        });
 
         return redirect()->route('peminjaman.peminjamans.show', $peminjaman)->with('success', 'Permintaan pengembalian berhasil dikirim.');
     }

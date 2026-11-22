@@ -76,6 +76,9 @@
 .developer-dashboard .dashboard-main .loan-dates dt { color: #aaa; font-size: .72rem; }
 .developer-dashboard .dashboard-main .loan-dates dd { margin: .25rem 0 0; color: #eee; font-size: .85rem; }
 .developer-dashboard .dashboard-main .loan-note { border-top: 1px solid #414141; padding-top: .8rem; color: #ddd; }
+.developer-dashboard .dashboard-main .report-summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: .8rem 0; }
+.developer-dashboard .dashboard-main .report-summary-card { display: grid; gap: .4rem; border: 1px solid #222; background: #0A0A0A; padding: .9rem 1rem; color: #aaa; font-size: .8rem; }
+.developer-dashboard .dashboard-main .report-summary-card strong { color: #eee; font-size: 1.2rem; }
 .developer-dashboard .dashboard-main .status-badge { border-color: #505050; background: #303030; color: #ddd; }
 .developer-dashboard .dashboard-main .status-badge.status-disetujui,.developer-dashboard .dashboard-main .status-badge.status-dikembalikan { border-color: #28623a; background: #203626; color: #a8e3b6; }
 .developer-dashboard .dashboard-main .status-badge.status-ditolak { border-color: #6c3c3c; background: #402525; color: #ffb3b3; }
@@ -118,4 +121,5 @@
 
 @media (max-width: 700px) {
     .developer-dashboard .dashboard-main .loan-request-controls { grid-template-columns: 1fr; }
+    .developer-dashboard .dashboard-main .report-summary-grid { grid-template-columns: 1fr; }
 }

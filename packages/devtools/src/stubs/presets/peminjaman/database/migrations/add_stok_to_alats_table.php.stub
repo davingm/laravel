@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (! Schema::hasTable('alats') || Schema::hasColumn('alats', 'stok')) {
+            return;
+        }
+
         Schema::table('alats', function (Blueprint $table) {
             $table->unsignedInteger('stok')->default(1);
         });

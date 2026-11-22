@@ -83,6 +83,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
+            "davingm/laravel-devtools": true,
             "davingm/laravel-runtime": true,
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
