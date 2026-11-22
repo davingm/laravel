@@ -1,52 +1,12 @@
 @extends('layouts.app')
-
-@section('title', 'Login')
-
+@section('title', 'Masuk')
+@section('body-class', 'bg-default')
 @section('content')
-<div class="auth-page">
-    <div class="auth-card">
-        <div class="auth-brand">
-            <svg class="auth-brand-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09Z"/>
-            </svg>
-            <h1 class="sr-only">Masuk</h1>
-        </div>
-
-        @if (session('error'))
-            <p class="auth-error" role="alert">{{ session('error') }}</p>
-        @endif
-
-        <form method="POST" action="{{ route('login.store') }}" class="auth-form">
-            @csrf
-
-            <div class="auth-field">
-                <label for="email" class="auth-label">Email</label>
-                <input id="email" name="email" type="email" value="{{ old('email') }}"
-                    required autofocus autocomplete="username" class="auth-input">
-                @error('email')
-                    <span class="auth-field-error">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="auth-field">
-                <label for="password" class="auth-label">Password</label>
-            <div class="auth-password-field">
-                <input id="password" name="password" type="password" required
-                    autocomplete="current-password" class="auth-input">
-                <button type="button" class="auth-password-toggle" data-toggle-password="password" aria-controls="password" aria-label="Tampilkan password">Tampilkan</button>
-            </div>
-                @error('password')
-                    <span class="auth-field-error">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <button type="submit" class="auth-submit">Masuk</button>
-        </form>
-
-        <p class="auth-footer">
-            Belum punya akun?
-            <a href="{{ route('register') }}">Daftar</a>
-        </p>
-    </div>
-</div>
+<div class="main-content"><div class="header bg-gradient-primary py-7 py-lg-8"><div class="container"><div class="header-body text-center mb-7"><h1 class="text-white">Argon</h1><p class="text-lead text-white">Sistem peminjaman</p></div></div></div>
+<div class="container mt--8 pb-5"><div class="row justify-content-center"><div class="col-lg-5 col-md-7"><div class="card bg-secondary shadow border-0"><div class="card-header bg-transparent pb-3"><div class="text-muted text-center"><h2>Masuk ke akun</h2></div></div><div class="card-body px-lg-5 py-lg-5">
+@if(session('error'))<div class="alert alert-danger">{{ session('error') }}</div>@endif
+<form method="POST" action="{{ route('login.store') }}">@csrf
+<div class="form-group"><label for="email">Email</label><input id="email" name="email" type="email" value="{{ old('email') }}" class="form-control" required autofocus autocomplete="username">@error('email')<small class="text-danger">{{ $message }}</small>@enderror</div>
+<div class="form-group"><label for="password">Password</label><input id="password" name="password" type="password" class="form-control" required autocomplete="current-password">@error('password')<small class="text-danger">{{ $message }}</small>@enderror</div>
+<button class="btn btn-primary btn-block" type="submit">Masuk</button></form><div class="text-center mt-3"><a href="{{ route('register') }}">Buat akun</a></div></div></div></div></div></div></div>
 @endsection

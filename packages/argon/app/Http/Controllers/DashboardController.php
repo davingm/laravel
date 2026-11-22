@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request): View
+    public function index(): RedirectResponse
     {
-        return view('pages.dashboard.index');
+        return redirect()->route('peminjaman.peminjamans.index');
     }
 }
