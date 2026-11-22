@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+/argon-dashboard-v1.0.0/** export-ignore

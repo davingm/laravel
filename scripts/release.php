@@ -149,6 +149,7 @@ final class SplitReleaseCommand
             $this->assertMainIsSynchronized();
 
             $versions = [];
+            /** @var array<string, string|null> $remoteMains */
             $remoteMains = [];
             foreach ($selected as $key) {
                 $package = self::PACKAGES[$key];
@@ -174,7 +175,9 @@ final class SplitReleaseCommand
             foreach ($selected as $key) {
                 $package = self::PACKAGES[$key];
                 $split = $splitCommits[$key];
-                $branchAction = $split['pushBranch'] ? 'update main' : 'main unchanged';
+                $branchAction = ! $split['pushBranch']
+                    ? 'main unchanged'
+                    : ($remoteMains[$key] === null ? 'create main' : 'update main');
                 $this->line("  {$package['label']}: {$versions[$key]} -> {$package['remote']}/main ({$branchAction}, {$split['commit']})");
             }
             $this->line('  Packagist diperbarui melalui webhook GitHub setelah tag didorong.');
@@ -249,13 +252,15 @@ final class SplitReleaseCommand
         $this->line('Package mana yang akan dirilis?');
         $this->line('  1) Runtime (packages/laravel)');
         $this->line('  2) Devtools (packages/devtools)');
-        $this->line('  3) Keduanya [default]');
+        $this->line('  3) Argon (packages/argon)');
+        $this->line('  4) Semua [default]');
 
-        return match ($this->ask('Pilihan', '3')) {
+        return match ($this->ask('Pilihan', '4')) {
             '1' => ['runtime'],
             '2' => ['devtools'],
-            '3' => ['runtime', 'devtools'],
-            default => throw new InvalidArgumentException('Choose 1, 2, or 3.'),
+            '3' => ['argon'],
+            '4' => ['runtime', 'devtools', 'argon'],
+            default => throw new InvalidArgumentException('Choose 1, 2, 3, or 4.'),
         };
     }
 
@@ -309,8 +314,13 @@ final class SplitReleaseCommand
         return $tags;
     }
 
-    private function fetchRemoteMain(string $remote): string
+    private function fetchRemoteMain(string $remote): ?string
     {
+        $mainRef = $this->git(['ls-remote', '--heads', $remote, 'refs/heads/main']);
+        if (trim($mainRef) === '') {
+            return null;
+        }
+
         $this->git(['fetch', '--quiet', '--no-tags', $remote, 'refs/heads/main']);
         $commit = $this->git(['rev-parse', 'FETCH_HEAD']);
 
@@ -437,9 +447,13 @@ final class SplitReleaseCommand
     }
 
     /** @return array{commit: string, pushBranch: bool} */
-    private function prepareSplitForPush(string $key, string $splitCommit, string $remoteMain): array
+    private function prepareSplitForPush(string $key, string $splitCommit, ?string $remoteMain): array
     {
         $package = self::PACKAGES[$key];
+        if ($remoteMain === null) {
+            return ['commit' => $splitCommit, 'pushBranch' => true];
+        }
+
         $ancestor = $this->gitResult(['merge-base', '--is-ancestor', $remoteMain, $splitCommit]);
         if ($ancestor['exitCode'] === 0) {
             return ['commit' => $splitCommit, 'pushBranch' => true];

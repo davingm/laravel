@@ -17,7 +17,15 @@ Command bersifat interaktif. Ia membaca tag langsung dari remote package, menawa
 5. Tinjau rencana dan setujui sebelum push. Source commit didorong ke `origin/main`, lalu tiap package di-split dengan `git subtree split` dan di-push ke branch `main` beserta tag versi baru.
 6. Packagist diperbarui oleh webhook GitHub ketika tag baru tiba. Pastikan webhook masing-masing repository package aktif; command tidak meminta atau menyimpan token Packagist.
 
-Sebelum meminta konfirmasi push, CLI memastikan branch remote package dapat di-fast-forward ke hasil split. Jika commit remote berbeda tetapi isi tree-nya sama dengan checkpoint historis pada split, CLI membuat merge commit yang mempertahankan kedua riwayat dan memakai isi package dari monorepo. Jika tidak ada checkpoint yang cocok, command berhenti tanpa push dan meminta developer meninjau serta menyelaraskan source secara manual. Jangan force-push atau menimpa branch package.
+Untuk Argon, pastikan remote `argon` sudah dibuat satu kali sebelum release:
+
+```bash
+git remote add argon https://github.com/davingm/argon.git
+```
+
+Pilih opsi `3` pada `composer release` untuk merilis `packages/argon` saja. Opsi `4` merilis seluruh package yang terdaftar.
+
+Sebelum meminta konfirmasi push, CLI memastikan branch remote package dapat di-fast-forward ke hasil split. Jika branch `main` package belum ada, rencana menampilkan `create main`; push pertama membuat branch itu tanpa force-push. Branch remote lain yang sudah ada tetap dipertahankan. Jika commit remote berbeda tetapi isi tree-nya sama dengan checkpoint historis pada split, CLI membuat merge commit yang mempertahankan kedua riwayat dan memakai isi package dari monorepo. Jika tidak ada checkpoint yang cocok, command berhenti tanpa push dan meminta developer meninjau serta menyelaraskan source secara manual. Jangan force-push atau menimpa branch package.
 
 Command tidak melakukan force push dan tidak memindahkan tag. Jika push branch package sukses tetapi push tag gagal, branch remote mungkin sudah maju tetapi versi belum terbit; periksa remote sebelum mengulang command. Jika release beberapa package dan salah satunya gagal, package yang sudah sukses tidak otomatis dibatalkan.
 
